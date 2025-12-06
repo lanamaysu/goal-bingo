@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1F3E4D"/>
+      <stop offset="100%" stop-color="#152b36"/>
+    </linearGradient>
+  </defs>
+  <!-- Main Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  
+  <!-- Bingo Grid Content (Centered) -->
+  <g transform="translate(96, 96)">
+    <!-- Row 1 -->
+    <rect x="0" y="0" width="90" height="90" rx="24" fill="#4A857E"/> 
+    <rect x="115" y="0" width="90" height="90" rx="24" fill="#B7E5CD" opacity="0.2"/>
+    <rect x="230" y="0" width="90" height="90" rx="24" fill="#B7E5CD" opacity="0.2"/>
+    
+    <!-- Row 2 -->
+    <rect x="0" y="115" width="90" height="90" rx="24" fill="#B7E5CD" opacity="0.2"/>
+    <rect x="115" y="115" width="90" height="90" rx="24" fill="#4A857E"/> 
+    <rect x="230" y="115" width="90" height="90" rx="24" fill="#B7E5CD" opacity="0.2"/>
+    
+    <!-- Row 3 -->
+    <rect x="0" y="230" width="90" height="90" rx="24" fill="#B7E5CD" opacity="0.2"/>
+    <rect x="115" y="230" width="90" height="90" rx="24" fill="#B7E5CD" opacity="0.2"/>
+    <rect x="230" y="230" width="90" height="90" rx="24" fill="#B04A2E"/> 
+    
+    <!-- Checkmarks for winning line -->
+    <g stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M28 45 L42 59 L62 31" transform="translate(0,0)"/>
+        <path d="M28 45 L42 59 L62 31" transform="translate(115,115)"/>
+        <path d="M28 45 L42 59 L62 31" transform="translate(230,230)"/>
+    </g>
+  </g>
+</svg>

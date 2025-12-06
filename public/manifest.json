@@ -1,0 +1,17 @@
+{
+  "name": "九宮格",
+  "short_name": "九宮格",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1F3E4D",
+  "theme_color": "#1F3E4D",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}
