@@ -21,6 +21,11 @@ const ALLOWED_ORIGINS = [
   'https://goal-bingo-one.vercel.app',
 ];
 
+function doOptions(e) {
+  const origin = (e && e.headers && (e.headers.Origin || e.headers.origin)) || '';
+  return respondWithCors(origin, {});
+}
+
 function doPost(e) {
   try {
     // Try to determine origin header (may be present as 'Origin')
@@ -29,11 +34,6 @@ function doPost(e) {
     // Optional origin check - helps reduce anonymous cross-site use
     if (ALLOWED_ORIGINS.length > 0 && origin && ALLOWED_ORIGINS.indexOf(origin) === -1) {
       return respond({ error: 'forbidden', reason: 'origin_not_allowed' });
-    }
-
-    // Handle CORS preflight request
-    if (e.requestMethod === 'OPTIONS') {
-      return respondWithCors(origin, {});
     }
 
     // Parse JSON body
