@@ -1,0 +1,19 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbar for BaseModal & Others */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(74, 133, 126, 0.2); /* brand-teal with opacity */
+  border-radius: 20px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(183, 229, 205, 0.2); /* brand-mint with opacity */
+}

@@ -1,0 +1,5 @@
+{
+  "name": "Yearly Goals Bingo",
+  "description": "A 3x3 Bingo game for friends to track yearly goals, calculate scores, and enforce penalties.",
+  "requestFramePermissions": []
+}
