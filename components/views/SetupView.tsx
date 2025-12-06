@@ -260,10 +260,10 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                 className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow transition-shadow flex items-center justify-center gap-2"
               >
                 <span className="material-symbols-outlined text-[20px]">lock</span>{' '}
-                鎖定目標，開始個人挑戰！
+                鎖定目標，配置九宮格
               </button>
               <p className="text-center text-xs text-brand-teal mt-3">
-                按下後將鎖定目標並進入執行期
+                進入九宮格配置頁面，調整目標位置後開始執行期
               </p>
             </div>
           )}
@@ -361,10 +361,10 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                   className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow transition-shadow flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-[20px]">lock</span>{' '}
-                  鎖定目標，開始遊戲！
+                  鎖定目標，配置九宮格
                 </button>
                 <p className="text-center text-xs text-brand-teal mt-3">
-                  按下後將隨機打亂九宮格並進入執行期
+                  進入九宮格配置頁面，調整目標位置後開始執行期
                 </p>
               </div>
             )}

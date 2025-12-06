@@ -17,6 +17,7 @@ import { useTheme } from './hooks/useTheme';
 import LandingView from './components/views/LandingView';
 import RegisterView from './components/views/RegisterView';
 import SetupView from './components/views/SetupView';
+import GridReviewView from './components/views/GridReviewView';
 import DashboardView from './components/views/DashboardView';
 import EmptyYearView from './components/views/EmptyYearView';
 
@@ -29,7 +30,7 @@ const AppContent: React.FC = () => {
   const { theme, toggleTheme, appTheme, setAppTheme } = useTheme();
 
   // UI States (Local UI interactions)
-  const [selectedGoalId, setSelectedGoalId] = useState<number | null>(null);
+  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
   const [isSyncOpen, setIsSyncOpen] = useState(false);
   const [isSetupInstructionsOpen, setIsSetupInstructionsOpen] = useState(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
@@ -236,11 +237,26 @@ const AppContent: React.FC = () => {
 
       {/* Main Content: NO PROPS NEEDED HERE ANYMORE! */}
       <main className="pt-8 container mx-auto px-4 md:px-6 max-w-5xl">
-        {game.gameState.phase === 'setup' ? (
+        {game.gameState && game.gameState.phase === 'setup' ? (
           <SetupView onSelectGoal={(g) => setSelectedGoalId(g.id)} />
-        ) : (
+        ) : game.gameState && game.gameState.phase === 'grid-review' ? (
+          <GridReviewView
+            gameState={game.gameState}
+            onGridChange={(newMapping) => {
+              if (!game.gameState) return;
+              game.updateGameStateLocal({
+                phase: game.gameState.phase,
+                users: game.gameState.users,
+                goals: game.gameState.goals,
+                gridMapping: newMapping,
+                config: game.gameState.config,
+              });
+            }}
+            onConfirm={game.confirmGridAndStartGame}
+          />
+        ) : game.gameState ? (
           <DashboardView onGoalClick={(g) => setSelectedGoalId(g.id)} />
-        )}
+        ) : null}
       </main>
 
       {/* Modals */}

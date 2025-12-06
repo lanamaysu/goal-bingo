@@ -6,20 +6,42 @@ interface BingoGridProps {
   gameState: GameState;
   onGoalClick: (goal: Goal) => void;
   highlightLines?: number[][]; // Indices of winning lines
+  isDraggable?: boolean; // Enable dragging mode
+  onDragStart?: (index: number) => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDrop?: (targetIndex: number) => void;
+  draggedIndex?: number | null;
 }
 
 // Separate Cell component to allow memoization
 interface GridCellProps {
-  goalId: number;
+  goalId: string;
   index: number;
-  goalMap: Map<number, Goal>;
+  goalMap: Map<string, Goal>;
   userMap: Map<string, User>;
   highlightedIndices: Set<number>;
   onGoalClick: (goal: Goal) => void;
+  isDraggable?: boolean;
+  onDragStart?: (index: number) => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDrop?: (targetIndex: number) => void;
+  isDragged?: boolean;
 }
 
 const BingoGridCell = React.memo<GridCellProps>(
-  ({ goalId, index, goalMap, userMap, highlightedIndices, onGoalClick }) => {
+  ({
+    goalId,
+    index,
+    goalMap,
+    userMap,
+    highlightedIndices,
+    onGoalClick,
+    isDraggable,
+    onDragStart,
+    onDragOver,
+    onDrop,
+    isDragged,
+  }) => {
     const goal = goalMap.get(goalId);
     const user = goal ? userMap.get(goal.userId) : null;
 
@@ -35,11 +57,28 @@ const BingoGridCell = React.memo<GridCellProps>(
 
     return (
       <button
-        onClick={() => onGoalClick(goal)}
+        draggable={isDraggable}
+        onDragStart={() => isDraggable && onDragStart?.(index)}
+        onDragOver={(e) => {
+          if (isDraggable) {
+            e.preventDefault();
+            e.dataTransfer!.dropEffect = 'move';
+            onDragOver?.(e);
+          }
+        }}
+        onDrop={(e) => {
+          if (isDraggable) {
+            e.preventDefault();
+            e.stopPropagation();
+            onDrop?.(index);
+          }
+        }}
+        onClick={() => !isDraggable && onGoalClick(goal)}
         className={`
         relative rounded-2xl p-2 flex flex-col items-center justify-center text-center
-        group overflow-hidden border-2 transform-gpu
+        group overflow-hidden border-2 transform-gpu transition-opacity
         ${isWinning ? 'ring-4 ring-brand-rust ring-offset-2 ring-offset-white dark:ring-offset-brand-surface z-10' : ''}
+        ${isDraggable && isDragged ? 'opacity-50' : ''}
         ${colorClasses}
         ${isComplete ? 'opacity-100' : 'opacity-90 dark:opacity-80'}
       `}
@@ -94,7 +133,16 @@ const BingoGridCell = React.memo<GridCellProps>(
 
 BingoGridCell.displayName = 'BingoGridCell';
 
-const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlightLines = [] }) => {
+const BingoGrid: React.FC<BingoGridProps> = ({
+  gameState,
+  onGoalClick,
+  highlightLines = [],
+  isDraggable = false,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  draggedIndex,
+}) => {
   const { gridMapping, goals, users, config } = gameState;
   const gridSize = config.gridSize || 3;
 
@@ -104,7 +152,7 @@ const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlight
   const highlightedIndices = useMemo(() => new Set(highlightLines.flat()), [highlightLines]);
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white dark:bg-[rgb(var(--brand-surface))] p-3 rounded-3xl shadow-sm relative border">
+    <div className="w-full max-w-md mx-auto bg-white dark:bg-[rgb(var(--brand-surface))] p-3 rounded-3xl shadow-sm relative">
       {/* Grid Container */}
       <div
         className="grid gap-2 sm:gap-3"
@@ -123,12 +171,14 @@ const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlight
             userMap={userMap}
             highlightedIndices={highlightedIndices}
             onGoalClick={onGoalClick}
+            isDraggable={isDraggable}
+            onDragStart={onDragStart}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            isDragged={isDraggable && draggedIndex === index}
           />
         ))}
       </div>
-
-      {/* Decorative Elements */}
-      <div className="absolute -inset-1 rounded-[2rem] border-2 border-brand-petrol/10 dark:border-brand-mint/5 pointer-events-none -z-10"></div>
     </div>
   );
 };

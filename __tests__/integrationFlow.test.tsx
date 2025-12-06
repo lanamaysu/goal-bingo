@@ -145,7 +145,7 @@ describe('Game Setup Integration Flow', () => {
     // Select frequency (default is weekly, lets change to yearly for simplicity in test if needed, but default is fine)
     // We need to fill required fields if any. Default logic handles it.
 
-    const saveGoalBtn = screen.getByRole('button', { name: /保存/i });
+    const saveGoalBtn = screen.getByRole('button', { name: /儲存/i });
     await act(async () => {
       fireEvent.click(saveGoalBtn);
     });
@@ -162,7 +162,7 @@ describe('Game Setup Integration Flow', () => {
       const tInput = screen.getByPlaceholderText('輸入目標標題...');
       fireEvent.change(tInput, { target: { value: 'Another Goal' } });
       await act(async () => {
-        fireEvent.click(screen.getByRole('button', { name: /保存/i }));
+        fireEvent.click(screen.getByRole('button', { name: /儲存/i }));
       });
     }
 

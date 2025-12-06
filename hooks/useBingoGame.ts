@@ -1,8 +1,16 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import useSWR, { mutate } from 'swr';
+import { v4 as uuidv4 } from 'uuid';
 import { GameState, Goal, User, GameConfig } from '../types';
 import { loadFromSheet, saveToSheet, fetchAvailableYears } from '../services/googleSheetSync';
 import { DEFAULT_CONFIG } from '../utils/constants';
+import {
+  isValidGasUrl,
+  reconstructGasUrl,
+  getStoredDeploymentId,
+  storeDeploymentId,
+  clearStoredDeploymentId,
+} from '../utils/urlSecurity';
 
 // --- Fetchers ---
 const fetchGameState = async ([url, year]: [string, string]) => {
@@ -28,9 +36,14 @@ const createNewState = (year: string): GameState => ({
 
 export const useBingoGame = () => {
   // Persistence
-  const [sheetUrl, setSheetUrl] = useState<string>(
-    () => localStorage.getItem('bingoGlobalSheetUrl') || ''
-  );
+  const [sheetUrl, setSheetUrlState] = useState<string>(() => {
+    // Try to restore from stored deployment ID
+    const storedDeploymentId = getStoredDeploymentId();
+    if (storedDeploymentId) {
+      return reconstructGasUrl(storedDeploymentId);
+    }
+    return '';
+  });
   const [currentUserId, setCurrentUserId] = useState<string>(
     () => localStorage.getItem('bingoUserId') || ''
   );
@@ -99,14 +112,31 @@ export const useBingoGame = () => {
   // --- Actions ---
 
   const setUrl = (url: string) => {
-    setSheetUrl(url);
-    localStorage.setItem('bingoGlobalSheetUrl', url);
+    // Validate URL format
+    if (!isValidGasUrl(url)) {
+      throw new Error(
+        '無效的 Google Apps Script URL。請確認網址格式為: https://script.google.com/macros/d/[deployment-id]/exec'
+      );
+    }
+
+    setSheetUrlState(url);
+
+    // Store only the deployment ID (obfuscated) for security
+    // This prevents storing the full URL which could be exposed via XSS
+    const parts = url.split('/');
+    const deploymentId = parts[5]; // Extract ID from URL structure
+    if (deploymentId) {
+      storeDeploymentId(deploymentId);
+    }
   };
 
   // Generic Save Function (Optimistic UI Update + Server Merge Handling)
   const saveAndSync = useCallback(
     async (newState: GameState) => {
       if (!sheetUrl) return;
+
+      // Save the previous state for rollback in case of error
+      const previousState = gameState;
 
       // 1. Optimistic Update: Update the local cache immediately so user sees their change
       await mutateGameState(newState, false);
@@ -120,22 +150,33 @@ export const useBingoGame = () => {
         // This ensures if someone else updated Goal B while we updated Goal A,
         // we now see Goal B's update instead of overwriting it with our old cache.
         if (mergedState) {
-          mutateGameState(mergedState, false);
+          await mutateGameState(mergedState, false);
         } else {
-          // Fallback just in case
-          mutateGameState();
+          // Fallback: re-fetch from server
+          await mutateGameState();
         }
 
         // Refresh years list if we just created a new year
         mutate(['availableYears', sheetUrl]);
+
+        // Clear any previous error messages on success
+        setErrorMsg('');
       } catch (e) {
         console.error('Sync failed', e);
-        setErrorMsg('同步失敗，請檢查網路連線');
-        // Force re-fetch to restore valid state from server (undo optimistic update)
-        mutateGameState();
+
+        // ROLLBACK: Restore the previous state immediately on error
+        if (previousState) {
+          await mutateGameState(previousState, false);
+        } else {
+          // If we don't have a previous state, force re-fetch from server
+          await mutateGameState();
+        }
+
+        // Set user-friendly error message
+        setErrorMsg('同步失敗，操作已復原。請檢查網路連線後重試。');
       }
     },
-    [sheetUrl, mutateGameState]
+    [sheetUrl, gameState, mutateGameState]
   );
 
   // Local Update (Just updates the cache, doesn't push to server immediately)
@@ -196,7 +237,7 @@ export const useBingoGame = () => {
     }
 
     // Create New User
-    const newUserId = `u_${Date.now()}`;
+    const newUserId = `u_${uuidv4()}`;
 
     const newUser: User = {
       id: newUserId,
@@ -208,7 +249,7 @@ export const useBingoGame = () => {
 
     const goalsCount = gameState.config.goalsPerUser || 3;
     const newGoals: Goal[] = Array.from({ length: goalsCount }).map((_, i) => ({
-      id: Date.now() + i,
+      id: uuidv4(),
       userId: newUserId,
       title: '',
       description: '',
@@ -216,6 +257,7 @@ export const useBingoGame = () => {
       currentScore: 0,
       logs: [],
       lastUpdated: Date.now(),
+      version: 0, // Initial version
     }));
 
     const newState = {
@@ -236,18 +278,30 @@ export const useBingoGame = () => {
 
   const updateGoal = (updatedGoal: Goal) => {
     if (!gameState) return;
+    // Increment version on update to handle conflicts
+    const goalWithVersion = {
+      ...updatedGoal,
+      version: (updatedGoal.version || 0) + 1,
+      lastUpdated: Date.now(),
+    };
     const newState = {
       ...gameState,
-      goals: gameState.goals.map((g) => (g.id === updatedGoal.id ? updatedGoal : g)),
+      goals: gameState.goals.map((g) => (g.id === goalWithVersion.id ? goalWithVersion : g)),
     };
     saveAndSync(newState);
   };
 
   const updateGoalLocal = (updatedGoal: Goal) => {
     if (!gameState) return;
+    // Increment version on update
+    const goalWithVersion = {
+      ...updatedGoal,
+      version: (updatedGoal.version || 0) + 1,
+      lastUpdated: Date.now(),
+    };
     const newState = {
       ...gameState,
-      goals: gameState.goals.map((g) => (g.id === updatedGoal.id ? updatedGoal : g)),
+      goals: gameState.goals.map((g) => (g.id === goalWithVersion.id ? goalWithVersion : g)),
     };
     updateGameStateLocal(newState);
   };
@@ -262,6 +316,14 @@ export const useBingoGame = () => {
     saveAndSync({
       ...gameState,
       gridMapping: shuffled,
+      phase: 'grid-review',
+    });
+  };
+
+  const confirmGridAndStartGame = () => {
+    if (!gameState) return;
+    saveAndSync({
+      ...gameState,
       phase: 'active',
     });
   };
@@ -282,6 +344,10 @@ export const useBingoGame = () => {
 
     setCurrentUserId('');
     localStorage.removeItem('bingoUserId');
+
+    // Also clear the stored deployment ID when resetting the game
+    clearStoredDeploymentId();
+    setSheetUrlState('');
   };
 
   return {
@@ -305,6 +371,7 @@ export const useBingoGame = () => {
     updateGoal,
     updateGoalLocal,
     startGame,
+    confirmGridAndStartGame,
     resetGame,
     initNewGame: (url: string) => {
       setUrl(url);

@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type, Schema } from '@google/genai';
 import { Goal } from '../types';
+import { getStoredDeploymentId, reconstructGasUrl } from '../utils/urlSecurity';
 
 const LOCAL_STORAGE_KEY = 'bingoGeminiApiKey';
 
@@ -13,17 +14,73 @@ const cleanJsonText = (text: string) => {
 };
 
 // DRY Helper for generating JSON content
-async function generateJsonContent<T>(prompt: string, schema: Schema): Promise<T | []> {
+async function callGasProxy(payload: any): Promise<any> {
+  const deploymentId = getStoredDeploymentId();
+  if (!deploymentId) throw new Error('NO_GAS_PROXY');
+  const url = reconstructGasUrl(deploymentId);
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch (_e) {
+    // If proxy returned plain text, wrap it
+    return { text };
+  }
+}
+
+async function executeGenerateContent(options: { model: string; contents: string; config?: any }) {
+  // If a GAS proxy is configured, route through it (no client-side API key required)
+  const deploymentId = getStoredDeploymentId();
+  if (deploymentId) {
+    try {
+      const proxyRes = await callGasProxy({
+        model: options.model,
+        contents: options.contents,
+        config: options.config || {},
+      });
+      // proxy is expected to forward the Gemini response; normalize to { text }
+      if (typeof proxyRes === 'string') return { text: proxyRes };
+      if (proxyRes && typeof proxyRes === 'object') {
+        // common shapes: { text }, or full API response
+        if (proxyRes.text) return { text: proxyRes.text };
+        // try choices[0].content or other nested shapes
+        if (proxyRes.choices && proxyRes.choices[0]) {
+          const c = proxyRes.choices[0];
+          if (c.content) return { text: c.content }; // conservative
+          if (c.message && c.message.content) return { text: c.message.content };
+        }
+        // fallback to stringified body
+        return { text: JSON.stringify(proxyRes) };
+      }
+      return { text: '' };
+    } catch (err) {
+      console.error('GAS proxy error:', err);
+      throw err;
+    }
+  }
+
+  // Fallback: use local API key with @google/genai
   const apiKey = getApiKey();
   if (!apiKey) {
     throw new Error('MISSING_API_KEY');
   }
-
-  // Initialize AI instance dynamically with the current key
   const ai = new GoogleGenAI({ apiKey });
+  return ai.models.generateContent({
+    model: options.model,
+    contents: options.contents,
+    config: options.config,
+  });
+}
 
+async function generateJsonContent<T>(prompt: string, schema: Schema): Promise<T | []> {
   try {
-    const response = await ai.models.generateContent({
+    const response = await executeGenerateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
@@ -32,9 +89,8 @@ async function generateJsonContent<T>(prompt: string, schema: Schema): Promise<T
       },
     });
 
-    const text = response.text;
+    const text = (response && (response as any).text) || '';
     if (!text) return [];
-
     const jsonText = cleanJsonText(text);
     return JSON.parse(jsonText);
   } catch (error) {
@@ -173,5 +229,66 @@ export const generatePenaltySuggestions = async (keyword: string): Promise<strin
   } catch (e: any) {
     if (e.message === 'MISSING_API_KEY') throw new Error('請先設定 API Key');
     throw e;
+  }
+};
+
+export interface SettlementSummaryPayload {
+  year: string;
+  isSolo: boolean;
+  totalGoals: number;
+  completedGoals: number;
+  averageCompletionRate: number;
+  groupScore: number;
+  groupTarget: number;
+  linesCount: number;
+  linesTarget: number;
+  isGroupSafe: boolean;
+  topPerformer: {
+    name: string;
+    completionRate: number;
+    totalScore: number;
+  } | null;
+  bottomPerformer: {
+    name: string;
+    completionRate: number;
+    totalScore: number;
+  } | null;
+  users: Array<{
+    name: string;
+    completionRate: number;
+    totalScore: number;
+    completedGoals: number;
+    totalGoals: number;
+  }>;
+}
+
+export const generateSettlementRoast = async (
+  summary: SettlementSummaryPayload
+): Promise<string> => {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error('MISSING_API_KEY');
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: `You are an energetic emcee hosting a spicy year-end award show. Based on the JSON summary below, craft a short, witty, and motivating comment that mixes praise and friendly roasting.
+
+Summary JSON:
+${JSON.stringify(summary)}
+
+Guidelines:
+- Respond in Traditional Chinese (Taiwan usage, 繁體中文).
+- Keep it under 80 characters.
+- Celebrate big wins, tease the laggards with humor, and end on an encouraging note.`,
+    });
+
+    return response.text?.trim() || '今年表現精彩，繼續殺瘋下去！';
+  } catch (error) {
+    console.error('Gemini API Error:', error);
+    throw error;
   }
 };

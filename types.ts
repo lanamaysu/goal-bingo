@@ -34,7 +34,7 @@ export interface GoalStructure {
 }
 
 export interface Goal {
-  id: number;
+  id: string; // UUID for better collision avoidance
   userId: string;
   title: string;
   description: string;
@@ -43,6 +43,7 @@ export interface Goal {
   structure?: GoalStructure; // New field for structured tracking
   logs: Log[];
   lastUpdated?: number; // Timestamp for sync merging
+  version?: number; // Version number for conflict resolution (increments on each update)
 }
 
 export interface Log {
@@ -64,9 +65,9 @@ export interface GameConfig {
 }
 
 export interface GameState {
-  phase: 'setup' | 'active' | 'review' | 'complete'; // Added 'complete'
+  phase: 'setup' | 'grid-review' | 'active' | 'review' | 'complete'; // Added 'grid-review' for grid configuration
   users: User[];
   goals: Goal[];
-  gridMapping: number[]; // Array of Goal IDs representing the grid
+  gridMapping: string[]; // Array of Goal IDs representing the grid
   config: GameConfig;
 }

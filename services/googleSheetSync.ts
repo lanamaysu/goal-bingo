@@ -45,7 +45,9 @@ const sendRequest = async (url: string, payload: any, retries = 3): Promise<any>
 
       if (data.error) {
         if (data.error === 'Server busy') {
-          throw new Error('Server busy');
+          const error: any = new Error('Server busy');
+          error.retryAfter = data.retryAfter || undefined;
+          throw error;
         }
         throw new Error(data.error);
       }
@@ -60,7 +62,8 @@ const sendRequest = async (url: string, payload: any, retries = 3): Promise<any>
 
       // If it is a retryable error and we haven't used up all retries
       if (isRetryable && i < retries) {
-        const delay = 1000 * Math.pow(2, i); // Exponential backoff: 1s, 2s, 4s...
+        // Use server-suggested retry delay if available, otherwise use exponential backoff
+        const delay = error.retryAfter || 1000 * Math.pow(2, i);
         console.warn(`Sync attempt ${i + 1} failed: ${error.message}. Retrying in ${delay}ms...`);
         await wait(delay);
         continue;

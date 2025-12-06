@@ -107,7 +107,7 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({
 
         {/* Step 2: Instructions */}
         <div className="space-y-3 bg-brand-teal/5 p-4 rounded-xl border border-brand-teal/20 text-sm text-brand-petrol dark:text-brand-mint/80">
-          <h4 className="font-bold text-brand-teal mb-2">步驟 2：部署到 Google Sheet</h4>
+          <h4 className="font-bold text-brand-teal mb-2">步驟 2：部署到 Google 試算表</h4>
           <ol className="list-decimal list-inside space-y-1 ml-1">
             <li>
               建立一個新的{' '}
@@ -117,7 +117,7 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({
                 rel="noreferrer"
                 className="text-brand-teal underline font-bold"
               >
-                Google Sheet
+                Google 試算表
               </a>
               。
             </li>

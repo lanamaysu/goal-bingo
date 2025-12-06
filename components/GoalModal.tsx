@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { Goal, User, Log, GoalStructure, Milestone, GoalType } from '../types';
 import { getGoalAdvice } from '../services/geminiService';
 import BaseModal from './common/BaseModal';
@@ -29,8 +30,8 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
 
   const config = gameState.config;
 
-  // IMPORTANT: Allow edit only if I am the owner OR if we are in Setup phase AND NOT COMPLETE
-  const canEdit = currentUser.id === goal.userId && gameState.phase !== 'complete';
+  // IMPORTANT: Allow edit only if I am the owner AND we are in Setup phase
+  const canEdit = currentUser.id === goal.userId && gameState.phase === 'setup';
 
   // --- State Setup ---
   const [title, setTitle] = useState(goal.title);
@@ -201,7 +202,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
   // Helper: Add log to local state
   const addLocalLog = (msg: string) => {
     const logEntry: Log = {
-      id: Date.now().toString() + Math.random().toString().slice(2, 5),
+      id: uuidv4(),
       date: new Date().toLocaleDateString(),
       content: msg,
     };
@@ -263,7 +264,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
   const addMilestone = () => {
     setMilestones([
       ...milestones,
-      { id: `m_${Date.now()}`, title: '', points: 0, isCompleted: false },
+      { id: `m_${uuidv4()}`, title: '', points: 0, isCompleted: false },
     ]);
   };
 
@@ -365,7 +366,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
               </Button>
               {canEdit && (
                 <Button onClick={handleSave}>
-                  <span className="material-symbols-outlined text-[16px]">save</span> 保存
+                  <span className="material-symbols-outlined text-[16px]">save</span> 儲存
                 </Button>
               )}
             </div>

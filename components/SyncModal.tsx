@@ -4,6 +4,13 @@ import { saveToSheet } from '../services/googleSheetSync';
 import BaseModal from './common/BaseModal';
 import { Input, Button } from './common/FormElements';
 import { Loading } from './common/Loading';
+import {
+  extractDeploymentId,
+  reconstructGasUrl,
+  getStoredDeploymentId,
+  storeDeploymentId,
+  clearStoredDeploymentId,
+} from '../utils/urlSecurity';
 
 interface SyncModalProps {
   isOpen: boolean;
@@ -33,6 +40,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
   onUpdateAppTheme,
 }) => {
   const [sheetUrl, setUrl] = useState('');
+  const [geminiProxyUrl, setGeminiProxyUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [displayName, setDisplayName] = useState('');
@@ -46,12 +54,23 @@ const SyncModal: React.FC<SyncModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      // Load Sheet URL
-      const url = localStorage.getItem('bingoGlobalSheetUrl') || '';
-      setUrl(url);
-      if (url) {
+      // Load Sheet URL (legacy/primary storage)
+      const legacy = localStorage.getItem('bingoGlobalSheetUrl') || '';
+      setUrl(legacy);
+      if (legacy) {
         const baseUrl = window.location.origin + window.location.pathname;
-        setInviteLink(`${baseUrl}?syncUrl=${encodeURIComponent(url)}`);
+        setInviteLink(`${baseUrl}?syncUrl=${encodeURIComponent(legacy)}`);
+      } else {
+        setInviteLink('');
+      }
+
+      // Load Gemini proxy URL (deployment id storage)
+      const storedDeploymentId = getStoredDeploymentId();
+      if (storedDeploymentId) {
+        const full = reconstructGasUrl(storedDeploymentId);
+        setGeminiProxyUrl(full);
+      } else {
+        setGeminiProxyUrl('');
       }
 
       // Load API Key
@@ -81,7 +100,35 @@ const SyncModal: React.FC<SyncModalProps> = ({
   };
 
   const handleSaveSettings = () => {
-    localStorage.setItem('bingoGlobalSheetUrl', sheetUrl);
+    // Save sheet URL (legacy behavior)
+    if (sheetUrl) {
+      localStorage.setItem('bingoGlobalSheetUrl', sheetUrl);
+    } else {
+      localStorage.removeItem('bingoGlobalSheetUrl');
+    }
+
+    // Save Gemini proxy deployment id if provided (prefer storing deployment id)
+    if (geminiProxyUrl) {
+      const maybeId = extractDeploymentId(geminiProxyUrl);
+      if (maybeId) {
+        try {
+          storeDeploymentId(maybeId);
+        } catch (e) {
+          // ignore
+        }
+      } else {
+        // If user pasted a non-standard URL, attempt to store raw value in legacy key
+        // (not recommended) — we intentionally do nothing here to avoid ambiguity.
+      }
+    } else {
+      try {
+        clearStoredDeploymentId();
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    // Save API key (still supported as fallback)
     localStorage.setItem('bingoGeminiApiKey', apiKey);
     // Update display name if changed
     if (displayName && displayName !== currentUserName) {
@@ -174,7 +221,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
         <div className="space-y-4">
           <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
             <span className="material-symbols-outlined text-[18px]">cloud_sync</span>
-            資料同步 (Google Sheets)
+            資料同步 (Google 試算表)
           </h4>
 
           <div className="space-y-2">
@@ -255,6 +302,19 @@ const SyncModal: React.FC<SyncModalProps> = ({
               <span className="material-symbols-outlined text-[12px]">open_in_new</span>
             </a>
           </div>
+          <div className="pt-3">
+            <Input
+              label="Gemini Proxy (GAS) 網址（可選）"
+              value={geminiProxyUrl}
+              onChange={(e) => setGeminiProxyUrl(e.target.value)}
+              placeholder="https://script.google.com/.../exec"
+            />
+            {geminiProxyUrl && (
+              <div className="text-xs text-green-600 mt-2">
+                已設定 GAS 代理 — 前端 API Key 可省略（將使用代理轉發請求）。
+              </div>
+            )}
+          </div>
           <Input
             label="Gemini API Key"
             type={showKey ? 'text' : 'password'}
@@ -268,6 +328,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
                 </span>
               </button>
             }
+            disabled={!!geminiProxyUrl}
           />
         </div>
 
