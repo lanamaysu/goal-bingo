@@ -156,10 +156,13 @@ export const useBingoGame = () => {
 
   const registerUser = async (name: string, colorId: number): Promise<boolean> => {
     if (!name.trim()) return false;
+    // Strict check: We cannot register if gameState is not loaded
+    if (!gameState) return false;
+
     setErrorMsg('');
     
     // Identity Recovery
-    const existingUser = gameState?.users.find(u => u.name === name);
+    const existingUser = gameState.users.find(u => u.name === name);
     if (existingUser) {
         setCurrentUserId(existingUser.id);
         localStorage.setItem('bingoUserId', existingUser.id);
@@ -175,14 +178,12 @@ export const useBingoGame = () => {
     }
 
     // Validate Team Size
-    if (gameState && gameState.config.totalPlayers > 0 && gameState.users.length >= gameState.config.totalPlayers) {
+    if (gameState.config.totalPlayers > 0 && gameState.users.length >= gameState.config.totalPlayers) {
         setErrorMsg(`隊伍已滿員 (${gameState.users.length}/${gameState.config.totalPlayers})，無法加入。`);
         return false;
     }
     
     // Create New User
-    if (!gameState) return false;
-
     const newUserId = `u_${Date.now()}`;
     
     const newUser: User = {
