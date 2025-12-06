@@ -89,7 +89,7 @@ const AppContent: React.FC = () => {
   // 1. No Sheet Connected -> Landing Page
   if (!game.sheetUrl) {
     return (
-      <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen text-brand-petrol dark:text-brand-mint transition-colors duration-300">
+      <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen text-brand-petrol dark:text-brand-mint transition-colors duration-300" style={{ minHeight: '100dvh' }}>
          <div className="absolute top-4 right-4 z-50">
             <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-brand-surface text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">
@@ -138,7 +138,7 @@ const AppContent: React.FC = () => {
           );
       }
       return (
-          <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen transition-colors duration-300">
+          <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen transition-colors duration-300" style={{ minHeight: '100dvh' }}>
              <div className="absolute top-4 right-4 z-50">
                 <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-brand-surface text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
                     <span className="material-symbols-outlined text-[20px]">
@@ -165,7 +165,7 @@ const AppContent: React.FC = () => {
       const showRecoveryMode = isFull || isStarted;
 
       return (
-        <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen transition-colors duration-300">
+        <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen transition-colors duration-300" style={{ minHeight: '100dvh' }}>
              <div className="absolute top-4 right-4 z-50">
                 <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-brand-surface text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
                     <span className="material-symbols-outlined text-[20px]">
@@ -195,7 +195,7 @@ const AppContent: React.FC = () => {
 
   // 5. Fully Active (Main Dashboard/Setup)
   return (
-    <div className="min-h-screen bg-brand-mint/30 dark:bg-brand-dark pb-20 transition-colors duration-300 text-brand-petrol dark:text-brand-mint">
+    <div className="min-h-screen bg-brand-mint/30 dark:bg-brand-dark pb-20 transition-colors duration-300 text-brand-petrol dark:text-brand-mint will-change-contents" style={{ minHeight: '100dvh' }}>
       {/* Header */}
             <header className="px-3 sm:px-4 py-2 bg-white/80 dark:bg-brand-surface/90 backdrop-blur-none md:backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-brand-teal/20 flex items-center justify-between transform-gpu will-change-[transform]">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">

@@ -570,7 +570,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                             )}
                         </div>
                         <div className="w-full bg-white dark:bg-brand-dark h-3 rounded-full overflow-hidden shadow-inner">
-                            <div className="bg-brand-teal h-full transition-all duration-500 ease-out" style={{ width: `${Math.min(100, (currentCount/targetCount)*100)}%` }}></div>
+                            <div className="bg-brand-teal h-full transition-none" style={{ width: `${Math.min(100, (currentCount/targetCount)*100)}%` }}></div>
                         </div>
                     </div>
                 )}

@@ -27,10 +27,11 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
   // Only calculate winning lines if NOT solo mode
   const winningLines = isSolo ? [] : getWinningLines(gridSize);
 
-  // Determine winning lines for highlighting
+  // Determine winning lines for highlighting - memoize goal lookup for performance
+  const goalMap = new Map(gameState.goals.map(g => [g.id, g]));
   const activeLines = winningLines.filter(line => line.every(idx => {
       const gId = gameState.gridMapping[idx];
-      const g = gameState.goals.find(x => x.id === gId);
+      const g = goalMap.get(gId);
       // Fallback for missing goals (safe guard)
       if (!g) return false;
       return g.currentScore >= g.targetScore;

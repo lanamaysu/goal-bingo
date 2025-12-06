@@ -52,7 +52,7 @@ const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlight
               key={goalId}
               onClick={() => onGoalClick(goal)}
               className={`
-                relative rounded-2xl p-2 flex flex-col items-center justify-center text-center transition-all duration-300
+                relative rounded-2xl p-2 flex flex-col items-center justify-center text-center
                 group overflow-hidden border-2
                 ${isWinning ? 'ring-4 ring-brand-rust ring-offset-2 ring-offset-white dark:ring-offset-brand-surface z-10 md:scale-[1.03] shadow-md md:shadow-xl' : 'md:hover:scale-[1.02] hover:shadow-sm md:hover:shadow-md'}
                 ${colorClasses}
@@ -62,7 +62,7 @@ const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlight
               {/* Progress Background Overlay for incomplete items */}
               {!isComplete && goal.currentScore > 0 && (
                 <div 
-                  className="absolute bottom-0 left-0 right-0 bg-current opacity-10 transition-all duration-500"
+                  className="absolute bottom-0 left-0 right-0 bg-current opacity-10 transition-opacity duration-200"
                   style={{ height: `${(goal.currentScore / goal.targetScore) * 100}%` }}
                 />
               )}
