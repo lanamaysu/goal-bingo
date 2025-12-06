@@ -16,13 +16,17 @@ interface SyncModalProps {
     onToggleTheme: () => void;
     currentUserName: string;
     onUpdateUserName: (name: string) => void;
+    // App-wide accent color theme
+    currentAppTheme: string;
+    onUpdateAppTheme: (id: string) => void;
 }
 
-const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImport, isDarkTheme, onToggleTheme, currentUserName, onUpdateUserName }) => {
+const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImport, isDarkTheme, onToggleTheme, currentUserName, onUpdateUserName, currentAppTheme, onUpdateAppTheme }) => {
   const [sheetUrl, setUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
     const [displayName, setDisplayName] = useState('');
+    const [selectedAppTheme, setSelectedAppTheme] = useState<string>('teal');
   
   const [inviteLink, setInviteLink] = useState('');
   const [syncStatus, setSyncStatus] = useState<{type: 'success' | 'error' | 'loading', msg: string} | null>(null);
@@ -43,6 +47,9 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
 
         // Load current display name
         setDisplayName(currentUserName || '');
+
+                // Load app theme
+                setSelectedAppTheme(currentAppTheme || 'teal');
 
         setSyncStatus(null);
     }
@@ -66,6 +73,10 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
       // Update display name if changed
       if (displayName && displayName !== currentUserName) {
           onUpdateUserName(displayName);
+      }
+      // Update app theme if changed
+      if (selectedAppTheme && selectedAppTheme !== currentAppTheme) {
+          onUpdateAppTheme(selectedAppTheme);
       }
       onClose();
   };
@@ -93,15 +104,15 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
         }
     >
         <div className="space-y-8">
-                {/* 0. Personal & Appearance Section */}
+                                {/* 0. Personal & Appearance Section */}
                 <div className="space-y-4">
-                      <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-brand-teal/20 pb-2 flex items-center gap-2">
+                      <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
                           <span className="material-symbols-outlined text-[18px]">person</span>
                           外觀與個人
                       </h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                         <div className="flex items-center justify-between p-3 rounded-xl border border-brand-teal/20 bg-white/50 dark:bg-black/20">
-                             <div className="text-xs text-brand-teal font-bold">深色模式</div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="flex items-center justify-between p-3 rounded-xl border border-accent/20 bg-white/50 dark:bg-black/20">
+                            <div className="text-xs text-accent font-bold">深色模式</div>
                              <Button onClick={onToggleTheme} className="px-3 py-1 text-xs h-auto">
                                  {isDarkTheme ? '切換為淺色' : '切換為深色'}
                              </Button>
@@ -114,12 +125,41 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
                                 placeholder="輸入你的名稱..."
                              />
                          </div>
-                      </div>
+                                            </div>
+
+                                            {/* App Theme Selector */}
+                                            <div className="space-y-2">
+                                                <div className="text-xs text-accent font-bold">App 配色</div>
+                                                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                                                    {[
+                                                        { id: 'teal', label: '品牌綠', swatch: '#4A857E' },
+                                                        { id: 'rose', label: '陶玫瑰', swatch: '#D66F65' },
+                                                        { id: 'gold', label: '麥穗金', swatch: '#D4A373' },
+                                                        { id: 'indigo', label: '岩板藍', swatch: '#6B7A8F' },
+                                                        { id: 'sage', label: '鼠尾草', swatch: '#7A9E7E' },
+                                                        { id: 'lavender', label: '薰衣草', swatch: '#9D8189' },
+                                                    ].map(opt => (
+                                                        <button
+                                                            key={opt.id}
+                                                            type="button"
+                                                            onClick={() => setSelectedAppTheme(opt.id)}
+                                                            className={`flex items-center gap-2 p-2 rounded-xl border text-xs transition-colors ${selectedAppTheme === opt.id ? 'border-accent' : 'border-accent/20'} bg-white/50 dark:bg-black/20`}
+                                                            aria-pressed={selectedAppTheme === opt.id}
+                                                        >
+                                                            <span
+                                                                className="inline-block w-5 h-5 rounded"
+                                                                style={{ backgroundColor: opt.swatch }}
+                                                            />
+                                                            <span className="text-brand-petrol dark:text-brand-mint">{opt.label}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
                 </div>
             
             {/* 1. Sync & Data Section */}
             <div className="space-y-4">
-                 <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-brand-teal/20 pb-2 flex items-center gap-2">
+                 <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px]">cloud_sync</span>
                     資料同步 (Google Sheets)
                 </h4>
@@ -136,7 +176,7 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
                             type="button"
                             onClick={handleManualSync} 
                             disabled={syncStatus?.type === 'loading' || !sheetUrl}
-                            className="text-xs text-brand-teal font-bold disabled:opacity-50 flex items-center gap-1"
+                            className="text-xs text-accent font-bold disabled:opacity-50 flex items-center gap-1"
                         >
                             {syncStatus?.type === 'loading' ? (
                                 <Loading text="同步中..." size="text-[14px]" />
@@ -156,14 +196,14 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
 
                 {/* Invite Link */}
                 {inviteLink && !isSolo && (
-                    <div className="bg-brand-teal/5 p-3 rounded-xl border border-brand-teal/20 space-y-2">
+                    <div className="bg-accent/10 p-3 rounded-xl border border-accent/20 space-y-2">
                         <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-xs">邀請連結 (分享給隊友)</h4>
                         <div className="flex gap-2">
                             <input 
                                 type="text" 
                                 readOnly 
                                 value={inviteLink} 
-                                className="flex-1 text-[10px] p-2 rounded border border-brand-teal/20 text-brand-petrol bg-white/50 dark:bg-black/20 outline-none" 
+                                className="flex-1 text-[10px] p-2 rounded border border-accent/20 text-brand-petrol bg-white/50 dark:bg-black/20 outline-none" 
                             />
                             <Button 
                                 variant="secondary"
@@ -182,7 +222,7 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
 
             {/* 2. AI Settings Section */}
             <div className="space-y-4">
-                 <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-brand-teal/20 pb-2 flex items-center gap-2">
+                 <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
                     AI 金鑰 (Gemini API)
                 </h4>
@@ -207,9 +247,9 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
             </div>
 
             {/* 3. Game Config Info (Read Only) */}
-            <div className="pt-4 border-t border-brand-teal/10">
-                <div className="text-xs text-brand-teal/60 mb-2 font-bold">目前遊戲參數 (唯讀)</div>
-                <div className="grid grid-cols-2 gap-y-1 gap-x-4 text-xs text-brand-teal">
+            <div className="pt-4 border-t border-accent/10">
+                <div className="text-xs text-accent/60 mb-2 font-bold">目前遊戲參數 (唯讀)</div>
+                <div className="grid grid-cols-2 gap-y-1 gap-x-4 text-xs text-accent">
                     <div>年度: <span className="font-mono text-brand-petrol dark:text-brand-mint">{config.year}</span></div>
                     <div>模式: <span className="text-brand-petrol dark:text-brand-mint">{isSolo ? '個人' : '團體'} ({config.totalPlayers}人)</span></div>
                 </div>

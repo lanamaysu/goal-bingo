@@ -1,5 +1,13 @@
 
 /** @type {import('tailwindcss').Config} */
+// Helper to support Tailwind opacity modifiers with CSS variables
+const withOpacity = (variable) => ({ opacityValue }) => {
+  if (opacityValue !== undefined) {
+    return `rgb(var(${variable}) / ${opacityValue})`;
+  }
+  return `rgb(var(${variable}))`;
+};
+
 export default {
   content: [
     "./index.html",
@@ -26,14 +34,20 @@ export default {
       },
       colors: {
         brand: {
-          mint: '#B7E5CD',   // Soft Mint (Backgrounds)
-          teal: '#4A857E',   // Vintage Teal (Text, Borders, Secondary)
-          petrol: '#1F3E4D', // Deep Petrol (Primary Text)
-          rust: '#B04A2E',   // Dark Rust (Alerts)
-          purple: '#6A4C78', // Deep Vintage Purple (Darker for better contrast)
-          dark: '#152b36',   // Deep Dark BG
-          surface: '#1F3E4D' // Dark Mode Surface
-        }
+          mint: withOpacity('--brand-mint'),
+          teal: withOpacity('--brand-teal'),
+          petrol: withOpacity('--brand-petrol'),
+          rust: withOpacity('--brand-rust'),
+          purple: withOpacity('--brand-purple'),
+          dark: withOpacity('--brand-dark'),
+          surface: withOpacity('--brand-surface')
+        },
+        tone: {
+          teal: withOpacity('--tone-teal'),
+          purple: withOpacity('--tone-purple'),
+          rust: withOpacity('--tone-rust')
+        },
+        accent: withOpacity('--accent')
       },
       keyframes: {
         fadeIn: {

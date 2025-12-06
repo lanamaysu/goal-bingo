@@ -33,7 +33,7 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
   }, [availableYears, activeYear]);
 
   return (
-    <header className="px-3 sm:px-4 py-2 bg-white/80 dark:bg-brand-surface/90 backdrop-blur-none md:backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-brand-teal/20 flex items-center justify-between transform-gpu will-change-[transform]">
+    <header className="px-3 sm:px-4 py-2 bg-white/80 dark:bg-[rgb(var(--brand-surface))]/90 backdrop-blur-none md:backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-accent/20 flex items-center justify-between transform-gpu will-change-[transform]">
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         <div className="bg-brand-petrol text-brand-mint p-1.5 rounded-lg shadow-sm flex items-center justify-center flex-shrink-0">
           <span className="material-symbols-outlined text-[20px]">track_changes</span>
@@ -44,7 +44,7 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
           <select 
             value={activeYear} 
             onChange={(e) => onYearChange(e.target.value)}
-            className="bg-brand-mint/50 dark:bg-brand-dark/50 text-brand-petrol dark:text-brand-mint text-sm font-bold py-1.5 pl-3 pr-8 rounded-lg cursor-pointer outline-none transition-colors appearance-none"
+            className="bg-brand-mint/50 dark:bg-[rgb(var(--brand-dark))]/50 text-brand-petrol dark:text-brand-mint text-sm font-bold py-1.5 pl-3 pr-8 rounded-lg cursor-pointer outline-none transition-colors appearance-none"
           >
             {yearOptions.map(y => (
               <option key={y} value={y}>{y}</option>

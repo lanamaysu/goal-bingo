@@ -39,7 +39,7 @@ const RegisterView: React.FC<RegisterViewProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 animate-fade-in" style={{ minHeight: '100dvh' }}>
-      <div className="max-w-sm w-full bg-white dark:bg-brand-surface rounded-3xl shadow-soft p-8 border border-white/20">
+      <div className="max-w-sm w-full bg-white dark:bg-[rgb(var(--brand-surface))] rounded-3xl shadow-soft p-8 border border-white/20">
         <div className="text-center mb-8">
             <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 rotate-3 ${isRecoveryMode ? 'bg-brand-purple/20 text-brand-purple' : 'bg-brand-teal/20 text-brand-teal'}`}>
               <span className="material-symbols-outlined text-[32px]">

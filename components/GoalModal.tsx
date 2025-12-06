@@ -386,7 +386,10 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                                     label="頻率"
                                     value={frequency} 
                                     disabled={!canEdit}
-                                    onChange={(e) => setFrequency(e.target.value as any)}
+                                    onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                                        const value = event.target.value as 'weekly' | 'monthly' | 'yearly';
+                                        setFrequency(value);
+                                    }}
                                 >
                                     <option value="weekly">每週</option>
                                     <option value="monthly">每月</option>
@@ -497,7 +500,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                     label="詳細說明 / 備註"
                     value={description}
                     readOnly={!canEdit}
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(event.target.value)}
                     placeholder="補充說明執行細節..."
                     className="h-24"
                 />
@@ -508,7 +511,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
         {!showSetupForm && (
         <div className="space-y-6">
             {/* Score Display */}
-            <div className="flex items-center justify-between bg-brand-petrol dark:bg-brand-dark text-white p-6 rounded-3xl shadow relative overflow-hidden">
+            <div className="flex items-center justify-between bg-brand-petrol dark:bg-[rgb(var(--brand-dark))] text-white p-6 rounded-3xl shadow relative overflow-hidden">
                 <div className="relative z-10">
                     <div className="text-[10px] opacity-70 uppercase tracking-widest font-bold mb-1">Current Score</div>
                     <div className="text-4xl font-black font-mono tracking-tight">
@@ -544,7 +547,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                             {canEdit && (
                                 <button 
                                     onClick={() => incrementHabit(-1)}
-                                    className="w-12 h-12 rounded-full bg-white dark:bg-brand-dark border-2 border-brand-teal/20 text-brand-teal transition-all flex items-center justify-center flex-shrink-0"
+                                    className="w-12 h-12 rounded-full bg-white dark:bg-[rgb(var(--brand-dark))] border-2 border-brand-teal/20 text-brand-teal transition-all flex items-center justify-center flex-shrink-0"
                                 >
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 13H5v-2h14v2z"/></svg>
                                 </button>
@@ -578,7 +581,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                                 </button>
                             )}
                         </div>
-                        <div className="w-full bg-white dark:bg-brand-dark h-3 rounded-full overflow-hidden shadow-inner">
+                        <div className="w-full bg-white dark:bg-[rgb(var(--brand-dark))] h-3 rounded-full overflow-hidden shadow-inner">
                             <div className="bg-brand-teal h-full transition-none" style={{ width: `${Math.min(100, (currentCount/targetCount)*100)}%` }}></div>
                         </div>
                     </div>
@@ -587,7 +590,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                 {goalType === 'step' && (
                     <div className="space-y-3">
                         {milestones.map((m) => (
-                            <label key={m.id} className={`flex items-center p-4 rounded-2xl border-2 transition-colors ${m.isCompleted ? 'bg-brand-mint/20 border-brand-mint dark:bg-brand-mint/10' : 'bg-white dark:bg-brand-surface border-gray-100 dark:border-brand-dark'} ${canEdit ? 'cursor-pointer' : 'cursor-default'}`}>
+                            <label key={m.id} className={`flex items-center p-4 rounded-2xl border-2 transition-colors ${m.isCompleted ? 'bg-brand-mint/20 border-brand-mint dark:bg-brand-mint/10' : 'bg-white dark:bg-[rgb(var(--brand-surface))] border-gray-100 dark:border-brand-dark'} ${canEdit ? 'cursor-pointer' : 'cursor-default'}`}>
                                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-3 transition-colors flex-shrink-0 ${m.isCompleted ? 'bg-brand-mint border-brand-mint text-brand-petrol' : 'border-gray-300 dark:border-brand-teal/30'}`}>
                                     {m.isCompleted && <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 15l-4-4 1.41-1.41L11 14.17l5.59-5.59L18 10l-7 7z"/></svg>}
                                 </div>

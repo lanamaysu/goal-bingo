@@ -62,7 +62,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
   if (isSettlementMode) {
     return (
         <div className="animate-fade-in pb-12 text-center max-w-2xl mx-auto">
-            <div className={`mb-6 p-6 rounded-3xl border-4 ${isLocked ? 'border-brand-petrol bg-white dark:bg-brand-surface' : 'border-brand-teal bg-white/60 dark:bg-black/20'}`}>
+            <div className={`mb-6 p-6 rounded-3xl border-4 ${isLocked ? 'border-brand-petrol bg-white dark:bg-[rgb(var(--brand-surface))]' : 'border-accent bg-white/60 dark:bg-black/20'}`}>
                 <h2 className="text-3xl font-black text-brand-petrol dark:text-brand-mint mb-2 flex items-center justify-center gap-2">
                     {isLocked ? (
                         <>
@@ -81,13 +81,13 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
                 {/* Result Summary (Hidden in Solo Mode) */}
                 {!isSolo && (
                     <div className="grid grid-cols-2 gap-4 mb-6 text-left">
-                         <div className="bg-white dark:bg-brand-dark p-4 rounded-xl border border-brand-mint/20">
+                         <div className="bg-white dark:bg-[rgb(var(--brand-dark))] p-4 rounded-xl border border-brand-mint/20">
                              <div className="text-xs text-brand-teal font-bold uppercase tracking-wider">連線數</div>
                              <div className={`text-2xl font-black ${linesCount >= linesTarget ? 'text-green-600 dark:text-green-400' : 'text-brand-rust'}`}>
                                  {linesCount} <span className="text-sm text-gray-400 dark:text-gray-500">/ {linesTarget} 條</span>
                              </div>
                          </div>
-                         <div className="bg-white dark:bg-brand-dark p-4 rounded-xl border border-brand-mint/20">
+                         <div className="bg-white dark:bg-[rgb(var(--brand-dark))] p-4 rounded-xl border border-brand-mint/20">
                              <div className="text-xs text-brand-teal font-bold uppercase tracking-wider">團體總分</div>
                              <div className={`text-2xl font-black ${groupTotalScore >= groupTarget ? 'text-green-600 dark:text-green-400' : 'text-brand-rust'}`}>
                                  {Math.round(groupTotalScore)} <span className="text-sm text-gray-400 dark:text-gray-500">/ {groupTarget}</span>
@@ -127,7 +127,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
                         const theme = getUserTheme(u.colorId);
 
                         return (
-                            <div key={u.id} className={`p-3 rounded-xl border grid grid-cols-[auto,1fr] items-center gap-2 ${isSafe ? 'bg-white/50 dark:bg-brand-dark border-brand-mint/20 opacity-70' : 'bg-white dark:bg-brand-rust/5 border-brand-rust/20'}`}>
+                            <div key={u.id} className={`p-3 rounded-xl border grid grid-cols-[auto,1fr] items-center gap-2 ${isSafe ? 'bg-white/50 dark:bg-[rgb(var(--brand-dark))] border-brand-mint/20 opacity-70' : 'bg-white dark:bg-brand-rust/5 border-brand-rust/20'}`}>
                                 <div className="flex items-center gap-2 min-w-0">
                                     {!isSolo && <span className={`flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded ${theme.badge}`}>{u.name}</span>}
                                     <span className="whitespace-nowrap text-sm font-bold text-brand-petrol dark:text-brand-mint">
@@ -154,10 +154,10 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
 
             {/* Actions */}
             {!isLocked && (
-                <div className="fixed bottom-0 left-0 right-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-white/90 dark:bg-brand-dark/90 backdrop-blur-none md:backdrop-blur border-t border-brand-mint/20 flex justify-center gap-4 z-50 transform-gpu will-change-[transform]">
+                <div className="fixed bottom-0 left-0 right-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-white/90 dark:bg-[rgb(var(--brand-dark))]/90 backdrop-blur-none md:backdrop-blur border-t border-brand-mint/20 flex justify-center gap-4 z-50 transform-gpu will-change-[transform]">
                     <button 
                         onClick={() => setShowPreview(false)} 
-                        className="px-6 py-3 bg-white dark:bg-brand-surface border border-brand-teal/30 text-brand-petrol dark:text-brand-mint font-bold rounded-xl"
+                        className="px-6 py-3 bg-white dark:bg-[rgb(var(--brand-surface))] border border-brand-teal/30 text-brand-petrol dark:text-brand-mint font-bold rounded-xl"
                     >
                         返回修改
                     </button>
@@ -213,7 +213,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
         </div>
         
         {/* Status Box - Only show if there's info to show. In Solo, we might just show Total Score. */}
-        <div className="bg-white dark:bg-brand-surface p-4 rounded-xl border border-brand-mint/20 text-sm">
+        <div className="bg-white dark:bg-[rgb(var(--brand-surface))] p-4 rounded-xl border border-brand-mint/20 text-sm">
             <h4 className="font-bold text-brand-teal mb-2">當前狀態</h4>
             <div className={`grid ${isSolo ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
                 {!isSolo && (

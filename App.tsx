@@ -27,7 +27,7 @@ import { PageLoading, Loading } from './components/common/Loading';
 // --- Main App Content (Inner Component to consume Context) ---
 const AppContent: React.FC = () => {
   const game = useGame();
-  const { theme, toggleTheme } = useTheme();
+    const { theme, toggleTheme, appTheme, setAppTheme } = useTheme();
   
   // UI States (Local UI interactions)
   const [selectedGoalId, setSelectedGoalId] = useState<number | null>(null);
@@ -85,9 +85,9 @@ const AppContent: React.FC = () => {
   // 1. No Sheet Connected -> Landing Page
   if (!game.sheetUrl) {
     return (
-      <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen text-brand-petrol dark:text-brand-mint transition-colors duration-300" style={{ minHeight: '100dvh' }}>
+    <div className="bg-brand-mint/30 dark:bg-[rgb(var(--brand-dark))] min-h-screen text-brand-petrol dark:text-brand-mint transition-colors duration-300" style={{ minHeight: '100dvh' }}>
          <div className="absolute top-4 right-4 z-50">
-            <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-brand-surface text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
+            <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-[rgb(var(--brand-surface))] text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">
                     {theme === 'dark' ? 'light_mode' : 'dark_mode'}
                 </span>
@@ -134,9 +134,9 @@ const AppContent: React.FC = () => {
           );
       }
       return (
-          <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen transition-colors duration-300" style={{ minHeight: '100dvh' }}>
+          <div className="bg-brand-mint/30 dark:bg-[rgb(var(--brand-dark))] min-h-screen transition-colors duration-300" style={{ minHeight: '100dvh' }}>
              <div className="absolute top-4 right-4 z-50">
-                <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-brand-surface text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
+                <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-[rgb(var(--brand-surface))] text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
                     <span className="material-symbols-outlined text-[20px]">
                         {theme === 'dark' ? 'light_mode' : 'dark_mode'}
                     </span>
@@ -161,9 +161,9 @@ const AppContent: React.FC = () => {
       const showRecoveryMode = isFull || isStarted;
 
       return (
-        <div className="bg-brand-mint/30 dark:bg-brand-dark min-h-screen transition-colors duration-300" style={{ minHeight: '100dvh' }}>
+        <div className="bg-brand-mint/30 dark:bg-[rgb(var(--brand-dark))] min-h-screen transition-colors duration-300" style={{ minHeight: '100dvh' }}>
              <div className="absolute top-4 right-4 z-50">
-                <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-brand-surface text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
+                <button onClick={toggleTheme} className="p-2 rounded-full bg-white/20 hover:bg-white/40 dark:hover:bg-[rgb(var(--brand-surface))] text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center">
                     <span className="material-symbols-outlined text-[20px]">
                         {theme === 'dark' ? 'light_mode' : 'dark_mode'}
                     </span>
@@ -191,7 +191,7 @@ const AppContent: React.FC = () => {
 
   // 5. Fully Active (Main Dashboard/Setup)
   return (
-    <div className="min-h-screen bg-brand-mint/30 dark:bg-brand-dark pb-20 transition-colors duration-300 text-brand-petrol dark:text-brand-mint will-change-contents" style={{ minHeight: '100dvh' }}>
+    <div className="min-h-screen bg-brand-mint/30 dark:bg-[rgb(var(--brand-dark))] pb-20 transition-colors duration-300 text-brand-petrol dark:text-brand-mint will-change-contents" style={{ minHeight: '100dvh' }}>
       {/* Header */}
             <AppHeader
               activeYear={game.activeYear}
@@ -236,21 +236,23 @@ const AppContent: React.FC = () => {
                     const updatedUsers = game.gameState.users.map(u => u.id === game.currentUser!.id ? { ...u, name } : u);
                     game.saveAndSync({ ...game.gameState, users: updatedUsers });
                 }}
+                currentAppTheme={appTheme}
+                onUpdateAppTheme={(id) => setAppTheme(id)}
             />
 
       {isCreatingYear && (
           <div className="fixed inset-0 bg-brand-petrol/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-              <div className="bg-white dark:bg-brand-surface rounded-2xl p-6 shadow-2xl w-full max-w-sm animate-fade-in">
+              <div className="bg-white dark:bg-[rgb(var(--brand-surface))] rounded-2xl p-6 shadow-2xl w-full max-w-sm animate-fade-in">
                   <h3 className="font-bold text-lg mb-4 text-brand-petrol dark:text-brand-mint">開啟新年度</h3>
                   <input 
                     type="number" 
                     value={newYearInput} 
                     onChange={e => setNewYearInput(e.target.value)} 
-                    className="border-2 border-gray-200 dark:border-brand-dark p-3 rounded-xl w-full mb-6 outline-none focus:border-brand-teal bg-gray-50 dark:bg-brand-dark dark:text-brand-mint text-center text-xl font-bold" 
+                    className="border-2 border-gray-200 dark:border-brand-dark p-3 rounded-xl w-full mb-6 outline-none focus:border-brand-teal bg-gray-50 dark:bg-[rgb(var(--brand-dark))] dark:text-brand-mint text-center text-xl font-bold" 
                     placeholder="YYYY" 
                   />
                   <div className="flex justify-end gap-3">
-                      <button onClick={()=>setIsCreatingYear(false)} className="px-5 py-2 text-gray-500 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-brand-dark rounded-xl">取消</button>
+                      <button onClick={()=>setIsCreatingYear(false)} className="px-5 py-2 text-gray-500 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-[rgb(var(--brand-dark))] rounded-xl">取消</button>
                       <button onClick={() => {
                           game.createNewYear(newYearInput);
                           setIsCreatingYear(false);

@@ -61,7 +61,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
       <div 
         className={`
             relative z-10 w-full ${maxWidthClass} 
-        bg-white md:bg-white/95 dark:bg-brand-surface 
+        bg-white md:bg-white/95 dark:bg-[rgb(var(--brand-surface))] 
             border border-white/20 dark:border-brand-teal/20
             rounded-3xl shadow-2xl 
         flex flex-col max-h-[90vh] overscroll-none 

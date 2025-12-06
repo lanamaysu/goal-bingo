@@ -102,7 +102,7 @@ const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlight
   const highlightedIndices = useMemo(() => new Set(highlightLines.flat()), [highlightLines]);
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white dark:bg-brand-surface p-3 rounded-3xl shadow-sm relative border-4 border-brand-petrol dark:border-brand-dark transform-gpu" style={{ willChange: 'transform' }}>
+    <div className="w-full max-w-md mx-auto bg-white dark:bg-[rgb(var(--brand-surface))] p-3 rounded-3xl shadow-sm relative border">
       {/* Grid Container */}
       <div 
         className="grid gap-2 sm:gap-3"
