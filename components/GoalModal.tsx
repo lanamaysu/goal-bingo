@@ -267,6 +267,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
     <BaseModal
         isOpen={true}
         onClose={onClose}
+        hideCloseButton={true}
         maxWidth="lg"
         title={
             <div className="flex justify-between items-center w-full gap-3">
@@ -297,17 +298,6 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                         </div>
                     )}
                 </div>
-                
-                {/* Allow switching to edit mode in Active Phase */}
-                {!isSetupPhase && canEdit && (
-                    <button 
-                        onClick={() => setIsEditingSettings(!isEditingSettings)}
-                        className={`flex-shrink-0 whitespace-nowrap p-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${isEditingSettings ? 'bg-brand-rust/10 text-brand-rust' : 'bg-brand-mint/20 text-brand-teal'}`}
-                    >
-                        <span className="material-symbols-outlined text-[16px]">{isEditingSettings ? 'close' : 'edit'}</span>
-                        {isEditingSettings ? '取消修改' : '修改設定'}
-                    </button>
-                )}
             </div>
         }
         footer={
@@ -318,13 +308,27 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                         {validationError}
                     </div>
                 )}
-                <div className="flex justify-end gap-3 w-full">
+                <div className="flex items-center justify-between w-full gap-3">
+                    <div className="flex items-center gap-2">
+                        {/* Move 修改設定 to footer */}
+                        {!isSetupPhase && canEdit && (
+                            <button 
+                                onClick={() => setIsEditingSettings(!isEditingSettings)}
+                                className={`whitespace-nowrap px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${isEditingSettings ? 'bg-brand-rust/10 text-brand-rust' : 'bg-brand-mint/20 text-brand-teal'}`}
+                            >
+                                <span className="material-symbols-outlined text-[16px]">{isEditingSettings ? 'close' : 'edit'}</span>
+                                {isEditingSettings ? '取消修改' : '修改設定'}
+                            </button>
+                        )}
+                    </div>
+                    <div className="flex justify-end gap-3">
                     <Button variant="secondary" onClick={onClose}>取消</Button>
                     {canEdit && (
                         <Button onClick={handleSave}>
                             <span className="material-symbols-outlined text-[16px]">save</span> 保存
                         </Button>
                     )}
+                    </div>
                 </div>
             </div>
         }

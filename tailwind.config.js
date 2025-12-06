@@ -3,7 +3,14 @@
 export default {
   content: [
     "./index.html",
-    "./**/*.{js,ts,jsx,tsx}",
+    "./App.tsx",
+    "./index.tsx",
+    "./components/**/*.{ts,tsx}",
+    "./views/**/*.{ts,tsx}",
+    "./contexts/**/*.{ts,tsx}",
+    "./hooks/**/*.{ts,tsx}",
+    "./utils/**/*.{ts,tsx}",
+    "./services/**/*.{ts,tsx}",
   ],
   darkMode: 'class',
   theme: {

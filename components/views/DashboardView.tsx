@@ -114,18 +114,20 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
                         const theme = getUserTheme(u.colorId);
 
                         return (
-                            <div key={u.id} className={`p-3 rounded-xl border flex justify-between items-center ${isSafe ? 'bg-white/50 dark:bg-brand-dark border-brand-mint/20 opacity-70' : 'bg-white dark:bg-brand-rust/5 border-brand-rust/20'}`}>
-                                <div className="flex items-center gap-2">
-                                    {!isSolo && <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${theme.badge}`}>{u.name}</span>}
-                                    <span className="text-sm font-bold text-brand-petrol dark:text-brand-mint">
-                                        {isSolo ? '總分 ' : ''}{Math.round(userTotal)} 分
+                            <div key={u.id} className={`p-3 rounded-xl border grid grid-cols-[auto,1fr] items-center gap-2 ${isSafe ? 'bg-white/50 dark:bg-brand-dark border-brand-mint/20 opacity-70' : 'bg-white dark:bg-brand-rust/5 border-brand-rust/20'}`}>
+                                <div className="flex items-center gap-2 min-w-0">
+                                    {!isSolo && <span className={`flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded ${theme.badge}`}>{u.name}</span>}
+                                    <span className="whitespace-nowrap text-sm font-bold text-brand-petrol dark:text-brand-mint">
+                                        {isSolo ? '累積 ' : ''}{Math.round(userTotal)} 分
                                     </span>
                                 </div>
-                                {isSafe ? (
-                                    <span className="text-xs font-bold text-green-600 dark:text-green-400 flex items-center gap-1">Safe <span className="material-symbols-outlined text-[14px]">check_circle</span></span>
-                                ) : (
-                                    <span className="text-xs font-bold text-brand-rust">{u.individualPenalty}</span>
-                                )}
+                                <div className="justify-self-end min-w-0 text-right">
+                                    {isSafe ? (
+                                        <span className="text-xs font-bold text-green-600 dark:text-green-400 inline-flex items-center gap-1">Safe <span className="material-symbols-outlined text-[14px]">check_circle</span></span>
+                                    ) : (
+                                        <span className="text-xs font-bold text-brand-rust break-words leading-snug">{u.individualPenalty}</span>
+                                    )}
+                                </div>
                             </div>
                         );
                     })}
@@ -139,7 +141,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
 
             {/* Actions */}
             {!isLocked && (
-                <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-brand-dark/90 backdrop-blur border-t border-brand-mint/20 flex justify-center gap-4 z-50">
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-brand-dark/90 backdrop-blur-none md:backdrop-blur border-t border-brand-mint/20 flex justify-center gap-4 z-50 transform-gpu will-change-[transform]">
                     <button 
                         onClick={() => setShowPreview(false)} 
                         className="px-6 py-3 bg-white dark:bg-brand-surface border border-brand-teal/30 text-brand-petrol dark:text-brand-mint font-bold rounded-xl hover:bg-brand-mint/20"

@@ -50,10 +50,10 @@ const BaseModal: React.FC<BaseModalProps> = ({
   }[maxWidth];
 
   const modalContent = (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overscroll-none">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-brand-petrol/60 backdrop-blur-sm animate-fade-in-opacity" 
+        className="absolute inset-0 bg-brand-petrol/70 md:bg-brand-petrol/60 backdrop-blur-none md:backdrop-blur-sm animate-fade-in-opacity will-change-[opacity]" 
         onClick={onClose}
       />
 
@@ -61,10 +61,10 @@ const BaseModal: React.FC<BaseModalProps> = ({
       <div 
         className={`
             relative z-10 w-full ${maxWidthClass} 
-            bg-white/95 dark:bg-brand-surface 
+        bg-white md:bg-white/95 dark:bg-brand-surface 
             border border-white/20 dark:border-brand-teal/20
             rounded-3xl shadow-2xl 
-            flex flex-col max-h-[90vh] 
+        flex flex-col max-h-[90vh] overscroll-none 
             transition-colors duration-300 animate-fade-in
             ${className}
         `}
@@ -87,7 +87,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
         )}
 
         {/* Body */}
-        <div className="overflow-y-auto flex-1 p-6 custom-scrollbar">
+        <div className="overflow-y-auto overscroll-contain flex-1 p-6 custom-scrollbar">
             {children}
         </div>
 

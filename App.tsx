@@ -197,8 +197,8 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-brand-mint/30 dark:bg-brand-dark pb-20 transition-colors duration-300 text-brand-petrol dark:text-brand-mint">
       {/* Header */}
-      <header className="px-4 py-3 bg-white/80 dark:bg-brand-surface/90 backdrop-blur-md shadow-sm sticky top-0 z-40 flex justify-between items-center border-b border-brand-teal/20">
-        <div className="flex items-center gap-3">
+            <header className="px-3 sm:px-4 py-2 bg-white/80 dark:bg-brand-surface/90 backdrop-blur-none md:backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-brand-teal/20 flex items-center justify-between transform-gpu will-change-[transform]">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <div className="bg-brand-petrol text-brand-mint p-1.5 rounded-lg shadow-sm flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">track_changes</span>
             </div>
@@ -219,25 +219,30 @@ const AppContent: React.FC = () => {
                 </div>
             </div>
 
-             <button onClick={() => setIsCreatingYear(true)} className="p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-brand-mint hover:text-brand-petrol dark:hover:bg-brand-mint/20 transition-all flex items-center justify-center">
+             <button onClick={() => setIsCreatingYear(true)} className="hidden sm:flex p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-brand-mint hover:text-brand-petrol dark:hover:bg-brand-mint/20 transition-all items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">add</span>
              </button>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 justify-end">
             {game.isValidating ? (
-                <div className="flex items-center gap-1.5 text-xs text-brand-rust font-medium bg-brand-rust/10 px-2 py-1 rounded-full">
+                <div className="hidden sm:flex items-center gap-1.5 text-xs text-brand-rust font-medium bg-brand-rust/10 px-2 py-1 rounded-full">
                     <Loading size="text-[14px]" />
                     <span className="hidden sm:inline">Syncing</span>
                 </div>
             ) : (
-                 <div className="text-brand-teal/50 flex items-center" title="已同步">
+                 <div className="hidden sm:flex text-brand-teal/50 items-center" title="已同步">
                     <span className="material-symbols-outlined text-[14px]">cloud_done</span>
                  </div>
             )}
             
-            <div className={`text-xs px-3 py-1.5 rounded-full border border-brand-petrol/20 dark:border-brand-mint/20 font-bold bg-white/50 dark:bg-black/20`}>
+            {/* Username pill hidden on small screens to save space */}
+            <div className={`hidden sm:block text-xs px-3 py-1.5 rounded-full border border-brand-petrol/20 dark:border-brand-mint/20 font-bold bg-white/50 dark:bg-black/20`}>
                 {game.currentUser.name}
+            </div>
+            {/* Compact account icon for mobile */}
+            <div className="sm:hidden text-brand-teal/70" title={game.currentUser.name}>
+                <span className="material-symbols-outlined text-[20px]">account_circle</span>
             </div>
             
             <button onClick={toggleTheme} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-brand-teal transition-colors flex items-center justify-center">
