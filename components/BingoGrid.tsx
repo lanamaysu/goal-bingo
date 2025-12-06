@@ -26,7 +26,7 @@ const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlight
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white dark:bg-brand-surface p-3 rounded-3xl shadow-2xl relative border-4 border-brand-petrol dark:border-brand-dark transition-colors duration-300">
+    <div className="w-full max-w-md mx-auto bg-white dark:bg-brand-surface p-3 rounded-3xl shadow-md md:shadow-2xl relative border-4 border-brand-petrol dark:border-brand-dark transition-colors duration-300">
       {/* Grid Container */}
       <div 
         className="grid gap-2 sm:gap-3"
@@ -54,7 +54,7 @@ const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlight
               className={`
                 relative rounded-2xl p-2 flex flex-col items-center justify-center text-center transition-all duration-300
                 group overflow-hidden border-2
-                ${isWinning ? 'ring-4 ring-brand-rust ring-offset-2 ring-offset-white dark:ring-offset-brand-surface z-10 scale-[1.03] shadow-xl' : 'hover:scale-[1.02] hover:shadow-md'}
+                ${isWinning ? 'ring-4 ring-brand-rust ring-offset-2 ring-offset-white dark:ring-offset-brand-surface z-10 md:scale-[1.03] shadow-md md:shadow-xl' : 'md:hover:scale-[1.02] hover:shadow-sm md:hover:shadow-md'}
                 ${colorClasses}
                 ${isComplete ? 'opacity-100' : 'opacity-90 dark:opacity-80'}
               `}

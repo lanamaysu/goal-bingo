@@ -18,6 +18,12 @@ export default {
       fontFamily: {
         sans: ['"Noto Sans TC"', 'sans-serif'],
       },
+      height: {
+        screen: '100dvh',
+      },
+      minHeight: {
+        screen: '100dvh',
+      },
       colors: {
         brand: {
           mint: '#B7E5CD',   // Soft Mint (Backgrounds)

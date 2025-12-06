@@ -21,7 +21,7 @@ export const PageLoading: React.FC<{ title?: string; subtitle?: string }> = ({
     title = "載入資料中", 
     subtitle 
 }) => (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-mint/30 dark:bg-brand-dark animate-fade-in transition-colors duration-300">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-mint/30 dark:bg-brand-dark animate-fade-in transition-colors duration-300" style={{ minHeight: '100dvh' }}>
         <div className="bg-white dark:bg-brand-surface p-8 rounded-3xl shadow-xl flex flex-col items-center space-y-4 border border-white/20 dark:border-brand-teal/20">
             <div className="relative w-16 h-16">
                 <div className="absolute inset-0 border-4 border-brand-mint/30 rounded-full"></div>

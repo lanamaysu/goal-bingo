@@ -135,13 +135,13 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
             </div>
 
             {/* Grid Visualization (Read Only) */}
-            <div className="opacity-80 pointer-events-none scale-90 origin-top">
+            <div className="opacity-80 pointer-events-none md:scale-90 origin-top">
                 <BingoGrid gameState={gameState} onGoalClick={()=>{}} highlightLines={activeLines} />
             </div>
 
             {/* Actions */}
             {!isLocked && (
-                <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-brand-dark/90 backdrop-blur-none md:backdrop-blur border-t border-brand-mint/20 flex justify-center gap-4 z-50 transform-gpu will-change-[transform]">
+                <div className="fixed bottom-0 left-0 right-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-white/90 dark:bg-brand-dark/90 backdrop-blur-none md:backdrop-blur border-t border-brand-mint/20 flex justify-center gap-4 z-50 transform-gpu will-change-[transform]">
                     <button 
                         onClick={() => setShowPreview(false)} 
                         className="px-6 py-3 bg-white dark:bg-brand-surface border border-brand-teal/30 text-brand-petrol dark:text-brand-mint font-bold rounded-xl hover:bg-brand-mint/20"

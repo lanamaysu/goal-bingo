@@ -7,7 +7,7 @@ interface LandingViewProps {
 }
 
 const LandingView: React.FC<LandingViewProps> = ({ onJoinTeam, onCreateTeam }) => (
-  <div className="min-h-screen flex flex-col items-center justify-center p-6 animate-fade-in">
+  <div className="min-h-screen flex flex-col items-center justify-center p-6 animate-fade-in" style={{ minHeight: '100dvh' }}>
     <div className="max-w-md w-full bg-white dark:bg-brand-surface rounded-3xl shadow-soft p-10 text-center border border-white/20">
       <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-mint/50 dark:bg-brand-mint/20 rounded-full mb-6 text-brand-petrol dark:text-brand-mint">
         <span className="material-symbols-outlined text-[40px]">track_changes</span>

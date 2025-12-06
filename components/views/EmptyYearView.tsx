@@ -17,7 +17,7 @@ const EmptyYearView: React.FC<EmptyYearViewProps> = ({ year, onSwitchYear, onIni
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-brand-mint/30 dark:bg-brand-dark transition-colors duration-300 animate-fade-in">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-brand-mint/30 dark:bg-brand-dark transition-colors duration-300 animate-fade-in" style={{ minHeight: '100dvh' }}>
       <div className="max-w-md w-full bg-white dark:bg-brand-surface rounded-3xl shadow-xl p-8 text-center space-y-6 border border-white/20 dark:border-brand-teal/20">
         <div className="space-y-2">
             <h2 className="text-4xl font-black text-brand-mint dark:text-brand-mint/10 opacity-50 dark:opacity-100">{year}</h2>
