@@ -2,13 +2,12 @@
  * Centralized storage helper for the app's v2 storage schema.
  *
  * Responsibilities:
- * - Read/write v2 keys for sheet/proxy/api
+ * - Read/write v2 keys for sheet/api
  * - Clean legacy keys
  * - Provide a simple initializer used when parsing URL params
  */
 
 const NEW_SHEET_KEY = 'bingo_v2_sheetUrl';
-const NEW_PROXY_KEY = 'bingo_v2_gasProxyUrl';
 const NEW_API_KEY = 'bingo_v2_geminiApiKey';
 const NEW_USER_KEY = 'bingo_v2_userId';
 const NEW_THEME_KEY = 'bingo_v2_theme';
@@ -40,38 +39,21 @@ export const setSheetUrl = (url: string): void => {
   }
 };
 
-export const getProxyUrl = (): string => {
-  try {
-    return localStorage.getItem(NEW_PROXY_KEY) || '';
-  } catch (e) {
-    return '';
-  }
-};
-
-export const setProxyUrl = (url: string): void => {
-  try {
-    if (url) localStorage.setItem(NEW_PROXY_KEY, url);
-    else localStorage.removeItem(NEW_PROXY_KEY);
-  } catch (e) {
-    // ignore
-  }
-};
+// In-memory API key storage (avoid persisting to localStorage for security)
+let memoryApiKey = '';
 
 export const getApiKey = (): string => {
-  try {
-    return localStorage.getItem(NEW_API_KEY) || '';
-  } catch (e) {
-    return '';
-  }
+  return memoryApiKey;
 };
 
 export const setApiKey = (key: string): void => {
+  // Clear any previously persisted copy and keep only in-memory
   try {
-    if (key) localStorage.setItem(NEW_API_KEY, key);
-    else localStorage.removeItem(NEW_API_KEY);
+    localStorage.removeItem(NEW_API_KEY);
   } catch (e) {
     // ignore
   }
+  memoryApiKey = key || '';
 };
 
 export const clearLegacyKeys = (): void => {
@@ -144,9 +126,7 @@ export const setAppTheme = (t: string | null): void => {
 export const clearAllKeys = (): void => {
   try {
     // remove v2 keys and known legacy keys
-    [NEW_SHEET_KEY, NEW_PROXY_KEY, NEW_API_KEY, ...LEGACY_KEYS].forEach((k) =>
-      localStorage.removeItem(k)
-    );
+    [NEW_SHEET_KEY, NEW_API_KEY, ...LEGACY_KEYS].forEach((k) => localStorage.removeItem(k));
     // remove any other bingo-prefixed keys
     Object.keys(localStorage).forEach((k) => {
       if (k.startsWith('bingo')) localStorage.removeItem(k);
@@ -172,7 +152,6 @@ export const initFromUrlParam = (url: string): boolean => {
 
 export const STORAGE_KEYS = {
   NEW_SHEET_KEY,
-  NEW_PROXY_KEY,
   NEW_API_KEY,
   NEW_USER_KEY,
   NEW_THEME_KEY,
@@ -182,8 +161,6 @@ export const STORAGE_KEYS = {
 export default {
   getSheetUrl,
   setSheetUrl,
-  getProxyUrl,
-  setProxyUrl,
   getApiKey,
   setApiKey,
   clearLegacyKeys,

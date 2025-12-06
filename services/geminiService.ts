@@ -1,6 +1,5 @@
 import { GoogleGenAI, Type, Schema } from '@google/genai';
 import { Goal } from '../types';
-import { isValidGasUrl } from '../utils/urlSecurity';
 import storage from '../utils/storage';
 
 // Helper to remove markdown code fences if present
@@ -8,69 +7,8 @@ const cleanJsonText = (text: string) => {
   return text.replace(/^```json\s*/, '').replace(/\s*```$/, '');
 };
 
-// DRY Helper for generating JSON content
-async function callGasProxy(payload: any): Promise<any> {
-  // First, check the new v2 proxy URL key (full GAS URL)
-  const v2Proxy = storage.getProxyUrl();
-  let url: string | null = null;
-  if (v2Proxy && isValidGasUrl(v2Proxy)) {
-    url = v2Proxy;
-  }
-
-  if (!url) {
-    throw new Error('NO_GAS_PROXY');
-  }
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const text = await res.text();
-  try {
-    return JSON.parse(text);
-  } catch (_e) {
-    // If proxy returned plain text, wrap it
-    return { text };
-  }
-}
-
 async function executeGenerateContent(options: { model: string; contents: string; config?: any }) {
-  // If a GAS proxy is configured (v2 or legacy), route through it (no client-side API key required)
-  // We attempt to call the proxy; callGasProxy will pick v2 key first, then legacy deployment id
-  try {
-    const proxyRes = await callGasProxy({
-      model: options.model,
-      contents: options.contents,
-      config: options.config || {},
-    });
-    // proxy is expected to forward the Gemini response; normalize to { text }
-    if (typeof proxyRes === 'string') return { text: proxyRes };
-    if (proxyRes && typeof proxyRes === 'object') {
-      // common shapes: { text }, or full API response
-      if (proxyRes.text) return { text: proxyRes.text };
-      // try choices[0].content or other nested shapes
-      if (proxyRes.choices && proxyRes.choices[0]) {
-        const c = proxyRes.choices[0];
-        if (c.content) return { text: c.content }; // conservative
-        if (c.message && c.message.content) return { text: c.message.content };
-      }
-      // fallback to stringified body
-      return { text: JSON.stringify(proxyRes) };
-    }
-    return { text: '' };
-  } catch (err: any) {
-    // If there was no proxy configured, callGasProxy throws 'NO_GAS_PROXY' — fall back to API key
-    if (err && err.message === 'NO_GAS_PROXY') {
-      // fall through to API key path
-    } else {
-      console.error('GAS proxy error:', err);
-      throw err;
-    }
-  }
-
-  // Fallback: use local API key with @google/genai
+  // Directly use local API key with @google/genai
   const apiKey = storage.getApiKey();
   if (!apiKey) {
     throw new Error('MISSING_API_KEY');
@@ -121,9 +59,9 @@ export const getGoalAdvice = async (goal: Goal): Promise<string> => {
     });
     return (response as any).text || '加油！你可以做到的。';
   } catch (error: any) {
-    // If no proxy and no API key, surface a friendlier hint
+    // If no API key, surface a friendlier hint
     if (error && error.message === 'MISSING_API_KEY') {
-      return '請先點擊右上角設定，輸入 Gemini API Key 或設定 GAS 代理。';
+      return '請先點擊右上角設定，輸入 Gemini API Key。';
     }
     console.error('Gemini API Error:', error);
     return '暫時無法取得建議，請檢查 API Key 或網路。';
@@ -146,7 +84,7 @@ export const analyzeProgress = async (goal: Goal): Promise<string> => {
     return (response as any).text || '進度不錯喔！';
   } catch (error: any) {
     if (error && error.message === 'MISSING_API_KEY') {
-      return '請先設定 API Key 或設定 GAS 代理。';
+      return '請先設定 Gemini API Key。';
     }
     console.error('Gemini API Error:', error);
     return '持續記錄你的進度！';
@@ -285,7 +223,7 @@ export const generateSettlementRoast = async (
     return (response as any).text?.trim() || '今年表現精彩，繼續殺瘋下去！';
   } catch (error: any) {
     if (error && error.message === 'MISSING_API_KEY') {
-      throw new Error('請先設定 API Key 或設定 GAS 代理');
+      throw new Error('請先設定 Gemini API Key');
     }
     console.error('Gemini API Error:', error);
     throw error;

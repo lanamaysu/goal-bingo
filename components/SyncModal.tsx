@@ -5,7 +5,6 @@ import BaseModal from './common/BaseModal';
 import ConfirmDialog from './common/ConfirmDialog';
 import { Input, Button } from './common/FormElements';
 import { Loading } from './common/Loading';
-import { isValidGasUrl } from '../utils/urlSecurity';
 import storage from '../utils/storage';
 
 interface SyncModalProps {
@@ -36,7 +35,6 @@ const SyncModal: React.FC<SyncModalProps> = ({
   onUpdateAppTheme,
 }) => {
   const [sheetUrl, setUrl] = useState('');
-  const [geminiProxyUrl, setGeminiProxyUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [displayName, setDisplayName] = useState('');
@@ -60,7 +58,6 @@ const SyncModal: React.FC<SyncModalProps> = ({
 
       // Load values from the new storage schema (v2). If not present, prompt user to input.
       const storedSheet = storage.getSheetUrl();
-      const storedProxy = storage.getProxyUrl();
 
       if (storedSheet) {
         setUrl(storedSheet);
@@ -69,12 +66,6 @@ const SyncModal: React.FC<SyncModalProps> = ({
       } else {
         setUrl('');
         setInviteLink('');
-      }
-
-      if (storedProxy && isValidGasUrl(storedProxy)) {
-        setGeminiProxyUrl(storedProxy);
-      } else {
-        setGeminiProxyUrl('');
       }
 
       // Load API Key (v2)
@@ -107,14 +98,6 @@ const SyncModal: React.FC<SyncModalProps> = ({
     // Save sheet URL (v2 schema)
     try {
       storage.setSheetUrl(sheetUrl);
-    } catch (e) {
-      // ignore
-    }
-
-    // Save Gemini proxy (v2 schema) as full GAS URL if valid
-    try {
-      if (geminiProxyUrl && isValidGasUrl(geminiProxyUrl)) storage.setProxyUrl(geminiProxyUrl);
-      else storage.setProxyUrl('');
     } catch (e) {
       // ignore
     }
@@ -307,32 +290,6 @@ const SyncModal: React.FC<SyncModalProps> = ({
               <span className="material-symbols-outlined text-[12px]">open_in_new</span>
             </a>
           </div>
-          <div className="pt-3">
-            <Input
-              label="Gemini Proxy (GAS) 網址（可選）"
-              value={geminiProxyUrl}
-              onChange={(e) => setGeminiProxyUrl(e.target.value)}
-              placeholder="https://script.google.com/.../exec"
-            />
-            {geminiProxyUrl && (
-              <div className="text-xs text-green-600 mt-2">
-                已設定 GAS 代理 — 前端 API Key 可省略（將使用代理轉發請求）。
-              </div>
-            )}
-          </div>
-          <div className="text-[12px] text-accent/80 mt-2 p-3 rounded border border-accent/10 bg-accent/5">
-            <div className="font-bold text-xs mb-1">說明 — 兩種 GAS URL</div>
-            <div className="text-[11px]">
-              - 資料儲存 (sheet)：儲存在本機鍵值 `{`bingo_v2_sheetUrl`}`，請輸入您用於同步的 Apps
-              Script 網址。
-              <br />- Gemini 代理 (proxy)：儲存在本機鍵值 `{`bingo_v2_gasProxyUrl`}
-              `，如果設定，前端將透過此代理呼叫 Gemini，而不需要在瀏覽器中保留 API Key。
-            </div>
-            <div className="text-[11px] text-brand-rust mt-1">
-              已清除舊版設定（舊的 `bingoGlobalSheetUrl` / `bingoGasDeploymentId` /
-              `bingoGeminiApiKey` 不再自動解析）。若未設定，請手動輸入。
-            </div>
-          </div>
           <Input
             label="Gemini API Key"
             type={showKey ? 'text' : 'password'}
@@ -346,7 +303,6 @@ const SyncModal: React.FC<SyncModalProps> = ({
                 </span>
               </button>
             }
-            disabled={!!geminiProxyUrl}
           />
         </div>
 
