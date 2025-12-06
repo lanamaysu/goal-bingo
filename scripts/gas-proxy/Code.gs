@@ -18,7 +18,7 @@ const KEY = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY'
 // Edit this to match the origins (scheme + host) you want to allow. Empty array = no origin checking.
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',
-  // 'https://your-production-domain.example'
+  'https://goal-bingo-one.vercel.app',
 ];
 
 function doPost(e) {
@@ -29,6 +29,11 @@ function doPost(e) {
     // Optional origin check - helps reduce anonymous cross-site use
     if (ALLOWED_ORIGINS.length > 0 && origin && ALLOWED_ORIGINS.indexOf(origin) === -1) {
       return respond({ error: 'forbidden', reason: 'origin_not_allowed' });
+    }
+
+    // Handle CORS preflight request
+    if (e.requestMethod === 'OPTIONS') {
+      return respondWithCors(origin, {});
     }
 
     // Parse JSON body
@@ -58,13 +63,27 @@ function doPost(e) {
 
     const resp = UrlFetchApp.fetch(apiUrl, options);
     const text = resp.getContentText();
-    // Pass through the API response body
-    return ContentService.createTextOutput(text).setMimeType(ContentService.MimeType.JSON);
+    // Pass through the API response body with CORS headers
+    return respondWithCors(origin, JSON.parse(text));
   } catch (err) {
-    return respond({ error: String(err) });
+    return respondWithCors(origin, { error: String(err) });
   }
 }
 
 function respond(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function respondWithCors(origin, obj) {
+  const output = ContentService.createTextOutput(JSON.stringify(obj));
+  output.setMimeType(ContentService.MimeType.JSON);
+  
+  // Add CORS headers
+  if (origin && ALLOWED_ORIGINS.indexOf(origin) !== -1) {
+    output.addHeader('Access-Control-Allow-Origin', origin);
+    output.addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    output.addHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+  
+  return output;
 }
