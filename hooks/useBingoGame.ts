@@ -4,13 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { GameState, Goal, User, GameConfig } from '../types';
 import { loadFromSheet, saveToSheet, fetchAvailableYears } from '../services/googleSheetSync';
 import { DEFAULT_CONFIG } from '../utils/constants';
-import {
-  isValidGasUrl,
-  reconstructGasUrl,
-  getStoredDeploymentId,
-  storeDeploymentId,
-  clearStoredDeploymentId,
-} from '../utils/urlSecurity';
+import { isValidGasUrl } from '../utils/urlSecurity';
+import storage from '../utils/storage';
 
 // --- Fetchers ---
 const fetchGameState = async ([url, year]: [string, string]) => {
@@ -37,16 +32,10 @@ const createNewState = (year: string): GameState => ({
 export const useBingoGame = () => {
   // Persistence
   const [sheetUrl, setSheetUrlState] = useState<string>(() => {
-    // Try to restore from stored deployment ID
-    const storedDeploymentId = getStoredDeploymentId();
-    if (storedDeploymentId) {
-      return reconstructGasUrl(storedDeploymentId);
-    }
-    return '';
+    // Prefer v2 sheet URL only (we no longer parse legacy keys automatically)
+    return storage.getSheetUrl() || '';
   });
-  const [currentUserId, setCurrentUserId] = useState<string>(
-    () => localStorage.getItem('bingoUserId') || ''
-  );
+  const [currentUserId, setCurrentUserId] = useState<string>(() => storage.getUserId() || '');
   const [activeYear, setActiveYear] = useState<string>(new Date().getFullYear().toString());
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -115,18 +104,21 @@ export const useBingoGame = () => {
     // Validate URL format
     if (!isValidGasUrl(url)) {
       throw new Error(
-        '無效的 Google Apps Script URL。請確認網址格式為: https://script.google.com/macros/d/[deployment-id]/exec'
+        '無效的 Google Apps Script URL。請確認網址格式為: https://script.google.com/macros/s/[deployment-id]/exec'
       );
     }
-
     setSheetUrlState(url);
-
-    // Store only the deployment ID (obfuscated) for security
-    // This prevents storing the full URL which could be exposed via XSS
-    const parts = url.split('/');
-    const deploymentId = parts[5]; // Extract ID from URL structure
-    if (deploymentId) {
-      storeDeploymentId(deploymentId);
+    // DEBUG: log setUrl in tests
+    try {
+      // eslint-disable-next-line no-console
+      console.log('[useBingoGame] setUrl ->', url);
+    } catch (e) {}
+    // Persist in v2 schema and remove legacy keys to avoid ambiguity
+    try {
+      storage.setSheetUrl(url);
+      storage.clearLegacyKeys();
+    } catch (e) {
+      // ignore storage errors
     }
   };
 
@@ -213,7 +205,11 @@ export const useBingoGame = () => {
     const existingUser = gameState.users.find((u) => u.name === name);
     if (existingUser) {
       setCurrentUserId(existingUser.id);
-      localStorage.setItem('bingoUserId', existingUser.id);
+      try {
+        storage.setUserId(existingUser.id);
+      } catch (e) {
+        // ignore storage errors
+      }
 
       // Update color if different (e.g. re-registering for new year or just changing)
       if (existingUser.colorId !== colorId) {
@@ -267,7 +263,11 @@ export const useBingoGame = () => {
     };
 
     setCurrentUserId(newUserId);
-    localStorage.setItem('bingoUserId', newUserId);
+    try {
+      storage.setUserId(newUserId);
+    } catch (e) {
+      // ignore storage errors
+    }
     await saveAndSync(newState);
     return true;
   };
@@ -343,11 +343,11 @@ export const useBingoGame = () => {
     await saveAndSync(resetState);
 
     setCurrentUserId('');
-    localStorage.removeItem('bingoUserId');
-
-    // Also clear the stored deployment ID when resetting the game
-    clearStoredDeploymentId();
-    setSheetUrlState('');
+    try {
+      storage.removeUserId();
+    } catch (e) {
+      // ignore storage errors
+    }
   };
 
   return {

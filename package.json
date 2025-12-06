@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest run",
     "format": "prettier --cache --write \"**/*.{js,jsx,ts,tsx,css,scss,html,json,md}\"",
     "prepare": "husky"
   },

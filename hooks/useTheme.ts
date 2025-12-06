@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import storage from '../utils/storage';
 
 type RGB = { r: number; g: number; b: number };
 
@@ -216,8 +217,8 @@ const applyAppThemePalette = (themeId: string) => {
 export const useTheme = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('bingoTheme');
-      if (saved === 'dark' || saved === 'light') return saved;
+      const saved = storage.getTheme();
+      if (saved === 'dark' || saved === 'light') return saved as 'dark' | 'light';
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     return 'light';
@@ -225,7 +226,7 @@ export const useTheme = () => {
 
   const [appTheme, setAppThemeState] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('bingoAppTheme') || 'teal';
+      return storage.getAppTheme() || 'teal';
     }
     return 'teal';
   });
@@ -237,14 +238,22 @@ export const useTheme = () => {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('bingoTheme', theme);
+    try {
+      storage.setTheme(theme);
+    } catch (e) {
+      // ignore
+    }
   }, [theme]);
 
   useEffect(() => {
     const root = window.document.documentElement;
     root.setAttribute('data-app-theme', appTheme);
     applyAppThemePalette(appTheme);
-    localStorage.setItem('bingoAppTheme', appTheme);
+    try {
+      storage.setAppTheme(appTheme);
+    } catch (e) {
+      // ignore
+    }
   }, [appTheme]);
 
   const toggleTheme = () => {

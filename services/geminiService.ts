@@ -1,12 +1,7 @@
 import { GoogleGenAI, Type, Schema } from '@google/genai';
 import { Goal } from '../types';
-import { getStoredDeploymentId, reconstructGasUrl } from '../utils/urlSecurity';
-
-const LOCAL_STORAGE_KEY = 'bingoGeminiApiKey';
-
-const getApiKey = () => {
-  return localStorage.getItem(LOCAL_STORAGE_KEY) || '';
-};
+import { isValidGasUrl } from '../utils/urlSecurity';
+import storage from '../utils/storage';
 
 // Helper to remove markdown code fences if present
 const cleanJsonText = (text: string) => {
@@ -15,9 +10,16 @@ const cleanJsonText = (text: string) => {
 
 // DRY Helper for generating JSON content
 async function callGasProxy(payload: any): Promise<any> {
-  const deploymentId = getStoredDeploymentId();
-  if (!deploymentId) throw new Error('NO_GAS_PROXY');
-  const url = reconstructGasUrl(deploymentId);
+  // First, check the new v2 proxy URL key (full GAS URL)
+  const v2Proxy = storage.getProxyUrl();
+  let url: string | null = null;
+  if (v2Proxy && isValidGasUrl(v2Proxy)) {
+    url = v2Proxy;
+  }
+
+  if (!url) {
+    throw new Error('NO_GAS_PROXY');
+  }
 
   const res = await fetch(url, {
     method: 'POST',
@@ -35,38 +37,41 @@ async function callGasProxy(payload: any): Promise<any> {
 }
 
 async function executeGenerateContent(options: { model: string; contents: string; config?: any }) {
-  // If a GAS proxy is configured, route through it (no client-side API key required)
-  const deploymentId = getStoredDeploymentId();
-  if (deploymentId) {
-    try {
-      const proxyRes = await callGasProxy({
-        model: options.model,
-        contents: options.contents,
-        config: options.config || {},
-      });
-      // proxy is expected to forward the Gemini response; normalize to { text }
-      if (typeof proxyRes === 'string') return { text: proxyRes };
-      if (proxyRes && typeof proxyRes === 'object') {
-        // common shapes: { text }, or full API response
-        if (proxyRes.text) return { text: proxyRes.text };
-        // try choices[0].content or other nested shapes
-        if (proxyRes.choices && proxyRes.choices[0]) {
-          const c = proxyRes.choices[0];
-          if (c.content) return { text: c.content }; // conservative
-          if (c.message && c.message.content) return { text: c.message.content };
-        }
-        // fallback to stringified body
-        return { text: JSON.stringify(proxyRes) };
+  // If a GAS proxy is configured (v2 or legacy), route through it (no client-side API key required)
+  // We attempt to call the proxy; callGasProxy will pick v2 key first, then legacy deployment id
+  try {
+    const proxyRes = await callGasProxy({
+      model: options.model,
+      contents: options.contents,
+      config: options.config || {},
+    });
+    // proxy is expected to forward the Gemini response; normalize to { text }
+    if (typeof proxyRes === 'string') return { text: proxyRes };
+    if (proxyRes && typeof proxyRes === 'object') {
+      // common shapes: { text }, or full API response
+      if (proxyRes.text) return { text: proxyRes.text };
+      // try choices[0].content or other nested shapes
+      if (proxyRes.choices && proxyRes.choices[0]) {
+        const c = proxyRes.choices[0];
+        if (c.content) return { text: c.content }; // conservative
+        if (c.message && c.message.content) return { text: c.message.content };
       }
-      return { text: '' };
-    } catch (err) {
+      // fallback to stringified body
+      return { text: JSON.stringify(proxyRes) };
+    }
+    return { text: '' };
+  } catch (err: any) {
+    // If there was no proxy configured, callGasProxy throws 'NO_GAS_PROXY' — fall back to API key
+    if (err && err.message === 'NO_GAS_PROXY') {
+      // fall through to API key path
+    } else {
       console.error('GAS proxy error:', err);
       throw err;
     }
   }
 
   // Fallback: use local API key with @google/genai
-  const apiKey = getApiKey();
+  const apiKey = storage.getApiKey();
   if (!apiKey) {
     throw new Error('MISSING_API_KEY');
   }
@@ -100,13 +105,8 @@ async function generateJsonContent<T>(prompt: string, schema: Schema): Promise<T
 }
 
 export const getGoalAdvice = async (goal: Goal): Promise<string> => {
-  const apiKey = getApiKey();
-  if (!apiKey) return '請先點擊右上角設定，輸入 Gemini API Key。';
-
-  const ai = new GoogleGenAI({ apiKey });
-
   try {
-    const response = await ai.models.generateContent({
+    const response = await executeGenerateContent({
       model: 'gemini-2.5-flash',
       contents: `You are a supportive but practical life coach. 
       The user has a yearly goal: "${goal.title}".
@@ -119,21 +119,21 @@ export const getGoalAdvice = async (goal: Goal): Promise<string> => {
       
       IMPORTANT: Respond in Traditional Chinese (Taiwan usage, 繁體中文). Be encouraging!`,
     });
-    return response.text || '加油！你可以做到的。';
-  } catch (error) {
+    return (response as any).text || '加油！你可以做到的。';
+  } catch (error: any) {
+    // If no proxy and no API key, surface a friendlier hint
+    if (error && error.message === 'MISSING_API_KEY') {
+      return '請先點擊右上角設定，輸入 Gemini API Key 或設定 GAS 代理。';
+    }
     console.error('Gemini API Error:', error);
     return '暫時無法取得建議，請檢查 API Key 或網路。';
   }
 };
 
 export const analyzeProgress = async (goal: Goal): Promise<string> => {
-  const apiKey = getApiKey();
-  if (!apiKey) return '請先設定 API Key。';
-  const ai = new GoogleGenAI({ apiKey });
-
   try {
     const logsText = goal.logs.map((l) => `- ${l.date}: ${l.content}`).join('\n');
-    const response = await ai.models.generateContent({
+    const response = await executeGenerateContent({
       model: 'gemini-2.5-flash',
       contents: `The user has a goal: "${goal.title}".
         Here are their recent progress logs:
@@ -143,8 +143,11 @@ export const analyzeProgress = async (goal: Goal): Promise<string> => {
         
         IMPORTANT: Respond in Traditional Chinese (Taiwan usage, 繁體中文).`,
     });
-    return response.text || '進度不錯喔！';
-  } catch (error) {
+    return (response as any).text || '進度不錯喔！';
+  } catch (error: any) {
+    if (error && error.message === 'MISSING_API_KEY') {
+      return '請先設定 API Key 或設定 GAS 代理。';
+    }
     console.error('Gemini API Error:', error);
     return '持續記錄你的進度！';
   }
@@ -265,29 +268,25 @@ export interface SettlementSummaryPayload {
 export const generateSettlementRoast = async (
   summary: SettlementSummaryPayload
 ): Promise<string> => {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    throw new Error('MISSING_API_KEY');
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
-
   try {
-    const response = await ai.models.generateContent({
+    const response = await executeGenerateContent({
       model: 'gemini-2.5-flash',
       contents: `You are an energetic emcee hosting a spicy year-end award show. Based on the JSON summary below, craft a short, witty, and motivating comment that mixes praise and friendly roasting.
-
-Summary JSON:
-${JSON.stringify(summary)}
-
-Guidelines:
-- Respond in Traditional Chinese (Taiwan usage, 繁體中文).
-- Keep it under 80 characters.
-- Celebrate big wins, tease the laggards with humor, and end on an encouraging note.`,
+    
+    Summary JSON:
+    ${JSON.stringify(summary)}
+    
+    Guidelines:
+    - Respond in Traditional Chinese (Taiwan usage, 繁體中文).
+    - Keep it under 80 characters.
+    - Celebrate big wins, tease the laggards with humor, and end on an encouraging note.`,
     });
 
-    return response.text?.trim() || '今年表現精彩，繼續殺瘋下去！';
-  } catch (error) {
+    return (response as any).text?.trim() || '今年表現精彩，繼續殺瘋下去！';
+  } catch (error: any) {
+    if (error && error.message === 'MISSING_API_KEY') {
+      throw new Error('請先設定 API Key 或設定 GAS 代理');
+    }
     console.error('Gemini API Error:', error);
     throw error;
   }

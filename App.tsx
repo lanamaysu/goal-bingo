@@ -6,8 +6,10 @@ import SetupInstructionsModal from './components/SetupInstructionsModal';
 import JoinTeamModal from './components/JoinTeamModal';
 import GameConfigModal from './components/GameConfigModal';
 import AlertDialog from './components/common/AlertDialog';
+import FloatingClearButton from './components/common/FloatingClearButton';
 import AppHeader from './components/AppHeader';
 import { APPS_SCRIPT_TEMPLATE } from './utils/constants';
+import storage from './utils/storage';
 
 // Context & Hooks
 import { GameProvider, useGame } from './contexts/GameContext';
@@ -43,6 +45,7 @@ const AppContent: React.FC = () => {
     isOpen: false,
     msg: '',
   });
+  const [isClearStorageOpen, setIsClearStorageOpen] = useState(false);
 
   const selectedGoal =
     selectedGoalId && game.gameState
@@ -53,16 +56,40 @@ const AppContent: React.FC = () => {
     setAlertConfig({ isOpen: true, msg });
   };
 
-  // Auto-Join Logic
+  const handleClearStorage = () => {
+    setIsClearStorageOpen(true);
+  };
+
+  const performClearStorage = () => {
+    try {
+      // Use centralized storage helper to clear v2 and legacy keys
+      storage.clearAllKeys();
+    } catch (e) {
+      console.error('Error clearing storage', e);
+    }
+    // Reload to reset app state
+    window.location.reload();
+  };
+
+  // Auto-join & Auto-cleanup Logic
   useEffect(() => {
+    // Auto-cleanup: Clear legacy keys on app load
+    try {
+      storage.clearLegacyKeys();
+    } catch (e) {
+      console.error('Error clearing legacy keys on load', e);
+    }
+
     const params = new URLSearchParams(window.location.search);
     const syncUrl = params.get('syncUrl');
     if (syncUrl) {
       try {
         const decodedUrl = decodeURIComponent(syncUrl);
         if (decodedUrl.startsWith('https://script.google.com')) {
+          // Write to the new v2 storage schema so the app remembers this URL
+          storage.initFromUrlParam(decodedUrl);
           game.initNewGame(decodedUrl);
-          showAlert('已透過邀請連結加入隊伍！');
+          showAlert('已透過邀請連結加入隊伍！（已儲存至新版設定）');
           window.history.replaceState({}, '', window.location.pathname);
         }
       } catch (e) {
@@ -74,6 +101,8 @@ const AppContent: React.FC = () => {
   const handleCreateTeamUrl = (url: string) => {
     if (url && url.startsWith('https://')) {
       game.initNewGame(url);
+      // Immediately open the configuration modal for the new team
+      setIsConfiguring(true);
     } else {
       showAlert('網址格式不正確，請確認網址開頭為 https://');
     }
@@ -103,6 +132,12 @@ const AppContent: React.FC = () => {
             </span>
           </button>
         </div>
+        <FloatingClearButton
+          isOpen={isClearStorageOpen}
+          onOpen={handleClearStorage}
+          onConfirm={performClearStorage}
+          onCancel={() => setIsClearStorageOpen(false)}
+        />
         <LandingView
           onJoinTeam={() => setIsJoinModalOpen(true)}
           onCreateTeam={() => setIsSetupInstructionsOpen(true)}
@@ -129,7 +164,17 @@ const AppContent: React.FC = () => {
 
   // 2. Loading State
   if (game.isLoading && !game.gameState) {
-    return <PageLoading subtitle={`正在讀取 ${game.activeYear} 年度紀錄...`} />;
+    return (
+      <>
+        <PageLoading subtitle={`正在讀取 ${game.activeYear} 年度紀錄...`} />
+        <FloatingClearButton
+          isOpen={isClearStorageOpen}
+          onOpen={handleClearStorage}
+          onConfirm={performClearStorage}
+          onCancel={() => setIsClearStorageOpen(false)}
+        />
+      </>
+    );
   }
 
   // 3. Connected but uninitialized (New Year)
@@ -158,6 +203,12 @@ const AppContent: React.FC = () => {
             </span>
           </button>
         </div>
+        <FloatingClearButton
+          isOpen={isClearStorageOpen}
+          onOpen={handleClearStorage}
+          onConfirm={performClearStorage}
+          onCancel={() => setIsClearStorageOpen(false)}
+        />
         <EmptyYearView
           year={game.activeYear}
           onSwitchYear={(y) => game.setActiveYear(y)}
@@ -172,6 +223,12 @@ const AppContent: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
         初始化遊戲資料中...
+        <FloatingClearButton
+          isOpen={isClearStorageOpen}
+          onOpen={handleClearStorage}
+          onConfirm={performClearStorage}
+          onCancel={() => setIsClearStorageOpen(false)}
+        />
       </div>
     );
 
@@ -196,6 +253,12 @@ const AppContent: React.FC = () => {
             </span>
           </button>
         </div>
+        <FloatingClearButton
+          isOpen={isClearStorageOpen}
+          onOpen={handleClearStorage}
+          onConfirm={performClearStorage}
+          onCancel={() => setIsClearStorageOpen(false)}
+        />
         <RegisterView
           year={game.activeYear}
           name={regName}

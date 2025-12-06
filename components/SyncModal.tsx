@@ -2,15 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { GameState } from '../types';
 import { saveToSheet } from '../services/googleSheetSync';
 import BaseModal from './common/BaseModal';
+import ConfirmDialog from './common/ConfirmDialog';
 import { Input, Button } from './common/FormElements';
 import { Loading } from './common/Loading';
-import {
-  extractDeploymentId,
-  reconstructGasUrl,
-  getStoredDeploymentId,
-  storeDeploymentId,
-  clearStoredDeploymentId,
-} from '../utils/urlSecurity';
+import { isValidGasUrl } from '../utils/urlSecurity';
+import storage from '../utils/storage';
 
 interface SyncModalProps {
   isOpen: boolean;
@@ -51,30 +47,38 @@ const SyncModal: React.FC<SyncModalProps> = ({
     type: 'success' | 'error' | 'loading';
     msg: string;
   } | null>(null);
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      // Load Sheet URL (legacy/primary storage)
-      const legacy = localStorage.getItem('bingoGlobalSheetUrl') || '';
-      setUrl(legacy);
-      if (legacy) {
+      // Clean legacy keys (we no longer parse old storage schema)
+      try {
+        storage.clearLegacyKeys();
+      } catch (e) {
+        // ignore
+      }
+
+      // Load values from the new storage schema (v2). If not present, prompt user to input.
+      const storedSheet = storage.getSheetUrl();
+      const storedProxy = storage.getProxyUrl();
+
+      if (storedSheet) {
+        setUrl(storedSheet);
         const baseUrl = window.location.origin + window.location.pathname;
-        setInviteLink(`${baseUrl}?syncUrl=${encodeURIComponent(legacy)}`);
+        setInviteLink(`${baseUrl}?syncUrl=${encodeURIComponent(storedSheet)}`);
       } else {
+        setUrl('');
         setInviteLink('');
       }
 
-      // Load Gemini proxy URL (deployment id storage)
-      const storedDeploymentId = getStoredDeploymentId();
-      if (storedDeploymentId) {
-        const full = reconstructGasUrl(storedDeploymentId);
-        setGeminiProxyUrl(full);
+      if (storedProxy && isValidGasUrl(storedProxy)) {
+        setGeminiProxyUrl(storedProxy);
       } else {
         setGeminiProxyUrl('');
       }
 
-      // Load API Key
-      const key = localStorage.getItem('bingoGeminiApiKey') || '';
+      // Load API Key (v2)
+      const key = storage.getApiKey() || '';
       setApiKey(key);
 
       // Load current display name
@@ -100,36 +104,28 @@ const SyncModal: React.FC<SyncModalProps> = ({
   };
 
   const handleSaveSettings = () => {
-    // Save sheet URL (legacy behavior)
-    if (sheetUrl) {
-      localStorage.setItem('bingoGlobalSheetUrl', sheetUrl);
-    } else {
-      localStorage.removeItem('bingoGlobalSheetUrl');
+    // Save sheet URL (v2 schema)
+    try {
+      storage.setSheetUrl(sheetUrl);
+    } catch (e) {
+      // ignore
     }
 
-    // Save Gemini proxy deployment id if provided (prefer storing deployment id)
-    if (geminiProxyUrl) {
-      const maybeId = extractDeploymentId(geminiProxyUrl);
-      if (maybeId) {
-        try {
-          storeDeploymentId(maybeId);
-        } catch (e) {
-          // ignore
-        }
-      } else {
-        // If user pasted a non-standard URL, attempt to store raw value in legacy key
-        // (not recommended) — we intentionally do nothing here to avoid ambiguity.
-      }
-    } else {
-      try {
-        clearStoredDeploymentId();
-      } catch (e) {
-        // ignore
-      }
+    // Save Gemini proxy (v2 schema) as full GAS URL if valid
+    try {
+      if (geminiProxyUrl && isValidGasUrl(geminiProxyUrl)) storage.setProxyUrl(geminiProxyUrl);
+      else storage.setProxyUrl('');
+    } catch (e) {
+      // ignore
     }
 
-    // Save API key (still supported as fallback)
-    localStorage.setItem('bingoGeminiApiKey', apiKey);
+    // Save API key (v2) via storage helper
+    try {
+      storage.setApiKey(apiKey);
+      storage.clearLegacyKeys();
+    } catch (e) {
+      // ignore
+    }
     // Update display name if changed
     if (displayName && displayName !== currentUserName) {
       onUpdateUserName(displayName);
@@ -139,6 +135,15 @@ const SyncModal: React.FC<SyncModalProps> = ({
       onUpdateAppTheme(selectedAppTheme);
     }
     onClose();
+  };
+
+  const performClearStorage = () => {
+    try {
+      storage.clearAllKeys();
+    } catch (e) {
+      console.error('Error clearing storage', e);
+    }
+    window.location.reload();
   };
 
   const { config } = gameState;
@@ -315,6 +320,19 @@ const SyncModal: React.FC<SyncModalProps> = ({
               </div>
             )}
           </div>
+          <div className="text-[12px] text-accent/80 mt-2 p-3 rounded border border-accent/10 bg-accent/5">
+            <div className="font-bold text-xs mb-1">說明 — 兩種 GAS URL</div>
+            <div className="text-[11px]">
+              - 資料儲存 (sheet)：儲存在本機鍵值 `{`bingo_v2_sheetUrl`}`，請輸入您用於同步的 Apps
+              Script 網址。
+              <br />- Gemini 代理 (proxy)：儲存在本機鍵值 `{`bingo_v2_gasProxyUrl`}
+              `，如果設定，前端將透過此代理呼叫 Gemini，而不需要在瀏覽器中保留 API Key。
+            </div>
+            <div className="text-[11px] text-brand-rust mt-1">
+              已清除舊版設定（舊的 `bingoGlobalSheetUrl` / `bingoGasDeploymentId` /
+              `bingoGeminiApiKey` 不再自動解析）。若未設定，請手動輸入。
+            </div>
+          </div>
           <Input
             label="Gemini API Key"
             type={showKey ? 'text' : 'password'}
@@ -351,6 +369,49 @@ const SyncModal: React.FC<SyncModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Clear storage action (destructive) */}
+      <div className="pt-6">
+        <div className="p-4 rounded-xl border border-accent/10 bg-white/50 dark:bg-black/20">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-xs font-bold text-brand-rust">清除本機資料</div>
+              <div className="text-[12px] text-accent mt-1">
+                此操作會移除所有本機設定與遊戲資料，無法復原。
+              </div>
+            </div>
+            <div>
+              <button
+                onClick={() => setIsClearConfirmOpen(true)}
+                className="px-3 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700"
+              >
+                清空本機資料
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ConfirmDialog
+        isOpen={isClearConfirmOpen}
+        title={
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-brand-rust">delete_forever</span>
+            確認清除本機資料
+          </div>
+        }
+        message={
+          '此操作會刪除本瀏覽器中所有與本 App 有關的本機設定與遊戲資料（包含 sheet/keys/使用者設定）。確定要繼續嗎？'
+        }
+        confirmText="清除並重整"
+        cancelText="取消"
+        isDestructive={true}
+        onConfirm={() => {
+          setIsClearConfirmOpen(false);
+          performClearStorage();
+        }}
+        onCancel={() => setIsClearConfirmOpen(false)}
+      />
     </BaseModal>
   );
 };

@@ -133,7 +133,8 @@ describe('Game Setup Integration Flow', () => {
 
     // 5c. Setup Goal 1
     // Find first goal (initially empty)
-    const goalItem = screen.getByText('(點擊以設定目標)'); // Finds the first one
+    const goalItems = screen.getAllByText('(點擊以設定目標)');
+    const goalItem = goalItems[0]; // Select the first goal
     fireEvent.click(goalItem);
 
     // Modal should open
@@ -176,20 +177,30 @@ describe('Game Setup Integration Flow', () => {
 
     // 6. Start Game
     // Since it's solo mode and ready, the start button should appear
-    const startGameBtn = await screen.findByRole('button', { name: /鎖定目標，開始個人挑戰/i });
+    const startGameBtn = await screen.findByRole('button', { name: /鎖定目標，配置九宮格/i });
     fireEvent.click(startGameBtn);
 
-    // Confirm Dialog
-    expect(screen.getByText('確定要鎖定所有目標並開始遊戲嗎？')).toBeInTheDocument();
+    // Confirm Dialog - match partial text since it contains newlines
+    expect(screen.getByText(/確定要鎖定所有目標並開始遊戲嗎/i)).toBeInTheDocument();
     const confirmStartBtn = screen.getByRole('button', { name: '確定開始' });
 
     await act(async () => {
       fireEvent.click(confirmStartBtn);
     });
 
+    // 6.5. Grid Review Phase - confirm the grid layout and start the game
+    // After starting, should see grid review view with drag-drop hint
+    expect(screen.getByText(/拖曳卡片可以重新排列/i)).toBeInTheDocument();
+
+    // Find and click the "確認開始執行" button to move from grid-review to active phase
+    const startGameFromGridBtn = screen.getByRole('button', { name: /確認開始執行/i });
+    await act(async () => {
+      fireEvent.click(startGameFromGridBtn);
+    });
+
     // 7. Verify Dashboard (Active Phase)
-    expect(await screen.findByText(/執行中/i)).toBeInTheDocument();
-    expect(screen.getByText('Goal 1: Read Books')).toBeInTheDocument();
-    expect(screen.getByText('個人挑戰')).toBeInTheDocument(); // Solo badge
+    // Check for goal title in the grid and check for preview button
+    expect(await screen.findByText('Goal 1: Read Books')).toBeInTheDocument();
+    expect(screen.getByText('查看結算預覽')).toBeInTheDocument();
   });
 });
