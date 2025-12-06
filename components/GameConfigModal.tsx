@@ -68,7 +68,7 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
       hideCloseButton={!onCancel}
       title={
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-brand-teal">settings</span>
+          <span className="material-symbols-outlined text-accent">settings</span>
           {year} 遊戲規則設定
         </div>
       }
@@ -86,7 +86,7 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
       }
     >
       <div className="text-center mb-6">
-        <p className="text-brand-teal dark:text-brand-teal/80 text-sm">
+        <p className="text-accent dark:text-accent/80 text-sm">
           {isSolo
             ? '單人自我挑戰模式 (無連線規則)'
             : '請設定人數、週期與目標，建立完美的 Bingo 方陣。'}
@@ -95,7 +95,7 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
 
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-bold text-brand-petrol dark:text-brand-mint mb-2">
+          <label className="block text-sm font-bold text-accent dark:text-accent mb-2">
             參加人數
           </label>
           <div className="flex items-center gap-4 bg-brand-mint/10 dark:bg-black/20 p-3 rounded-xl">
@@ -108,14 +108,14 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
               onChange={(e) => setTotalPlayers(parseInt(e.target.value))}
               className="flex-1 accent-brand-petrol cursor-pointer"
             />
-            <span className="font-mono font-bold text-xl w-8 text-center text-brand-petrol dark:text-brand-mint">
+            <span className="font-mono font-bold text-xl w-8 text-center text-accent dark:text-accent">
               {totalPlayers}
             </span>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-brand-petrol dark:text-brand-mint mb-2">
+          <label className="block text-sm font-bold text-accent dark:text-accent mb-2">
             每人目標數量
           </label>
           <div className="flex items-center gap-4 bg-brand-mint/10 dark:bg-black/20 p-3 rounded-xl">
@@ -128,7 +128,7 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
               onChange={(e) => setGoalsPerUser(parseInt(e.target.value))}
               className="flex-1 accent-brand-petrol cursor-pointer"
             />
-            <span className="font-mono font-bold text-xl w-8 text-center text-brand-petrol dark:text-brand-mint">
+            <span className="font-mono font-bold text-xl w-8 text-center text-accent dark:text-accent">
               {goalsPerUser}
             </span>
           </div>
@@ -138,11 +138,11 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
           className={`bg-brand-teal/5 dark:bg-brand-teal/10 p-4 rounded-xl border border-brand-teal/20 transition-opacity ${isSolo ? 'opacity-50' : ''}`}
         >
           <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-bold text-brand-teal dark:text-brand-mint">
+            <label className="block text-sm font-bold text-accent dark:text-accent">
               有效月份 (計分週期)
             </label>
             {isSolo && (
-              <span className="text-[10px] bg-brand-teal text-brand-mint px-2 py-0.5 rounded">
+              <span className="text-[10px] bg-brand-teal text-accent px-2 py-0.5 rounded">
                 單人全年度
               </span>
             )}
@@ -159,12 +159,12 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
               onChange={(e) => setActiveMonths(parseInt(e.target.value))}
               className="flex-1 accent-brand-teal cursor-pointer"
             />
-            <span className="font-mono font-bold text-xl w-8 text-center text-brand-teal dark:text-brand-mint">
+            <span className="font-mono font-bold text-xl w-8 text-center text-accent dark:text-accent">
               {activeMonths}
             </span>
           </div>
           {!isSolo && (
-            <div className="text-xs text-brand-petrol/60 dark:text-brand-mint/60 text-right">
+            <div className="text-xs text-accent/60 dark:text-accent/60 text-right">
               扣除 {12 - activeMonths} 個休息月，約等於 {calculateWeeks()} 週
             </div>
           )}
@@ -174,17 +174,17 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
           className={`p-4 rounded-xl border transition-colors ${error ? 'bg-brand-rust/5 border-brand-rust/20' : 'bg-brand-mint/20 border-brand-mint/30'}`}
         >
           {error ? (
-            <div className="flex items-start gap-2 text-brand-rust font-bold">
+            <div className="flex items-start gap-2 text-accent font-bold">
               <span className="material-symbols-outlined">warning</span>
               <div className="text-sm">{error}</div>
             </div>
           ) : (
             <div className="text-center">
-              <div className="text-brand-petrol dark:text-brand-mint font-bold mb-1 flex items-center justify-center gap-1">
+              <div className="text-accent dark:text-accent font-bold mb-1 flex items-center justify-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">check_circle</span>{' '}
                 設定完美！
               </div>
-              <div className="text-xs text-brand-teal">
+              <div className="text-xs text-accent">
                 {isSolo ? (
                   <span>
                     個人總計 <span className="font-black text-lg">{goalsPerUser}</span> 個目標

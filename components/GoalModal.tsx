@@ -318,11 +318,11 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
               </div>
             ) : (
               <div className="mt-1">
-                <h2 className="text-xl font-bold text-brand-petrol dark:text-white leading-tight">
+                <h2 className="text-xl font-bold text-accent dark:text-white leading-tight">
                   {goal.title}
                 </h2>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="text-[10px] px-2 py-1 rounded-md bg-brand-petrol text-brand-mint font-bold flex items-center gap-1">
+                  <span className="text-[10px] px-2 py-1 rounded-md bg-brand-petrol dark:bg-brand-mint text-foreground dark:text-brand-dark font-bold flex items-center gap-1">
                     <span className="material-symbols-outlined text-[10px]">
                       {goal.structure?.type === 'habit' ? 'calendar_today' : 'flag'}
                     </span>
@@ -337,7 +337,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
       footer={
         <div className="flex flex-col w-full gap-3">
           {validationError && (
-            <div className="bg-white dark:bg-brand-rust/10 border border-brand-rust dark:border-brand-rust/30 text-brand-rust text-xs font-bold p-2.5 rounded-lg flex items-center gap-2 animate-fade-in shadow-sm">
+            <div className="bg-white dark:bg-brand-rust/10 border border-brand-rust dark:border-brand-rust/30 text-accent text-xs font-bold p-2.5 rounded-lg flex items-center gap-2 animate-fade-in shadow-sm">
               <span className="material-symbols-outlined text-[16px]">error</span>
               {validationError}
             </div>
@@ -350,8 +350,8 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                   onClick={() => setIsEditingSettings(!isEditingSettings)}
                   className={`whitespace-nowrap px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors ${
                     isEditingSettings
-                      ? 'bg-brand-rust/10 text-brand-rust'
-                      : 'bg-brand-mint/20 text-brand-teal'
+                      ? 'bg-brand-rust/10 text-accent border border-brand-rust/20'
+                      : 'bg-brand-mint/10 text-accent border border-accent/20'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[16px]">
@@ -380,7 +380,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
         <div className="space-y-6">
           {/* Warning for editing in Active Phase */}
           {isEditingSettings && (
-            <div className="p-3 bg-brand-rust/10 border border-brand-rust/20 rounded-xl text-brand-rust text-xs font-bold flex gap-2">
+            <div className="p-3 bg-brand-rust/10 border border-brand-rust/20 rounded-xl text-accent text-xs font-bold flex gap-2">
               <span className="material-symbols-outlined text-[16px]">warning</span>
               <span>注意：在進行中修改目標設定可能會影響目前得分與進度計算。</span>
             </div>
@@ -389,7 +389,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
           {/* 1. Goal Type Selection */}
           {canEdit && (
             <div>
-              <label className="block text-xs font-black text-brand-teal uppercase tracking-wider mb-2">
+              <label className="block text-xs font-black text-accent uppercase tracking-wider mb-2">
                 目標類型
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -397,8 +397,8 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                   onClick={() => setGoalType('habit')}
                   className={`p-4 rounded-xl border-2 text-center transition-colors flex flex-col items-center gap-2 ${
                     goalType === 'habit'
-                      ? 'border-brand-teal bg-brand-teal/10 text-brand-petrol dark:text-brand-mint'
-                      : 'border-brand-mint/20 bg-white dark:bg-black/20 dark:text-gray-400'
+                      ? 'border-brand-teal bg-brand-teal/10 text-accent'
+                      : 'border-accent/20 bg-white/50 dark:bg-black/20 text-accent'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[24px] mb-1 align-middle inline-block">
@@ -410,8 +410,8 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                   onClick={() => setGoalType('step')}
                   className={`p-4 rounded-xl border-2 text-center transition-colors flex flex-col items-center gap-2 ${
                     goalType === 'step'
-                      ? 'border-brand-rust bg-brand-rust/10 text-brand-rust'
-                      : 'border-brand-mint/20 bg-white dark:bg-black/20 dark:text-gray-400'
+                      ? 'border-brand-rust bg-brand-rust/10 text-accent'
+                      : 'border-accent/20 bg-white/50 dark:bg-black/20 text-accent'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[24px] mb-1 align-middle inline-block">
@@ -443,9 +443,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                     <option value="yearly">每年</option>
                   </Select>
                 </div>
-                <div className="pb-3 text-sm text-brand-petrol dark:text-brand-teal font-bold">
-                  至少
-                </div>
+                <div className="pb-3 text-sm text-accent dark:text-accent font-bold">至少</div>
                 <div>
                   <Input
                     type="number"
@@ -471,7 +469,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
 
               {frequency !== 'yearly' && (
                 <div className="flex items-center gap-3">
-                  <label className="text-xs font-bold text-brand-teal whitespace-nowrap">
+                  <label className="text-xs font-bold text-accent whitespace-nowrap">
                     允許請假 (Buffer):
                   </label>
                   <div className="w-20">
@@ -483,23 +481,23 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                       onChange={(e) =>
                         setExemptionCount(Math.max(0, parseInt(e.target.value) || 0))
                       }
-                      className="text-center text-brand-rust"
+                      className="text-center text-accent"
                     />
                   </div>
-                  <span className="text-sm text-gray-400">{getFrequencyLabel()}不計分</span>
+                  <span className="text-sm text-accent/60">{getFrequencyLabel()}不計分</span>
                 </div>
               )}
 
               <div className="bg-white/50 dark:bg-black/20 p-3 rounded-xl flex justify-between items-center border border-white/20 dark:border-white/5">
                 <div>
-                  <div className="text-[10px] text-brand-teal font-bold uppercase tracking-wider">
+                  <div className="text-[10px] text-accent font-bold uppercase tracking-wider">
                     年度總目標
                   </div>
-                  <div className="text-lg font-black text-brand-petrol dark:text-brand-mint">
+                  <div className="text-lg font-black text-accent dark:text-accent">
                     {targetCount} {unit}
                   </div>
                 </div>
-                <div className="text-right text-[10px] text-gray-400">
+                <div className="text-right text-[10px] text-accent/60">
                   每{unit}約 {pointsPerUnit.toFixed(2)} 分
                 </div>
               </div>
@@ -509,10 +507,10 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
           {goalType === 'step' && (
             <div className="bg-brand-mint/10 dark:bg-black/20 p-5 rounded-xl border border-brand-mint/20 space-y-3">
               <div className="flex justify-between items-center mb-1">
-                <label className="text-xs font-bold text-brand-teal">里程碑規劃</label>
+                <label className="text-xs font-bold text-accent">里程碑規劃</label>
                 <span
                   className={`text-xs font-bold ${
-                    totalMilestonePoints === 100 ? 'text-brand-teal' : 'text-brand-rust'
+                    totalMilestonePoints === 100 ? 'text-accent' : 'text-accent'
                   }`}
                 >
                   總分: {totalMilestonePoints}/100
@@ -541,7 +539,10 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                       />
                     </div>
                     {canEdit && (
-                      <button onClick={() => removeMilestone(idx)} className="text-gray-400 px-1">
+                      <button
+                        onClick={() => removeMilestone(idx)}
+                        className="text-accent/50 hover:text-accent/70 transition-colors px-1"
+                      >
                         <span className="material-symbols-outlined text-[20px]">close</span>
                       </button>
                     )}
@@ -574,7 +575,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
       {!showSetupForm && (
         <div className="space-y-6">
           {/* Score Display */}
-          <div className="flex items-center justify-between bg-brand-petrol dark:bg-[rgb(var(--brand-dark))] text-white p-6 rounded-3xl shadow relative overflow-hidden">
+          <div className="flex items-center justify-between bg-brand-petrol dark:bg-brand-mint text-white dark:text-brand-dark p-6 rounded-3xl shadow relative overflow-hidden">
             <div className="relative z-10">
               <div className="text-[10px] opacity-70 uppercase tracking-widest font-bold mb-1">
                 Current Score
@@ -590,7 +591,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
               </div>
               {currentTotalScore >= 100 && canEdit ? (
                 <div className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px] text-brand-mint">add</span>
+                  <span className="material-symbols-outlined text-[16px] text-accent">add</span>
                   <input
                     type="number"
                     value={bonusPoints}
@@ -601,7 +602,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
               ) : (
                 <div
                   className={`font-mono font-bold text-2xl ${
-                    bonusPoints > 0 ? 'text-brand-mint' : 'text-gray-500'
+                    bonusPoints > 0 ? 'text-accent' : 'text-accent/50'
                   }`}
                 >
                   +{bonusPoints}
@@ -619,7 +620,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                   {canEdit && (
                     <button
                       onClick={() => incrementHabit(-1)}
-                      className="w-12 h-12 rounded-full bg-white dark:bg-[rgb(var(--brand-dark))] border-2 border-brand-teal/20 text-brand-teal transition-all flex items-center justify-center flex-shrink-0"
+                      className="w-12 h-12 rounded-full bg-white dark:bg-[rgb(var(--brand-dark))] border-2 border-brand-teal/20 text-accent transition-all flex items-center justify-center flex-shrink-0"
                     >
                       <svg
                         width="20"
@@ -642,11 +643,11 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                           onChange={(e) =>
                             setCurrentCount(Math.max(0, parseInt(e.target.value) || 0))
                           }
-                          className="text-5xl font-black text-brand-petrol dark:text-white font-mono tracking-tighter bg-transparent text-center w-32 outline-none border-b-2 border-transparent focus:border-brand-teal/50 transition-colors"
+                          className="text-5xl font-black text-accent dark:text-white font-mono tracking-tighter bg-transparent text-center w-32 outline-none border-b-2 border-transparent focus:border-brand-teal/50 transition-colors"
                         />
                         <div className="absolute top-0 right-0 opacity-0 transition-opacity pointer-events-none">
                           <svg
-                            className="text-gray-400"
+                            className="text-accent/50"
                             width="14"
                             height="14"
                             viewBox="0 0 24 24"
@@ -658,19 +659,19 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                         </div>
                       </div>
                     ) : (
-                      <div className="text-5xl font-black text-brand-petrol dark:text-white font-mono tracking-tighter">
+                      <div className="text-5xl font-black text-accent dark:text-white font-mono tracking-tighter">
                         {currentCount}
                       </div>
                     )}
 
-                    <div className="text-xs text-brand-teal font-bold uppercase tracking-wider mt-1">
+                    <div className="text-xs text-accent font-bold uppercase tracking-wider mt-1">
                       / {targetCount} {unit}
                     </div>
                   </div>
                   {canEdit && (
                     <button
                       onClick={() => incrementHabit(1)}
-                      className="w-20 h-20 rounded-full bg-brand-petrol text-brand-mint shadow transition-colors flex items-center justify-center flex-shrink-0 transform-gpu"
+                      className="w-20 h-20 rounded-full bg-brand-petrol dark:bg-brand-mint text-foreground dark:text-brand-dark shadow transition-colors flex items-center justify-center flex-shrink-0 transform-gpu hover:bg-brand-petrol/90 dark:hover:bg-brand-mint/80"
                     >
                       <svg
                         width="32"
@@ -709,7 +710,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                     <div
                       className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-3 transition-colors flex-shrink-0 ${
                         m.isCompleted
-                          ? 'bg-brand-mint border-brand-mint text-brand-petrol'
+                          ? 'bg-brand-mint border-brand-mint text-accent'
                           : 'border-gray-300 dark:border-brand-teal/30'
                       }`}
                     >
@@ -735,15 +736,13 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                     <div className="flex-1">
                       <div
                         className={`font-bold ${
-                          m.isCompleted
-                            ? 'text-brand-petrol dark:text-brand-mint'
-                            : 'text-gray-700 dark:text-gray-300'
+                          m.isCompleted ? 'text-accent dark:text-accent' : 'text-accent/60'
                         }`}
                       >
                         {m.title}
                       </div>
                     </div>
-                    <div className="font-mono font-bold text-gray-400 bg-gray-100 dark:bg-black/20 px-2 py-1 rounded-lg text-xs">
+                    <div className="font-mono font-bold text-accent/60 bg-white/50 dark:bg-black/20 px-2 py-1 rounded-lg text-xs border border-accent/10">
                       {m.points}pt
                     </div>
                   </label>
@@ -756,7 +755,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
           <div className="space-y-4">
             <div className="p-4 bg-brand-purple/5 dark:bg-brand-purple/10 rounded-2xl border border-brand-purple/10 dark:border-brand-purple/20">
               <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-bold text-brand-purple dark:text-purple-200 flex items-center gap-1">
+                <h3 className="text-sm font-bold text-accent dark:text-purple-200 flex items-center gap-1">
                   <svg
                     width="14"
                     height="14"
@@ -771,13 +770,13 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                 <button
                   onClick={fetchAdvice}
                   disabled={loadingAi}
-                  className="text-xs bg-white dark:bg-brand-purple/20 text-brand-purple dark:text-purple-100 px-3 py-1.5 rounded-full shadow-sm"
+                  className="text-xs bg-white dark:bg-brand-purple/20 text-accent dark:text-purple-100 px-3 py-1.5 rounded-full shadow-sm"
                 >
                   {loadingAi ? '思考中...' : '給點建議'}
                 </button>
               </div>
               {aiAdvice && (
-                <p className="text-sm text-brand-purple/90 dark:text-purple-200 italic leading-relaxed">
+                <p className="text-sm text-accent/90 dark:text-purple-200 italic leading-relaxed">
                   "{aiAdvice}"
                 </p>
               )}
@@ -803,11 +802,9 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                 {localLogs.map((log) => (
                   <div
                     key={log.id}
-                    className="text-xs bg-gray-50 dark:bg-black/20 p-3 rounded-xl border border-gray-100 dark:border-white/5 flex gap-3 text-gray-600 dark:text-gray-300"
+                    className="text-xs bg-white/50 dark:bg-black/20 p-3 rounded-xl border border-accent/10 flex gap-3 text-accent/70"
                   >
-                    <span className="font-mono text-gray-400 opacity-70 whitespace-nowrap">
-                      {log.date}
-                    </span>
+                    <span className="font-mono text-accent/50 whitespace-nowrap">{log.date}</span>
                     <span>{log.content}</span>
                   </div>
                 ))}

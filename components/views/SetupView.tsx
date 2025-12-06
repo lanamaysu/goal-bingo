@@ -163,8 +163,8 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-20">
       <div className="text-center space-y-6">
-        <h2 className="text-3xl font-black text-brand-petrol dark:text-brand-mint tracking-tight">
-          {gameState.config.year} <span className="text-brand-teal">PLANNING</span>
+        <h2 className="text-3xl font-black text-accent dark:text-accent tracking-tight">
+          {gameState.config.year} <span className="text-accent">PLANNING</span>
         </h2>
         <TeamStatusList users={gameState.users} totalPlayers={gameState.config.totalPlayers} />
       </div>
@@ -172,13 +172,13 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
       <div className={`grid gap-8 ${isSolo ? 'max-w-xl mx-auto' : 'md:grid-cols-2'}`}>
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-brand-petrol dark:text-brand-mint flex items-center gap-2">
-              <span className="material-symbols-outlined text-[24px] text-brand-teal">person</span>{' '}
+            <h3 className="text-xl font-bold text-accent dark:text-accent flex items-center gap-2">
+              <span className="material-symbols-outlined text-[24px] text-accent">person</span>{' '}
               我的設定
             </h3>
             <button
               onClick={() => setBrainstormUser(currentUser)}
-              className="text-xs bg-brand-purple/15 text-brand-purple dark:text-purple-200 border border-brand-purple/30 px-3 py-1.5 rounded-full transition-colors font-bold flex items-center gap-1 shadow-sm"
+              className="text-xs bg-brand-purple/15 text-accent dark:text-purple-200 border border-brand-purple/30 px-3 py-1.5 rounded-full transition-colors font-bold flex items-center gap-1 shadow-sm"
             >
               <span className="material-symbols-outlined text-[12px]">auto_awesome</span> AI 靈感
             </button>
@@ -197,7 +197,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
 
           <div className="bg-white dark:bg-[rgb(var(--brand-surface))] p-5 rounded-2xl border border-brand-teal/20 shadow-sm">
             <div className="flex justify-between items-center mb-3">
-              <label className="text-sm font-bold text-brand-teal">個人懲罰 (若未達成)</label>
+              <label className="text-sm font-bold text-accent">個人懲罰 (若未達成)</label>
               <button
                 onClick={() =>
                   setBrainstormPenalty({
@@ -205,7 +205,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                     user: currentUser,
                   })
                 }
-                className="text-xs text-brand-purple bg-brand-purple/15 px-2 py-1 rounded border border-brand-purple/30 flex items-center gap-1 shadow-sm font-bold"
+                className="text-xs text-accent bg-brand-purple/15 px-2 py-1 rounded border border-brand-purple/30 flex items-center gap-1 shadow-sm font-bold"
               >
                 <span className="material-symbols-outlined text-[12px]">lightbulb</span> 發想
               </button>
@@ -262,7 +262,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                 <span className="material-symbols-outlined text-[20px]">lock</span>{' '}
                 鎖定目標，配置九宮格
               </button>
-              <p className="text-center text-xs text-brand-teal mt-3">
+              <p className="text-center text-xs text-accent mt-3">
                 進入九宮格配置頁面，調整目標位置後開始執行期
               </p>
             </div>
@@ -276,12 +276,12 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
             }`}
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-brand-petrol dark:text-brand-mint flex items-center gap-2">
-                <span className="material-symbols-outlined text-[24px] text-brand-teal">group</span>{' '}
+              <h3 className="text-xl font-bold text-accent dark:text-accent flex items-center gap-2">
+                <span className="material-symbols-outlined text-[24px] text-accent">group</span>{' '}
                 團體設定
               </h3>
               {!allReady && (
-                <span className="text-xs text-brand-rust font-bold bg-brand-rust/10 px-2 py-1 rounded">
+                <span className="text-xs text-accent font-bold bg-brand-rust/10 px-2 py-1 rounded">
                   等待全員 Ready 解鎖
                 </span>
               )}
@@ -290,10 +290,10 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
             <div className="bg-white dark:bg-[rgb(var(--brand-surface))] p-6 rounded-2xl shadow-sm border border-brand-teal/20 space-y-5">
               <div>
                 <div className="flex justify-between mb-2">
-                  <label className="text-sm font-bold text-brand-teal">團體懲罰 (全員未達標)</label>
+                  <label className="text-sm font-bold text-accent">團體懲罰 (全員未達標)</label>
                   <button
                     onClick={() => setBrainstormPenalty({ type: 'group' })}
-                    className="text-xs text-brand-purple bg-brand-purple/15 px-2 py-1 rounded border border-brand-purple/30 flex items-center gap-1 shadow-sm font-bold"
+                    className="text-xs text-accent bg-brand-purple/10 px-2 py-1 rounded border border-brand-purple/30 flex items-center gap-1 shadow-sm font-bold hover:bg-brand-purple/15 transition-colors"
                   >
                     <span className="material-symbols-outlined text-[12px]">lightbulb</span> 發想
                   </button>
@@ -315,9 +315,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-brand-teal block mb-2">
-                    連線目標 (條)
-                  </label>
+                  <label className="text-xs font-bold text-accent block mb-2">連線目標 (條)</label>
                   <Input
                     type="number"
                     value={gameState.config.minLinesForSafe}
@@ -334,7 +332,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-brand-teal block mb-2">團體總分</label>
+                  <label className="text-xs font-bold text-accent block mb-2">團體總分</label>
                   <Input
                     type="number"
                     step="10"
@@ -363,7 +361,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                   <span className="material-symbols-outlined text-[20px]">lock</span>{' '}
                   鎖定目標，配置九宮格
                 </button>
-                <p className="text-center text-xs text-brand-teal mt-3">
+                <p className="text-center text-xs text-accent mt-3">
                   進入九宮格配置頁面，調整目標位置後開始執行期
                 </p>
               </div>
@@ -375,16 +373,16 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
       <div className="mt-12 pt-8 border-t-2 border-dashed border-brand-teal/20">
         <div className="flex justify-between items-center bg-brand-rust/5 p-4 rounded-xl border border-brand-rust/10">
           <div>
-            <h4 className="font-bold text-brand-rust flex items-center gap-2">
+            <h4 className="font-bold text-accent flex items-center gap-2">
               <span className="material-symbols-outlined text-[16px]">refresh</span> 重置隊伍
             </h4>
-            <p className="text-xs text-brand-rust/70 mt-1">
+            <p className="text-xs text-accent/70 mt-1">
               此動作將清除所有成員與目標，讓隊伍重新加入。
             </p>
           </div>
           <button
             onClick={() => setShowResetConfirm(true)}
-            className="px-4 py-2 bg-white dark:bg-[rgb(var(--brand-dark))] border border-brand-rust/30 text-brand-rust font-bold rounded-xl transition-colors text-sm"
+            className="px-4 py-2 bg-white dark:bg-[rgb(var(--brand-dark))] border border-brand-rust/30 text-accent font-bold rounded-xl transition-colors text-sm"
           >
             重置設定
           </button>
@@ -411,11 +409,11 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
         isOpen={showStartConfirm}
         title={
           gameState.users.length !== gameState.config.totalPlayers ? (
-            <span className="flex items-center justify-center gap-2 text-brand-rust">
+            <span className="flex items-center justify-center gap-2 text-accent">
               <span className="material-symbols-outlined">warning</span> 強制開始遊戲
             </span>
           ) : (
-            <span className="flex items-center justify-center gap-2 text-brand-petrol dark:text-brand-mint">
+            <span className="flex items-center justify-center gap-2 text-accent dark:text-accent">
               <span className="material-symbols-outlined">rocket_launch</span> 開始遊戲
             </span>
           )
@@ -430,7 +428,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
       <ConfirmDialog
         isOpen={showResetConfirm}
         title={
-          <span className="flex items-center justify-center gap-2 text-brand-rust">
+          <span className="flex items-center justify-center gap-2 text-accent">
             <span className="material-symbols-outlined">warning</span> 確定重置隊伍？
           </span>
         }
@@ -447,7 +445,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
       <AlertDialog
         isOpen={!!validationError}
         title={
-          <span className="flex items-center justify-center gap-2 text-brand-rust">
+          <span className="flex items-center justify-center gap-2 text-accent">
             <span className="material-symbols-outlined">error</span> 設定尚未完成
           </span>
         }
@@ -459,7 +457,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
         isOpen={pendingReplacements.length > 0 && !!activeReplacement}
         onClose={handleSkipReplacement}
         title={
-          <span className="flex items-center gap-2 text-brand-petrol dark:text-brand-mint">
+          <span className="flex items-center gap-2 text-accent dark:text-accent">
             <span className="material-symbols-outlined">sync_alt</span> 選擇要替換的目標
           </span>
         }
@@ -474,24 +472,24 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                   <div className="text-xs font-bold text-accent tracking-wider uppercase">
                     AI 建議
                   </div>
-                  <div className="text-lg font-black text-brand-petrol dark:text-brand-mint mt-1">
+                  <div className="text-lg font-black text-accent dark:text-accent mt-1">
                     {activeReplacement.title}
                   </div>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-1 rounded bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
+                <span className="text-[10px] font-bold px-2 py-1 rounded bg-white/50 dark:bg-black/20 text-accent/60 border border-accent/10">
                   {activeReplacement.type === 'habit' ? '規律型' : '階段型'}
                 </span>
               </div>
-              <p className="text-sm text-brand-petrol/80 dark:text-brand-mint/80 mt-3 whitespace-pre-wrap leading-relaxed">
+              <p className="text-sm text-accent/80 dark:text-accent/80 mt-3 whitespace-pre-wrap leading-relaxed">
                 {activeReplacement.description}
               </p>
-              <div className="text-[11px] text-brand-purple mt-3 font-mono">
+              <div className="text-[11px] text-accent mt-3 font-mono">
                 計分：{activeReplacement.breakdown}
               </div>
             </div>
 
             <div>
-              <h4 className="text-sm font-bold text-brand-petrol dark:text-brand-mint mb-2">
+              <h4 className="text-sm font-bold text-accent dark:text-accent mb-2">
                 選擇要替換的目標
               </h4>
               <div className="space-y-2">
@@ -502,18 +500,16 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                     className="w-full text-left p-3 rounded-xl border border-brand-mint/30 dark:border-brand-teal/30 bg-white dark:bg-[rgb(var(--brand-surface))] hover:border-accent hover:bg-accent/10 transition-colors"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm font-bold text-brand-petrol dark:text-brand-mint">
+                      <div className="flex items-center gap-2 text-sm font-bold text-accent dark:text-accent">
                         <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand-mint/60 dark:bg-black/30 text-xs font-black">
                           {index + 1}
                         </span>
                         <span>{goal.title || `目標 ${index + 1}`}</span>
                       </div>
-                      <span className="text-xs text-brand-petrol/60 dark:text-brand-mint/60">
-                        點擊以取代
-                      </span>
+                      <span className="text-xs text-accent/60 dark:text-accent/60">點擊以取代</span>
                     </div>
                     {goal.description && (
-                      <div className="text-[11px] text-brand-petrol/70 dark:text-brand-mint/70 mt-1 line-clamp-2">
+                      <div className="text-[11px] text-accent/70 dark:text-accent/70 mt-1 line-clamp-2">
                         {goal.description}
                       </div>
                     )}

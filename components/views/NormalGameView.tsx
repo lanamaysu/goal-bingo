@@ -21,7 +21,7 @@ const NormalGameView: React.FC<NormalGameViewProps> = ({
     <div className="flex-1 flex flex-col items-center justify-center p-6 gap-4">
       <button
         onClick={onShowPreview}
-        className="px-6 py-3 bg-brand-petrol text-white font-bold rounded-xl shadow hover:bg-brand-petrol/90"
+        className="px-6 py-3 bg-brand-petrol dark:bg-brand-mint text-white dark:text-brand-dark font-bold rounded-xl shadow hover:bg-brand-petrol/90 dark:hover:bg-brand-mint/80"
       >
         查看結算預覽
       </button>

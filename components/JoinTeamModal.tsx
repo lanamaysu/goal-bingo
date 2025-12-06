@@ -54,7 +54,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({ isOpen, onClose, onConfir
       }
     >
       <div className="space-y-4">
-        <p className="text-sm text-brand-teal dark:text-brand-teal/80">
+        <p className="text-sm text-accent dark:text-accent/80">
           請輸入隊伍的 Google Apps Script 網址 (Web App URL)。
         </p>
         <div>
@@ -69,7 +69,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({ isOpen, onClose, onConfir
             className={error ? 'border-brand-rust focus:border-brand-rust' : ''}
           />
           {error && (
-            <p className="mt-2 text-xs text-brand-rust font-bold flex items-center gap-1">
+            <p className="mt-2 text-xs text-accent font-bold flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px]">error</span> {error}
             </p>
           )}

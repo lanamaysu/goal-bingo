@@ -25,7 +25,7 @@ const FloatingClearButton: React.FC<Props> = ({ isOpen, onOpen, onConfirm, onCan
         isOpen={isOpen}
         title="清空應用儲存"
         message={
-          '這將會移除本地所有 Goal Bingo 的暫存設定（包含試算表網址、Gemini 設定、使用者 ID 等）。此操作無法復原。確定要清空嗎？'
+          '這將會裝置上的暫存設定（包含試算表網址、Gemini 設定、使用者 ID 等）。此操作無法復原。確定要清空嗎？'
         }
         confirmText="清空並重新載入"
         cancelText="取消"

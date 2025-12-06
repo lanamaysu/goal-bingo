@@ -71,13 +71,13 @@ const BaseModal: React.FC<BaseModalProps> = ({
         {/* Header */}
         {(title || !hideCloseButton) && (
           <div className="flex items-center justify-between p-5 border-b border-brand-mint/20 dark:border-white/5 flex-shrink-0 gap-4">
-            <div className="flex-1 min-w-0 text-xl font-bold text-brand-petrol dark:text-brand-mint">
+            <div className="flex-1 min-w-0 text-xl font-bold text-accent dark:text-accent">
               {title}
             </div>
             {!hideCloseButton && (
               <button
                 onClick={onClose}
-                className="flex-shrink-0 p-1 rounded-full text-brand-teal transition-colors"
+                className="flex-shrink-0 p-1 rounded-full text-accent transition-colors"
               >
                 <span className="material-symbols-outlined text-[24px]">close</span>
               </button>
@@ -92,7 +92,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
 
         {/* Footer */}
         {footer && (
-          <div className="p-4 border-t border-brand-mint/20 dark:border-white/5 bg-brand-mint/5 dark:bg-black/10 rounded-b-3xl flex-shrink-0">
+          <div className="p-4 border-t border-accent/10 bg-white/30 dark:bg-black/10 rounded-b-3xl flex-shrink-0">
             {footer}
           </div>
         )}

@@ -16,6 +16,15 @@
   --tone-purple: 106 76 120; /* Base purple tone */
   --tone-rust: 176 74 46; /* Base rust tone */
   --accent: 74 133 126; /* Accent defaults to teal */
+  --text-accent-light: 42 95 90; /* Darkened accent for light mode text */
+  --text-accent-dark: 113 185 177; /* Brightened accent for dark mode text */
+  --text-accent: var(--text-accent-light);
+  --text-foreground: var(--brand-mint); /* Lightest color for light mode */
+}
+
+.dark {
+  --text-accent: var(--text-accent-dark);
+  --text-foreground: var(--brand-dark); /* Darkest color for dark mode */
 }
 
 /* Custom Scrollbar for BaseModal & Others */

@@ -37,14 +37,12 @@ const SettlementSummaryCard: React.FC<SettlementSummaryCardProps> = ({
     <div className="mb-6 bg-white dark:bg-[rgb(var(--brand-surface))] p-5 rounded-2xl border border-brand-mint/20 text-left">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <div className="text-xs text-brand-teal font-bold uppercase tracking-wider">
-            年度完成概覽
-          </div>
-          <div className="text-2xl font-black text-brand-petrol dark:text-brand-mint">
+          <div className="text-xs text-accent font-bold uppercase tracking-wider">年度完成概覽</div>
+          <div className="text-2xl font-black text-accent dark:text-accent">
             {completedGoals}/{totalGoals} 項目達標
           </div>
         </div>
-        <div className="text-sm text-brand-teal font-bold">平均達成率 {averageCompletionRate}%</div>
+        <div className="text-sm text-accent font-bold">平均達成率 {averageCompletionRate}%</div>
       </div>
       <div className="mt-4 space-y-3">
         {userStats.map((stat) => {
@@ -61,18 +59,18 @@ const SettlementSummaryCard: React.FC<SettlementSummaryCardProps> = ({
               key={stat.user.id}
               className="bg-brand-mint/10 dark:bg-black/20 p-3 rounded-xl border border-brand-mint/20"
             >
-              <div className="flex items-center justify-between text-sm font-bold text-brand-petrol dark:text-brand-mint">
+              <div className="flex items-center justify-between text-sm font-bold text-accent dark:text-accent">
                 <span className="flex items-center gap-2 min-w-0">
                   <span
                     className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded ${theme.badge}`}
                   >
                     {stat.user.name}
                   </span>
-                  <span className="text-xs font-semibold text-brand-teal whitespace-nowrap">
+                  <span className="text-xs font-semibold text-accent whitespace-nowrap">
                     {completionLabel}
                   </span>
                 </span>
-                <span className="text-brand-teal text-xs sm:text-sm">
+                <span className="text-accent text-xs sm:text-sm">
                   {Math.round(stat.totalScore)} 分・{stat.completionRate}%
                 </span>
               </div>
@@ -88,12 +86,12 @@ const SettlementSummaryCard: React.FC<SettlementSummaryCardProps> = ({
       </div>
       {shouldShowBadges && topPerformer && (
         <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold">
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-brand-mint/40 text-brand-petrol rounded-full">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-brand-mint/40 text-accent rounded-full">
             <span className="material-symbols-outlined text-[14px]">military_tech</span>
             MVP：{topPerformer.user.name} ({topPerformer.completionRate}%)
           </span>
           {showBottomBadge && bottomPerformer && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 bg-brand-rust/10 text-brand-rust rounded-full">
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-brand-rust/10 text-accent rounded-full">
               <span className="material-symbols-outlined text-[14px]">hourglass_bottom</span>
               加油：{bottomPerformer.user.name} ({bottomPerformer.completionRate}%)
             </span>

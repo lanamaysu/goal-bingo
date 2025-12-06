@@ -8,13 +8,12 @@ const baseStyles = `
     rounded-xl
     outline-none
     transition-all
-    text-brand-petrol dark:text-brand-mint
+    text-accent
     placeholder-accent/80 dark:placeholder-brand-mint/40
     disabled:opacity-50 disabled:cursor-not-allowed
 `;
 
-const labelClass =
-  'block text-xs font-bold text-accent dark:text-accent/80 mb-1.5 uppercase tracking-wider';
+const labelClass = 'block text-xs font-bold text-accent mb-1.5 uppercase tracking-wider';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -27,9 +26,7 @@ export const Input: React.FC<InputProps> = ({ label, className = '', rightElemen
     <div className="relative">
       <input className={`${baseStyles} ${rightElement ? 'pr-10' : ''} ${className}`} {...props} />
       {rightElement && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-accent dark:text-brand-mint">
-          {rightElement}
-        </div>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-accent">{rightElement}</div>
       )}
     </div>
   </div>
@@ -60,7 +57,7 @@ export const Select: React.FC<SelectProps> = ({ label, className = '', children,
       >
         {children}
       </select>
-      <span className="material-symbols-outlined text-[20px] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-accent dark:text-brand-mint">
+      <span className="material-symbols-outlined text-[20px] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-accent">
         expand_more
       </span>
     </div>
@@ -80,12 +77,13 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const variants: Record<ButtonVariant, string> = {
-    primary: 'bg-accent text-white shadow',
+    primary:
+      'bg-brand-petrol dark:bg-brand-mint text-foreground dark:text-brand-dark shadow hover:bg-brand-petrol/90 dark:hover:bg-brand-mint/80',
     secondary:
-      'bg-white border-2 border-accent/30 text-brand-petrol dark:bg-transparent dark:border-brand-mint/30 dark:text-brand-mint',
+      'bg-white border-2 border-accent/30 text-accent dark:bg-transparent dark:border-accent/30 dark:text-accent hover:bg-white/80',
     danger:
-      'bg-white border-2 border-brand-rust/20 text-brand-rust dark:bg-brand-rust/20 dark:text-orange-200 dark:border-brand-rust/40',
-    ghost: 'bg-transparent text-accent dark:text-brand-mint',
+      'bg-white border-2 border-brand-rust/20 text-brand-rust dark:bg-brand-rust/20 dark:text-orange-200 dark:border-brand-rust/40 hover:bg-white/80',
+    ghost: 'bg-transparent text-accent hover:bg-white/10 dark:hover:bg-white/5',
   };
 
   return (

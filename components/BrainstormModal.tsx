@@ -112,13 +112,13 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
     switch (type) {
       case 'step':
         return (
-          <span className="bg-brand-rust/10 text-brand-rust dark:text-orange-200 text-[10px] px-1.5 py-0.5 rounded border border-brand-rust/20 dark:border-brand-rust/30">
+          <span className="bg-brand-rust/10 text-accent text-[10px] px-1.5 py-0.5 rounded border border-brand-rust/20">
             階段型
           </span>
         );
       case 'habit':
         return (
-          <span className="bg-brand-teal/10 text-brand-teal dark:text-brand-mint text-[10px] px-1.5 py-0.5 rounded border border-brand-teal/20 dark:border-brand-mint/30">
+          <span className="bg-brand-teal/10 text-accent text-[10px] px-1.5 py-0.5 rounded border border-brand-teal/20">
             規律型
           </span>
         );
@@ -133,11 +133,11 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
       onClose={resetAndClose}
       title={
         <div className="flex flex-col">
-          <div className="flex items-center gap-2 text-brand-purple dark:text-purple-300">
+          <div className="flex items-center gap-2 text-accent dark:text-purple-300">
             <span className="material-symbols-outlined">auto_awesome</span>
             AI 靈感助手
           </div>
-          <span className="text-xs font-normal text-brand-purple/70 dark:text-purple-300/70 mt-1">
+          <span className="text-xs font-normal text-accent/70 dark:text-purple-300/70 mt-1">
             {mode === 'goal' ? `目標設定 (最多選 ${maxSelectable} 個)` : '懲罰發想'}
           </span>
         </div>
@@ -160,7 +160,7 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
       }
     >
       <div className="space-y-4">
-        <p className="text-sm text-brand-purple dark:text-purple-200">
+        <p className="text-sm text-accent dark:text-purple-200">
           {mode === 'goal'
             ? `輸入興趣，AI 將提供包含計分建議的目標方案...`
             : `幫 ${targetName} 發想一些有趣的懲罰...`}
@@ -190,7 +190,7 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
         </div>
 
         {error && (
-          <div className="p-3 bg-white dark:bg-brand-rust/10 border border-brand-rust dark:border-brand-rust/20 text-brand-rust text-xs rounded-xl flex items-center gap-2 shadow-sm animate-fade-in">
+          <div className="p-3 bg-white dark:bg-brand-rust/10 border border-brand-rust dark:border-brand-rust/20 text-accent text-xs rounded-xl flex items-center gap-2 shadow-sm animate-fade-in">
             <span className="material-symbols-outlined text-[14px]">error</span> {error}
           </div>
         )}
@@ -217,21 +217,21 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
                           </span>
                         )}
                       </div>
-                      <span className="font-bold text-brand-petrol dark:text-brand-mint text-sm">
+                      <span className="font-bold text-accent dark:text-accent text-sm">
                         {s.title}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       {getTypeBadge(s.type)}
-                      <span className="text-[10px] font-bold bg-gray-100 dark:bg-white/10 px-1.5 py-0.5 rounded text-gray-600 dark:text-gray-300">
+                      <span className="text-[10px] font-bold bg-white/50 dark:bg-black/20 px-1.5 py-0.5 rounded text-accent/60 border border-accent/10">
                         /{s.targetScore}分
                       </span>
                     </div>
                   </div>
-                  <div className="text-xs text-brand-petrol/70 dark:text-brand-mint/70 pl-6 mb-1">
+                  <div className="text-xs text-accent/70 dark:text-accent/70 pl-6 mb-1">
                     {s.description}
                   </div>
-                  <div className="text-[10px] text-brand-purple pl-6 p-1 rounded inline-block font-mono">
+                  <div className="text-[10px] text-accent pl-6 p-1 rounded inline-block font-mono">
                     計分：{s.breakdown}
                   </div>
                 </div>
@@ -245,7 +245,7 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
                 key={idx}
                 className="flex items-center justify-between gap-4 p-3 bg-white dark:bg-brand-rust/20 rounded-xl border border-brand-rust/10 dark:border-brand-rust/30 group"
               >
-                <div className="text-sm text-brand-rust dark:text-orange-200 font-medium flex-1">
+                <div className="text-sm text-accent dark:text-orange-200 font-medium flex-1">
                   {s}
                 </div>
                 <Button
@@ -264,13 +264,13 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
           {(mode === 'goal' ? goalSuggestions.length === 0 : penaltySuggestions.length === 0) &&
             !loading &&
             !error && (
-              <div className="text-center text-brand-purple/50 text-xs py-8 border-2 border-dashed border-brand-purple/30 rounded-xl">
+              <div className="text-center text-accent/50 text-xs py-8 border-2 border-dashed border-brand-purple/30 rounded-xl">
                 輸入關鍵字後，點擊「發想」按鈕
               </div>
             )}
 
           {loading && (
-            <div className="text-center text-brand-purple text-xs py-8 animate-pulse flex flex-col items-center gap-2">
+            <div className="text-center text-accent text-xs py-8 animate-pulse flex flex-col items-center gap-2">
               <span className="material-symbols-outlined text-[24px]">psychology</span>
               正在詢問 Gemini 大神...
             </div>

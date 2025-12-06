@@ -50,16 +50,16 @@ const RegisterView: React.FC<RegisterViewProps> = ({
       <div className="max-w-sm w-full bg-white dark:bg-[rgb(var(--brand-surface))] rounded-3xl shadow-soft p-8 border border-white/20">
         <div className="text-center mb-8">
           <div
-            className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 rotate-3 ${isRecoveryMode ? 'bg-brand-purple/20 text-brand-purple' : 'bg-brand-teal/20 text-brand-teal'}`}
+            className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 rotate-3 ${isRecoveryMode ? 'bg-brand-purple/20 text-accent' : 'bg-brand-teal/20 text-accent'}`}
           >
             <span className="material-symbols-outlined text-[32px]">
               {isRecoveryMode ? 'badge' : 'person_add'}
             </span>
           </div>
-          <h2 className="text-2xl font-black text-brand-petrol dark:text-brand-mint">
+          <h2 className="text-2xl font-black text-accent dark:text-accent">
             {isRecoveryMode ? '歡迎回來！' : '歡迎加入！'}
           </h2>
-          <p className="text-brand-teal dark:text-brand-teal/80 text-sm font-medium mt-2">
+          <p className="text-accent dark:text-accent/80 text-sm font-medium mt-2">
             {isRecoveryMode
               ? `請輸入您在 ${year} 登記的暱稱以繼續`
               : `輸入您的暱稱以加入 ${year} 年度挑戰`}
@@ -67,7 +67,7 @@ const RegisterView: React.FC<RegisterViewProps> = ({
         </div>
 
         {errorMsg && (
-          <div className="mb-6 p-4 bg-white dark:bg-brand-rust/10 border border-brand-rust dark:border-brand-rust/30 text-brand-rust text-sm font-bold rounded-xl flex items-center gap-2 shadow-sm">
+          <div className="mb-6 p-4 bg-white dark:bg-brand-rust/10 border border-brand-rust dark:border-brand-rust/30 text-accent text-sm font-bold rounded-xl flex items-center gap-2 shadow-sm">
             <span className="material-symbols-outlined text-[18px]">warning</span> {errorMsg}
           </div>
         )}
@@ -85,7 +85,7 @@ const RegisterView: React.FC<RegisterViewProps> = ({
 
           {!isRecoveryMode && (
             <div className="animate-fade-in">
-              <label className="block text-center text-xs font-bold text-brand-teal dark:text-brand-teal/80 mb-3 uppercase tracking-wider">
+              <label className="block text-center text-xs font-bold text-accent dark:text-accent/80 mb-3 uppercase tracking-wider">
                 選擇代表色
               </label>
               <div className="flex justify-center flex-wrap gap-3">

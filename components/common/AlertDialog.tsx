@@ -23,7 +23,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title = '提示', mes
         </Button>
       }
     >
-      <div className="text-brand-petrol dark:text-brand-mint text-sm leading-relaxed text-center font-medium whitespace-pre-wrap">
+      <div className="text-accent dark:text-accent text-sm leading-relaxed text-center font-medium whitespace-pre-wrap">
         {message}
       </div>
     </BaseModal>

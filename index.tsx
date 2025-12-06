@@ -26,7 +26,7 @@ const FontLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <div className="min-h-screen flex items-center justify-center bg-brand-mint/30 dark:bg-[rgb(var(--brand-dark))] transition-colors duration-300">
         <div className="flex flex-col items-center gap-4 animate-pulse">
           <div className="w-12 h-12 border-4 border-brand-teal border-t-transparent rounded-full animate-spin"></div>
-          <div className="text-brand-petrol dark:text-brand-mint font-bold text-sm tracking-widest">
+          <div className="text-accent dark:text-accent font-bold text-sm tracking-widest">
             LOADING...
           </div>
         </div>

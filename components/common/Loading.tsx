@@ -29,19 +29,17 @@ export const PageLoading: React.FC<{ title?: string; subtitle?: string }> = ({
         <div className="absolute inset-0 border-4 border-brand-mint/30 rounded-full"></div>
         <div className="absolute inset-0 border-4 border-brand-teal border-t-transparent rounded-full animate-spin"></div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="material-symbols-outlined text-brand-teal text-[24px] animate-spin">
+          <span className="material-symbols-outlined text-accent text-[24px] animate-spin">
             sync
           </span>
         </div>
       </div>
       <div className="text-center">
-        <div className="text-xl font-black text-brand-petrol dark:text-brand-mint tracking-tight">
+        <div className="text-xl font-black text-accent dark:text-accent tracking-tight">
           {title}
         </div>
         {subtitle && (
-          <div className="text-sm text-brand-teal dark:text-brand-teal/80 mt-1 font-bold">
-            {subtitle}
-          </div>
+          <div className="text-sm text-accent dark:text-accent/80 mt-1 font-bold">{subtitle}</div>
         )}
       </div>
     </div>

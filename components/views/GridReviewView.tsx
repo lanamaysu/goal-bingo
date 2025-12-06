@@ -50,13 +50,13 @@ const GridReviewView: React.FC<GridReviewViewProps> = ({ gameState, onGridChange
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-fade-in pb-20 flex flex-col items-center">
       <div className="text-center space-y-4 w-full">
-        <h2 className="text-3xl font-black text-brand-petrol dark:text-brand-mint tracking-tight">
+        <h2 className="text-3xl font-black text-accent dark:text-accent tracking-tight">
           <span className="material-symbols-outlined text-[28px] align-middle mr-2">
             auto_awesome
           </span>
           調整九宮格位置
         </h2>
-        <p className="text-brand-petrol/70 dark:text-brand-mint/70">
+        <p className="text-accent/70 dark:text-accent/70">
           拖曳卡片調整目標的位置，或點擊「隨機打亂」重新產生
         </p>
       </div>
@@ -81,7 +81,7 @@ const GridReviewView: React.FC<GridReviewViewProps> = ({ gameState, onGridChange
             const shuffled = [...localGridMapping].sort(() => Math.random() - 0.5);
             setLocalGridMapping(shuffled);
           }}
-          className="flex-1 px-4 py-3 bg-brand-purple/15 text-brand-purple border border-brand-purple/30 font-bold rounded-xl transition-colors hover:bg-brand-purple/25 flex items-center justify-center gap-2"
+          className="flex-1 px-4 py-3 bg-brand-purple/15 text-accent border border-brand-purple/30 font-bold rounded-xl transition-colors hover:bg-brand-purple/25 dark:bg-brand-purple/10 dark:border-brand-purple/20 flex items-center justify-center gap-2"
         >
           <span className="material-symbols-outlined text-[18px]">shuffle</span>
           隨機打亂
@@ -97,7 +97,7 @@ const GridReviewView: React.FC<GridReviewViewProps> = ({ gameState, onGridChange
       </div>
 
       <div className="bg-brand-teal/5 border border-brand-teal/20 rounded-xl p-4 w-full max-w-md">
-        <p className="text-sm text-brand-petrol dark:text-brand-mint">
+        <p className="text-sm text-accent dark:text-accent">
           <span className="font-bold">💡 提示：</span>
           拖曳卡片可以重新排列九宮格的目標位置。您可以多次隨機打亂或手動調整，直到滿意為止。
         </p>

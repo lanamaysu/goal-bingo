@@ -48,7 +48,8 @@ export default {
           purple: withOpacity('--tone-purple'),
           rust: withOpacity('--tone-rust'),
         },
-        accent: withOpacity('--accent'),
+        accent: withOpacity('--text-accent'),
+        foreground: withOpacity('--text-foreground'),
       },
       keyframes: {
         fadeIn: {

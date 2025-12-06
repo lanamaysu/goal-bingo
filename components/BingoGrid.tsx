@@ -47,7 +47,7 @@ const BingoGridCell = React.memo<GridCellProps>(
 
     if (!goal || !user) {
       return (
-        <div className="bg-gray-100 dark:bg-white/5 rounded-2xl border-2 border-dashed border-gray-200 dark:border-brand-mint/10 transition-colors" />
+        <div className="bg-white/30 dark:bg-black/10 rounded-2xl border-2 border-dashed border-accent/20 dark:border-accent/10 transition-colors" />
       );
     }
 
@@ -108,7 +108,7 @@ const BingoGridCell = React.memo<GridCellProps>(
         {/* Status Indicator */}
         <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2">
           {isComplete && (
-            <div className="bg-brand-petrol dark:bg-brand-mint text-brand-mint dark:text-brand-petrol rounded-full p-0.5 shadow-sm flex items-center justify-center">
+            <div className="bg-brand-petrol dark:bg-brand-mint text-foreground dark:text-accent rounded-full p-0.5 shadow-sm flex items-center justify-center">
               <svg
                 width="12"
                 height="12"

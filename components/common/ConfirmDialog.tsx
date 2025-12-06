@@ -45,7 +45,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </div>
       }
     >
-      <div className="text-brand-petrol dark:text-brand-mint text-sm leading-relaxed text-center font-medium whitespace-pre-wrap">
+      <div className="text-accent dark:text-accent text-sm leading-relaxed text-center font-medium whitespace-pre-wrap">
         {message}
       </div>
     </BaseModal>

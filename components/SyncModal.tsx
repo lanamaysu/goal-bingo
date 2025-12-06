@@ -6,6 +6,7 @@ import ConfirmDialog from './common/ConfirmDialog';
 import { Input, Button } from './common/FormElements';
 import { Loading } from './common/Loading';
 import storage from '../utils/storage';
+import { APP_THEME_OPTIONS } from '../hooks/useTheme';
 
 interface SyncModalProps {
   isOpen: boolean;
@@ -39,6 +40,9 @@ const SyncModal: React.FC<SyncModalProps> = ({
   const [showKey, setShowKey] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [selectedAppTheme, setSelectedAppTheme] = useState<string>('teal');
+  const [initialAppTheme, setInitialAppTheme] = useState<string>('teal');
+  const [tempDarkTheme, setTempDarkTheme] = useState<boolean>(isDarkTheme);
+  const [initialDarkTheme, setInitialDarkTheme] = useState<boolean>(isDarkTheme);
 
   const [inviteLink, setInviteLink] = useState('');
   const [syncStatus, setSyncStatus] = useState<{
@@ -76,7 +80,13 @@ const SyncModal: React.FC<SyncModalProps> = ({
       setDisplayName(currentUserName || '');
 
       // Load app theme
-      setSelectedAppTheme(currentAppTheme || 'teal');
+      const theme = currentAppTheme || 'teal';
+      setSelectedAppTheme(theme);
+      setInitialAppTheme(theme);
+
+      // Track dark theme for rollback
+      setTempDarkTheme(isDarkTheme);
+      setInitialDarkTheme(isDarkTheme);
 
       setSyncStatus(null);
     }
@@ -120,6 +130,28 @@ const SyncModal: React.FC<SyncModalProps> = ({
     onClose();
   };
 
+  const handleCancel = () => {
+    // Roll back dark theme if changed during modal session
+    if (tempDarkTheme !== initialDarkTheme) {
+      onToggleTheme();
+    }
+    // Roll back app theme if changed during modal session
+    if (selectedAppTheme !== initialAppTheme) {
+      onUpdateAppTheme(initialAppTheme);
+    }
+    onClose();
+  };
+
+  const handleToggleTheme = () => {
+    onToggleTheme();
+    setTempDarkTheme((prev) => !prev);
+  };
+
+  const handleSelectAppTheme = (id: string) => {
+    setSelectedAppTheme(id);
+    onUpdateAppTheme(id);
+  };
+
   const performClearStorage = () => {
     try {
       storage.clearAllKeys();
@@ -135,7 +167,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
   return (
     <BaseModal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleCancel}
       title={
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined">settings</span>
@@ -144,7 +176,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
       }
       footer={
         <div className="flex justify-end gap-3 w-full">
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={handleCancel}>
             取消
           </Button>
           <Button onClick={handleSaveSettings}>儲存設定</Button>
@@ -154,60 +186,56 @@ const SyncModal: React.FC<SyncModalProps> = ({
       <div className="space-y-8">
         {/* 0. Personal & Appearance Section */}
         <div className="space-y-4">
-          <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
+          <h4 className="font-bold text-accent dark:text-accent text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
             <span className="material-symbols-outlined text-[18px]">person</span>
             外觀與個人
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="flex items-center justify-between p-3 rounded-xl border border-accent/20 bg-white/50 dark:bg-black/20">
+
+          <div className="space-y-3">
+            <Input
+              label="顯示名稱"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="輸入你的名稱..."
+            />
+
+            <div className="p-3 rounded-xl border border-accent/20 bg-white/50 dark:bg-black/20 flex items-center justify-between">
               <div className="text-xs text-accent font-bold">深色模式</div>
-              <Button onClick={onToggleTheme} className="px-3 py-1 text-xs h-auto">
-                {isDarkTheme ? '切換為淺色' : '切換為深色'}
+              <Button
+                variant="ghost"
+                onClick={handleToggleTheme}
+                className="px-3 py-1 text-xs h-auto text-accent"
+              >
+                {tempDarkTheme ? '淺色' : '深色'}
               </Button>
             </div>
-            <div>
-              <Input
-                label="顯示名稱"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="輸入你的名稱..."
-              />
-            </div>
-          </div>
 
-          {/* App Theme Selector */}
-          <div className="space-y-2">
-            <div className="text-xs text-accent font-bold">App 配色</div>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {[
-                { id: 'teal', label: '品牌綠', swatch: '#4A857E' },
-                { id: 'rose', label: '陶玫瑰', swatch: '#D66F65' },
-                { id: 'gold', label: '麥穗金', swatch: '#D4A373' },
-                { id: 'indigo', label: '岩板藍', swatch: '#6B7A8F' },
-                { id: 'sage', label: '鼠尾草', swatch: '#7A9E7E' },
-                { id: 'lavender', label: '薰衣草', swatch: '#9D8189' },
-              ].map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => setSelectedAppTheme(opt.id)}
-                  className={`flex items-center gap-2 p-2 rounded-xl border text-xs transition-colors ${selectedAppTheme === opt.id ? 'border-accent' : 'border-accent/20'} bg-white/50 dark:bg-black/20`}
-                  aria-pressed={selectedAppTheme === opt.id}
-                >
-                  <span
-                    className="inline-block w-5 h-5 rounded"
-                    style={{ backgroundColor: opt.swatch }}
-                  />
-                  <span className="text-brand-petrol dark:text-brand-mint">{opt.label}</span>
-                </button>
-              ))}
+            {/* App Theme Selector */}
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {APP_THEME_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => handleSelectAppTheme(opt.id)}
+                    className={`flex items-center gap-2 p-3 rounded-xl border text-xs transition-colors ${selectedAppTheme === opt.id ? 'border-brand-petrol dark:border-brand-mint' : 'border-accent/20'} bg-white/70 dark:bg-black/30`}
+                    aria-pressed={selectedAppTheme === opt.id}
+                  >
+                    <span
+                      className="inline-block w-5 h-5 rounded"
+                      style={{ backgroundColor: opt.swatch }}
+                    />
+                    <span className="text-accent">{opt.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
         {/* 1. Sync & Data Section */}
         <div className="space-y-4">
-          <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
+          <h4 className="font-bold text-accent dark:text-accent text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
             <span className="material-symbols-outlined text-[18px]">cloud_sync</span>
             資料同步 (Google 試算表)
           </h4>
@@ -236,7 +264,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
               </button>
               {syncStatus && syncStatus.type !== 'loading' && (
                 <span
-                  className={`text-xs ${syncStatus.type === 'success' ? 'text-green-600' : 'text-brand-rust'}`}
+                  className={`text-xs ${syncStatus.type === 'success' ? 'text-green-600' : 'text-accent'}`}
                 >
                   {syncStatus.msg}
                 </span>
@@ -247,7 +275,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
           {/* Invite Link */}
           {inviteLink && !isSolo && (
             <div className="bg-accent/10 p-3 rounded-xl border border-accent/20 space-y-2">
-              <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-xs">
+              <h4 className="font-bold text-accent dark:text-accent text-xs">
                 邀請連結 (分享給隊友)
               </h4>
               <div className="flex gap-2">
@@ -255,7 +283,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
                   type="text"
                   readOnly
                   value={inviteLink}
-                  className="flex-1 text-[10px] p-2 rounded border border-accent/20 text-brand-petrol bg-white/50 dark:bg-black/20 outline-none"
+                  className="flex-1 text-[10px] p-2 rounded border border-accent/20 text-accent bg-white/50 dark:bg-black/20 outline-none focus:border-accent/40"
                 />
                 <Button
                   variant="secondary"
@@ -274,11 +302,11 @@ const SyncModal: React.FC<SyncModalProps> = ({
 
         {/* 2. AI Settings Section */}
         <div className="space-y-4">
-          <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
+          <h4 className="font-bold text-accent dark:text-accent text-sm border-b border-accent/20 pb-2 flex items-center gap-2">
             <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
             AI 金鑰 (Gemini API)
           </h4>
-          <div className="bg-brand-purple/5 dark:bg-brand-purple/10 p-4 rounded-xl text-xs text-brand-purple dark:text-purple-200 border border-brand-purple/10">
+          <div className="bg-brand-purple/5 dark:bg-brand-purple/10 p-4 rounded-xl text-xs text-accent dark:text-purple-200 border border-brand-purple/10">
             <p className="mb-2">啟用 AI 輔助需要您自己的 API Key。</p>
             <a
               href="https://aistudio.google.com/app/apikey"
@@ -311,14 +339,11 @@ const SyncModal: React.FC<SyncModalProps> = ({
           <div className="text-xs text-accent/60 mb-2 font-bold">目前遊戲參數 (唯讀)</div>
           <div className="grid grid-cols-2 gap-y-1 gap-x-4 text-xs text-accent">
             <div>
-              年度:{' '}
-              <span className="font-mono text-brand-petrol dark:text-brand-mint">
-                {config.year}
-              </span>
+              年度: <span className="font-mono text-accent dark:text-accent">{config.year}</span>
             </div>
             <div>
               模式:{' '}
-              <span className="text-brand-petrol dark:text-brand-mint">
+              <span className="text-accent dark:text-accent">
                 {isSolo ? '個人' : '團體'} ({config.totalPlayers}人)
               </span>
             </div>
@@ -331,7 +356,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
         <div className="p-4 rounded-xl border border-accent/10 bg-white/50 dark:bg-black/20">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="text-xs font-bold text-brand-rust">清除本機資料</div>
+              <div className="text-xs font-bold text-accent">清除本機資料</div>
               <div className="text-[12px] text-accent mt-1">
                 此操作會移除所有本機設定與遊戲資料，無法復原。
               </div>
@@ -352,7 +377,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
         isOpen={isClearConfirmOpen}
         title={
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-brand-rust">delete_forever</span>
+            <span className="material-symbols-outlined text-accent">delete_forever</span>
             確認清除本機資料
           </div>
         }

@@ -152,7 +152,7 @@ const SettlementView: React.FC<SettlementViewProps> = ({
       <div
         className={`mb-6 p-6 rounded-3xl border-4 ${isLocked ? 'border-brand-petrol bg-white dark:bg-[rgb(var(--brand-surface))]' : 'border-accent bg-white/60 dark:bg-black/20'}`}
       >
-        <h2 className="text-3xl font-black text-brand-petrol dark:text-brand-mint mb-2 flex items-center justify-center gap-2">
+        <h2 className="text-3xl font-black text-accent dark:text-accent mb-2 flex items-center justify-center gap-2">
           {isLocked ? (
             <>
               <span className="material-symbols-outlined text-[32px]">emoji_events</span>{' '}
@@ -164,7 +164,7 @@ const SettlementView: React.FC<SettlementViewProps> = ({
             </>
           )}
         </h2>
-        <p className="text-brand-teal dark:text-brand-teal/80 mb-6 text-sm">
+        <p className="text-accent dark:text-accent/80 mb-6 text-sm">
           {isLocked
             ? '本年度挑戰已結束，感謝大家的努力！'
             : '請確認以下結果，按下「確認結算」後將無法再修改。'}
@@ -174,25 +174,20 @@ const SettlementView: React.FC<SettlementViewProps> = ({
         {!isSolo && (
           <div className="grid grid-cols-2 gap-4 mb-6 text-left">
             <div className="bg-white dark:bg-[rgb(var(--brand-dark))] p-4 rounded-xl border border-brand-mint/20">
-              <div className="text-xs text-brand-teal font-bold uppercase tracking-wider">
-                連線數
-              </div>
+              <div className="text-xs text-accent font-bold uppercase tracking-wider">連線數</div>
               <div
-                className={`text-2xl font-black ${linesCount >= linesTarget ? 'text-green-600 dark:text-green-400' : 'text-brand-rust'}`}
+                className={`text-2xl font-black ${linesCount >= linesTarget ? 'text-green-600 dark:text-green-400' : 'text-accent'}`}
               >
-                {linesCount}{' '}
-                <span className="text-sm text-gray-400 dark:text-gray-500">/ {linesTarget} 條</span>
+                {linesCount} <span className="text-sm text-accent/50">/ {linesTarget} 條</span>
               </div>
             </div>
             <div className="bg-white dark:bg-[rgb(var(--brand-dark))] p-4 rounded-xl border border-brand-mint/20">
-              <div className="text-xs text-brand-teal font-bold uppercase tracking-wider">
-                團體總分
-              </div>
+              <div className="text-xs text-accent font-bold uppercase tracking-wider">團體總分</div>
               <div
-                className={`text-2xl font-black ${groupTotalScore >= groupTarget ? 'text-green-600 dark:text-green-400' : 'text-brand-rust'}`}
+                className={`text-2xl font-black ${groupTotalScore >= groupTarget ? 'text-green-600 dark:text-green-400' : 'text-accent'}`}
               >
                 {Math.round(groupTotalScore)}{' '}
-                <span className="text-sm text-gray-400 dark:text-gray-500">/ {groupTarget}</span>
+                <span className="text-sm text-accent/50">/ {groupTarget}</span>
               </div>
             </div>
           </div>
@@ -203,18 +198,18 @@ const SettlementView: React.FC<SettlementViewProps> = ({
           <>
             {!isGroupSafe && (
               <div className="mb-6 bg-white dark:bg-brand-rust/10 p-5 rounded-xl border border-brand-rust/20 dark:border-brand-rust/30 text-left">
-                <h4 className="font-bold text-brand-rust mb-1 flex items-center gap-2">
+                <h4 className="font-bold text-accent mb-1 flex items-center gap-2">
                   <span className="material-symbols-outlined">warning</span> 團體懲罰執行
                 </h4>
-                <p className="text-brand-rust font-bold text-lg">{gameState.config.groupPenalty}</p>
+                <p className="text-accent font-bold text-lg">{gameState.config.groupPenalty}</p>
               </div>
             )}
             {isGroupSafe && (
               <div className="mb-6 bg-brand-mint/30 p-5 rounded-xl border border-brand-mint/50 text-left">
-                <h4 className="font-bold text-brand-petrol dark:text-brand-mint mb-1 flex items-center gap-2">
+                <h4 className="font-bold text-accent dark:text-accent mb-1 flex items-center gap-2">
                   <span className="material-symbols-outlined">celebration</span> 恭喜！
                 </h4>
-                <p className="text-brand-petrol dark:text-brand-mint font-bold">
+                <p className="text-accent dark:text-accent font-bold">
                   達成團體目標，免除團體懲罰！
                 </p>
               </div>
@@ -244,7 +239,7 @@ const SettlementView: React.FC<SettlementViewProps> = ({
 
         {/* Individual Settlement List */}
         <div className="text-left space-y-2">
-          <h4 className="font-bold text-brand-teal ml-1 text-sm uppercase tracking-wider">
+          <h4 className="font-bold text-accent ml-1 text-sm uppercase tracking-wider">
             {isSolo ? '個人結算' : '個人懲罰清單'}
           </h4>
           {gameState.users.map((user) => {
@@ -266,7 +261,7 @@ const SettlementView: React.FC<SettlementViewProps> = ({
                       {user.name}
                     </span>
                   )}
-                  <span className="whitespace-nowrap text-sm font-bold text-brand-petrol dark:text-brand-mint">
+                  <span className="whitespace-nowrap text-sm font-bold text-accent dark:text-accent">
                     {isSolo ? '累積 ' : ''}
                     {Math.round(userTotal)} 分
                   </span>
@@ -278,7 +273,7 @@ const SettlementView: React.FC<SettlementViewProps> = ({
                       <span className="material-symbols-outlined text-[14px]">check_circle</span>
                     </span>
                   ) : (
-                    <span className="text-xs font-bold text-brand-rust break-words leading-snug">
+                    <span className="text-xs font-bold text-accent break-words leading-snug">
                       {user.individualPenalty}
                     </span>
                   )}
@@ -300,13 +295,13 @@ const SettlementView: React.FC<SettlementViewProps> = ({
         <div className="fixed bottom-0 left-0 right-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-white/90 dark:bg-[rgb(var(--brand-dark))]/90 backdrop-blur-none md:backdrop-blur border-t border-brand-mint/20 flex justify-center gap-4 z-50 transform-gpu will-change-[transform]">
           <button
             onClick={onReturn}
-            className="px-6 py-3 bg-white dark:bg-[rgb(var(--brand-surface))] border border-brand-teal/30 text-brand-petrol dark:text-brand-mint font-bold rounded-xl"
+            className="px-6 py-3 bg-white dark:bg-[rgb(var(--brand-surface))] border border-brand-teal/30 text-accent dark:text-accent font-bold rounded-xl"
           >
             返回修改
           </button>
           <button
             onClick={() => setShowConfirmLock(true)}
-            className="px-6 py-3 bg-brand-petrol text-white font-bold rounded-xl shadow flex items-center gap-2"
+            className="px-6 py-3 bg-brand-petrol dark:bg-brand-mint text-white dark:text-brand-dark font-bold rounded-xl shadow flex items-center gap-2 hover:bg-brand-petrol/90 dark:hover:bg-brand-mint/80"
           >
             確認並鎖定結算 <span className="material-symbols-outlined text-[18px]">lock</span>
           </button>
@@ -316,7 +311,7 @@ const SettlementView: React.FC<SettlementViewProps> = ({
       <ConfirmDialog
         isOpen={showConfirmLock}
         title={
-          <span className="flex items-center justify-center gap-2 text-brand-rust">
+          <span className="flex items-center justify-center gap-2 text-accent">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M1 21h22L12 2 1 21zm12-3h-2v2h2v-2zm0-8h-2v6h2V10z" />
             </svg>

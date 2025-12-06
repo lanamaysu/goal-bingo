@@ -73,23 +73,19 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({
         {/* Step 1: Copy Code */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <h4 className="font-bold text-brand-petrol dark:text-brand-mint">
-              步驟 1：複製後端程式碼
-            </h4>
+            <h4 className="font-bold text-accent dark:text-accent">步驟 1：複製後端程式碼</h4>
             {copied && (
-              <span className="text-xs text-brand-teal font-bold animate-pulse">
-                已複製到剪貼簿！
-              </span>
+              <span className="text-xs text-accent font-bold animate-pulse">已複製到剪貼簿！</span>
             )}
           </div>
           <div className="relative group">
             {/* Changed bg-gray-800 to bg-brand-petrol for brand consistency */}
-            <pre className="bg-brand-petrol text-brand-mint/90 p-4 rounded-xl text-xs font-mono h-32 overflow-y-auto border border-brand-teal/20 custom-scrollbar">
+            <pre className="bg-brand-petrol dark:bg-brand-mint text-foreground dark:text-brand-dark p-4 rounded-xl text-xs font-mono h-32 overflow-y-auto border border-brand-petrol dark:border-brand-mint/30 custom-scrollbar">
               {codeTemplate}
             </pre>
             <button
               onClick={handleCopy}
-              className="absolute top-2 right-2 bg-white text-brand-petrol px-3 py-1 rounded text-xs font-bold shadow transition-all flex items-center gap-1"
+              className="absolute top-2 right-2 bg-white text-accent px-3 py-1 rounded text-xs font-bold shadow transition-all flex items-center gap-1"
             >
               {copied ? (
                 <>
@@ -106,8 +102,8 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({
         </div>
 
         {/* Step 2: Instructions */}
-        <div className="space-y-3 bg-brand-teal/5 p-4 rounded-xl border border-brand-teal/20 text-sm text-brand-petrol dark:text-brand-mint/80">
-          <h4 className="font-bold text-brand-teal mb-2">步驟 2：部署到 Google 試算表</h4>
+        <div className="space-y-3 bg-brand-teal/5 p-4 rounded-xl border border-brand-teal/20 text-sm text-accent dark:text-accent/80">
+          <h4 className="font-bold text-accent mb-2">步驟 2：部署到 Google 試算表</h4>
           <ol className="list-decimal list-inside space-y-1 ml-1">
             <li>
               建立一個新的{' '}
@@ -115,7 +111,7 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({
                 href="https://sheets.new"
                 target="_blank"
                 rel="noreferrer"
-                className="text-brand-teal underline font-bold"
+                className="text-accent underline font-bold"
               >
                 Google 試算表
               </a>
@@ -134,7 +130,7 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({
               點擊左上角的齒輪圖示 &gt; 選擇 <b>「網頁應用程式 (Web app)」</b>。
             </li>
             <li>
-              <span className="text-brand-rust font-bold">重要：</span>將「存取權限 (Who has
+              <span className="text-accent font-bold">重要：</span>將「存取權限 (Who has
               access)」設為 <b>「任何人 (Anyone)」</b>。
             </li>
             <li>點擊「部署」，並授予必要的權限。</li>
@@ -146,9 +142,7 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({
 
         {/* Step 3: Paste URL */}
         <div className="space-y-2">
-          <h4 className="font-bold text-brand-petrol dark:text-brand-mint">
-            步驟 3：貼上網址並開始
-          </h4>
+          <h4 className="font-bold text-accent dark:text-accent">步驟 3：貼上網址並開始</h4>
           <Input
             value={url}
             onChange={(e) => {
@@ -159,13 +153,11 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({
             className={error ? 'border-brand-rust focus:border-brand-rust' : ''}
           />
           {error ? (
-            <p className="text-xs text-brand-rust font-bold flex items-center gap-1">
+            <p className="text-xs text-accent font-bold flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px]">error</span> {error}
             </p>
           ) : (
-            <p className="text-xs text-brand-teal/60">
-              請確保網址以 https://script.google.com 開頭
-            </p>
+            <p className="text-xs text-accent/60">請確保網址以 https://script.google.com 開頭</p>
           )}
         </div>
       </div>
