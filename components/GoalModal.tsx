@@ -31,7 +31,8 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
   const config = gameState.config;
 
   // IMPORTANT: Allow edit only if I am the owner AND we are in Setup phase
-  const canEdit = currentUser.id === goal.userId && gameState.phase === 'setup';
+  const canEdit =
+    currentUser.id === goal.userId && (gameState.phase === 'setup' || gameState.phase === 'active');
 
   // --- State Setup ---
   const [title, setTitle] = useState(goal.title);
