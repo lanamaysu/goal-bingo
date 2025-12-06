@@ -1,5 +1,3 @@
-
-
 // NOTE: This test file requires a standard Jest/Vitest setup.
 // It tests the extracted pure functions for validation.
 
@@ -8,17 +6,35 @@ import { User, Goal, GameConfig } from '../types';
 
 describe('Setup Logic Validation', () => {
   const mockUser: User = {
-    id: 'u1', 
-    name: 'Test User', 
-    colorId: 0, 
-    color: 'bg-blue-100', 
-    individualPenalty: 'Run 5km', 
-    isReady: false
+    id: 'u1',
+    name: 'Test User',
+    colorId: 0,
+    color: 'bg-blue-100',
+    individualPenalty: 'Run 5km',
+    isReady: false,
   };
 
   const mockGoals: Goal[] = [
-    { id: 1, userId: 'u1', title: 'Goal 1', description: '', targetScore: 100, currentScore: 0, logs: [], lastUpdated: 0 },
-    { id: 2, userId: 'u1', title: 'Goal 2', description: '', targetScore: 100, currentScore: 0, logs: [], lastUpdated: 0 },
+    {
+      id: 1,
+      userId: 'u1',
+      title: 'Goal 1',
+      description: '',
+      targetScore: 100,
+      currentScore: 0,
+      logs: [],
+      lastUpdated: 0,
+    },
+    {
+      id: 2,
+      userId: 'u1',
+      title: 'Goal 2',
+      description: '',
+      targetScore: 100,
+      currentScore: 0,
+      logs: [],
+      lastUpdated: 0,
+    },
   ];
 
   describe('validatePersonalSetup', () => {
@@ -48,13 +64,15 @@ describe('Setup Logic Validation', () => {
     });
 
     it('should return error if step goal total points is not 100', () => {
-      const stepGoals = [{
-        ...mockGoals[0],
-        structure: {
-          type: 'step',
-          milestones: [{ id: 'm1', title: 'p1', points: 50, isCompleted: false }]
-        }
-      }];
+      const stepGoals = [
+        {
+          ...mockGoals[0],
+          structure: {
+            type: 'step',
+            milestones: [{ id: 'm1', title: 'p1', points: 50, isCompleted: false }],
+          },
+        },
+      ];
       // @ts-ignore - treating goal type as any for test simplicity or fully mock it
       const result = validatePersonalSetup(mockUser, stepGoals as Goal[]);
       expect(result).toContain('里程碑總分不等於 100 分');
@@ -63,8 +81,15 @@ describe('Setup Logic Validation', () => {
 
   describe('validateGroupSetup', () => {
     const mockConfig: GameConfig = {
-      year: '2025', groupPenalty: 'Buy Dinner', groupTargetScore: 500, minLinesForSafe: 1,
-      individualSafeScore: 100, gridSize: 3, goalsPerUser: 3, totalPlayers: 3, activeMonths: 12
+      year: '2025',
+      groupPenalty: 'Buy Dinner',
+      groupTargetScore: 500,
+      minLinesForSafe: 1,
+      individualSafeScore: 100,
+      gridSize: 3,
+      goalsPerUser: 3,
+      totalPlayers: 3,
+      activeMonths: 12,
     };
 
     it('should return null (valid) when group penalty is set', () => {

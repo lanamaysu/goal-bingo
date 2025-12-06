@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useBingoGame } from '../hooks/useBingoGame';
 
@@ -10,11 +9,7 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const game = useBingoGame();
 
-  return (
-    <GameContext.Provider value={game}>
-      {children}
-    </GameContext.Provider>
-  );
+  return <GameContext.Provider value={game}>{children}</GameContext.Provider>;
 };
 
 export const useGame = () => {

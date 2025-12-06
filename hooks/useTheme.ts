@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 
 type RGB = { r: number; g: number; b: number };
@@ -26,9 +25,13 @@ const BASE_BRAND_COLORS: Record<string, string> = {
 
 const toRgb = (hex: string): RGB => {
   const normalized = hex.replace('#', '');
-  const value = normalized.length === 3
-    ? normalized.split('').map((char) => char + char).join('')
-    : normalized;
+  const value =
+    normalized.length === 3
+      ? normalized
+          .split('')
+          .map((char) => char + char)
+          .join('')
+      : normalized;
 
   const r = parseInt(value.slice(0, 2), 16);
   const g = parseInt(value.slice(2, 4), 16);
@@ -134,8 +137,8 @@ const recolorWithAccentHue = (
   const lightnessScale = options.lightnessScale ?? 1;
   const lightnessOffset = options.lightnessOffset ?? 0;
 
-  const sRaw = options.targetSaturation ?? (baseHsl.s * saturationScale + saturationOffset);
-  const lRaw = options.targetLightness ?? (baseHsl.l * lightnessScale + lightnessOffset);
+  const sRaw = options.targetSaturation ?? baseHsl.s * saturationScale + saturationOffset;
+  const lRaw = options.targetLightness ?? baseHsl.l * lightnessScale + lightnessOffset;
 
   const s = clamp01(sRaw);
   const l = clamp01(lRaw);
@@ -245,7 +248,7 @@ export const useTheme = () => {
   }, [appTheme]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
   const setAppTheme = (id: string) => {

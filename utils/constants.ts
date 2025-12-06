@@ -1,8 +1,7 @@
-
 // Helper to generate winning lines for any N x N grid
 export const getWinningLines = (size: number): number[][] => {
   const lines: number[][] = [];
-  
+
   // Rows
   for (let r = 0; r < size; r++) {
     const row = [];
@@ -25,7 +24,7 @@ export const getWinningLines = (size: number): number[][] => {
   const d1 = [];
   const d2 = [];
   for (let i = 0; i < size; i++) {
-    d1.push(i * size + i);       // Top-left to bottom-right
+    d1.push(i * size + i); // Top-left to bottom-right
     d2.push(i * size + (size - 1 - i)); // Top-right to bottom-left
   }
   lines.push(d1);
@@ -45,7 +44,7 @@ export const DEFAULT_CONFIG = {
   gridSize: 3,
   goalsPerUser: 3,
   totalPlayers: 0, // Initialize as 0 to detect if config setup is needed
-  activeMonths: 11 // Default to 11 months (assuming 1 month break)
+  activeMonths: 11, // Default to 11 months (assuming 1 month break)
 };
 
 export const APPS_SCRIPT_TEMPLATE = `

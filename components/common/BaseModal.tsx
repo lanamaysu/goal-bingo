@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -13,15 +12,15 @@ interface BaseModalProps {
   className?: string; // For overriding container styles (e.g., padding)
 }
 
-const BaseModal: React.FC<BaseModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  title, 
-  children, 
-  footer, 
+const BaseModal: React.FC<BaseModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  footer,
   maxWidth = 'md',
   hideCloseButton = false,
-  className = ''
+  className = '',
 }) => {
   const [mounted, setMounted] = useState(false);
 
@@ -41,24 +40,24 @@ const BaseModal: React.FC<BaseModalProps> = ({
   if (!isOpen || !mounted) return null;
 
   const maxWidthClass = {
-    'sm': 'max-w-sm',
-    'md': 'max-w-md',
-    'lg': 'max-w-lg',
-    'xl': 'max-w-xl',
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
     '2xl': 'max-w-2xl',
-    'full': 'max-w-full mx-4',
+    full: 'max-w-full mx-4',
   }[maxWidth];
 
   const modalContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overscroll-none">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-brand-petrol/70 md:bg-brand-petrol/60 backdrop-blur-none md:backdrop-blur-sm animate-fade-in-opacity will-change-[opacity]" 
+      <div
+        className="absolute inset-0 bg-brand-petrol/70 md:bg-brand-petrol/60 backdrop-blur-none md:backdrop-blur-sm animate-fade-in-opacity will-change-[opacity]"
         onClick={onClose}
       />
 
       {/* Content */}
-      <div 
+      <div
         className={`
             relative z-10 w-full ${maxWidthClass} 
         bg-white md:bg-white/95 dark:bg-[rgb(var(--brand-surface))] 
@@ -71,31 +70,31 @@ const BaseModal: React.FC<BaseModalProps> = ({
       >
         {/* Header */}
         {(title || !hideCloseButton) && (
-            <div className="flex items-center justify-between p-5 border-b border-brand-mint/20 dark:border-white/5 flex-shrink-0 gap-4">
-                <div className="flex-1 min-w-0 text-xl font-bold text-brand-petrol dark:text-brand-mint">
-                    {title}
-                </div>
-                {!hideCloseButton && (
-                    <button 
-                      onClick={onClose} 
-                      className="flex-shrink-0 p-1 rounded-full text-brand-teal transition-colors"
-                    >
-                        <span className="material-symbols-outlined text-[24px]">close</span>
-                    </button>
-                )}
+          <div className="flex items-center justify-between p-5 border-b border-brand-mint/20 dark:border-white/5 flex-shrink-0 gap-4">
+            <div className="flex-1 min-w-0 text-xl font-bold text-brand-petrol dark:text-brand-mint">
+              {title}
             </div>
+            {!hideCloseButton && (
+              <button
+                onClick={onClose}
+                className="flex-shrink-0 p-1 rounded-full text-brand-teal transition-colors"
+              >
+                <span className="material-symbols-outlined text-[24px]">close</span>
+              </button>
+            )}
+          </div>
         )}
 
         {/* Body */}
         <div className="overflow-y-auto overscroll-contain flex-1 p-6 custom-scrollbar">
-            {children}
+          {children}
         </div>
 
         {/* Footer */}
         {footer && (
-            <div className="p-4 border-t border-brand-mint/20 dark:border-white/5 bg-brand-mint/5 dark:bg-black/10 rounded-b-3xl flex-shrink-0">
-                {footer}
-            </div>
+          <div className="p-4 border-t border-brand-mint/20 dark:border-white/5 bg-brand-mint/5 dark:bg-black/10 rounded-b-3xl flex-shrink-0">
+            {footer}
+          </div>
         )}
       </div>
     </div>

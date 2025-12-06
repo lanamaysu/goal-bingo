@@ -1,4 +1,3 @@
-
 import '@testing-library/jest-dom';
 
 // Polyfill for matchMedia which is not present in JSDOM

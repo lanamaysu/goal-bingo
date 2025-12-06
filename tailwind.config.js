@@ -1,24 +1,25 @@
-
 /** @type {import('tailwindcss').Config} */
 // Helper to support Tailwind opacity modifiers with CSS variables
-const withOpacity = (variable) => ({ opacityValue }) => {
-  if (opacityValue !== undefined) {
-    return `rgb(var(${variable}) / ${opacityValue})`;
-  }
-  return `rgb(var(${variable}))`;
-};
+const withOpacity =
+  (variable) =>
+  ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgb(var(${variable}) / ${opacityValue})`;
+    }
+    return `rgb(var(${variable}))`;
+  };
 
 export default {
   content: [
-    "./index.html",
-    "./App.tsx",
-    "./index.tsx",
-    "./components/**/*.{ts,tsx}",
-    "./views/**/*.{ts,tsx}",
-    "./contexts/**/*.{ts,tsx}",
-    "./hooks/**/*.{ts,tsx}",
-    "./utils/**/*.{ts,tsx}",
-    "./services/**/*.{ts,tsx}",
+    './index.html',
+    './App.tsx',
+    './index.tsx',
+    './components/**/*.{ts,tsx}',
+    './views/**/*.{ts,tsx}',
+    './contexts/**/*.{ts,tsx}',
+    './hooks/**/*.{ts,tsx}',
+    './utils/**/*.{ts,tsx}',
+    './services/**/*.{ts,tsx}',
   ],
   darkMode: 'class',
   theme: {
@@ -40,14 +41,14 @@ export default {
           rust: withOpacity('--brand-rust'),
           purple: withOpacity('--brand-purple'),
           dark: withOpacity('--brand-dark'),
-          surface: withOpacity('--brand-surface')
+          surface: withOpacity('--brand-surface'),
         },
         tone: {
           teal: withOpacity('--tone-teal'),
           purple: withOpacity('--tone-purple'),
-          rust: withOpacity('--tone-rust')
+          rust: withOpacity('--tone-rust'),
         },
-        accent: withOpacity('--accent')
+        accent: withOpacity('--accent'),
       },
       keyframes: {
         fadeIn: {
@@ -57,13 +58,13 @@ export default {
         fadeInOpacity: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
-        }
+        },
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'fade-in-opacity': 'fadeInOpacity 0.3s ease-out',
-      }
+      },
     },
   },
   plugins: [],
-}
+};

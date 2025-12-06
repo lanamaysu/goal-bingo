@@ -1,10 +1,9 @@
-
 import { User, Goal, GameConfig } from '../types';
 
 export const validatePersonalSetup = (user: User, userGoals: Goal[]): string | null => {
   // 1. Check Penalty
   if (!user.individualPenalty || !user.individualPenalty.trim()) {
-    return "請填寫您的「個人懲罰」項目。";
+    return '請填寫您的「個人懲罰」項目。';
   }
 
   // 2. Check Goals
@@ -31,7 +30,7 @@ export const validateGroupSetup = (config: GameConfig): string | null => {
   if (config.totalPlayers === 1) return null;
 
   if (!config.groupPenalty || !config.groupPenalty.trim()) {
-    return "請設定「團體懲罰」項目。";
+    return '請設定「團體懲罰」項目。';
   }
   return null;
 };

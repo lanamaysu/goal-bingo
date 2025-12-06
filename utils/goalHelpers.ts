@@ -1,65 +1,112 @@
-
 import { Goal, GameConfig } from '../types';
 import { GoalSuggestion } from '../services/geminiService';
 
-export const applySuggestionsToGoals = (
-  currentGoals: Goal[], 
-  suggestions: GoalSuggestion[], 
+const HABIT_DEFAULT_TOTAL = 52;
+
+export const isGoalEmpty = (goal: Goal): boolean => {
+  return !goal.title || !goal.title.trim() || goal.title.includes('(點擊設定目標)');
+};
+
+const buildGoalFromSuggestion = (
+  goal: Goal,
+  suggestion: GoalSuggestion,
   config: GameConfig
-): Goal[] => {
+): Goal => {
   const activeMonths = config.activeMonths || 12;
-  let updatedGoals = [...currentGoals];
 
-  suggestions.forEach((sug, i) => {
-    // Only update if within bounds of existing goals (e.g. user selects 3 suggestions but has 3 slots)
-    if (i < updatedGoals.length) {
-      
-      // Recalculate total if habit
-      let finalTargetCount = sug.totalCount || 52;
-      const freq = sug.frequency || 'weekly';
-      const periodCount = sug.periodCount || 1;
+  const frequency = suggestion.frequency || 'weekly';
+  const periodCount = suggestion.periodCount || 1;
+  let finalTargetCount = suggestion.totalCount || HABIT_DEFAULT_TOTAL;
 
-      if (sug.type === 'habit') {
-        if (freq === 'weekly') finalTargetCount = Math.round((activeMonths / 12) * 52) * periodCount;
-        if (freq === 'monthly') finalTargetCount = activeMonths * periodCount;
-      }
+  if (suggestion.type === 'habit') {
+    if (frequency === 'weekly') {
+      finalTargetCount = Math.round((activeMonths / 12) * HABIT_DEFAULT_TOTAL) * periodCount;
+    }
+    if (frequency === 'monthly') {
+      finalTargetCount = activeMonths * periodCount;
+    }
+  }
 
-      // Helper to generate description text
-      let desc = `${sug.description}\n\n[計分方式]: ${sug.breakdown}`;
-      if (sug.type === 'habit') {
-        const freqMap: Record<string, string> = { 'weekly': '每週', 'monthly': '每月', 'yearly': '每年' };
-        const freqStr = freqMap[freq] || '每週';
-        desc += `\n[頻率目標]: ${freqStr} ${periodCount}${sug.unit} (約 ${finalTargetCount} ${sug.unit}/年)`;
-      }
+  let description = `${suggestion.description}\n\n[計分方式]: ${suggestion.breakdown}`;
+  if (suggestion.type === 'habit') {
+    const freqMap: Record<string, string> = { weekly: '每週', monthly: '每月', yearly: '每年' };
+    const freqLabel = freqMap[frequency] || '每週';
+    description += `\n[頻率目標]: ${freqLabel} ${periodCount}${suggestion.unit || '次'} (約 ${finalTargetCount} ${suggestion.unit || '次'}/年)`;
+  }
 
-      // Create the new structure object
-      const newStructure = {
-        type: sug.type,
-        bonusPoints: 0,
-        ...(sug.type === 'habit' ? {
-            frequency: freq, 
-            periodCount: periodCount,
-            targetCount: finalTargetCount,
-            currentCount: 0,
-            unit: sug.unit || '次'
-        } : {
-            milestones: [
-                { id: 'm1', title: '階段 1', points: 20, isCompleted: false },
-                { id: 'm2', title: '階段 2', points: 30, isCompleted: false },
-                { id: 'm3', title: '完成', points: 50, isCompleted: false },
-            ]
-        })
-      };
+  const structure =
+    suggestion.type === 'habit'
+      ? {
+          type: suggestion.type,
+          bonusPoints: 0,
+          frequency,
+          periodCount,
+          targetCount: finalTargetCount,
+          currentCount: 0,
+          unit: suggestion.unit || '次',
+        }
+      : {
+          type: suggestion.type,
+          bonusPoints: 0,
+          milestones: [
+            { id: 'm1', title: '階段 1', points: 20, isCompleted: false },
+            { id: 'm2', title: '階段 2', points: 30, isCompleted: false },
+            { id: 'm3', title: '完成', points: 50, isCompleted: false },
+          ],
+        };
 
-      updatedGoals[i] = {
-        ...updatedGoals[i],
-        title: sug.title,
-        description: desc,
-        targetScore: sug.targetScore,
-        structure: newStructure
-      };
+  return {
+    ...goal,
+    title: suggestion.title,
+    description,
+    targetScore: suggestion.targetScore,
+    structure,
+  };
+};
+
+export interface ApplySuggestionResult {
+  updatedGoals: Goal[];
+  pending: GoalSuggestion[];
+}
+
+export const applySuggestionsToGoals = (
+  currentGoals: Goal[],
+  suggestions: GoalSuggestion[],
+  config: GameConfig
+): ApplySuggestionResult => {
+  const updatedGoals = [...currentGoals];
+  const emptyIndices = updatedGoals.reduce<number[]>((list, goal, index) => {
+    if (isGoalEmpty(goal)) list.push(index);
+    return list;
+  }, []);
+
+  const pending: GoalSuggestion[] = [];
+  const emptyQueue = [...emptyIndices];
+
+  suggestions.forEach((suggestion) => {
+    if (emptyQueue.length > 0) {
+      const targetIndex = emptyQueue.shift()!;
+      updatedGoals[targetIndex] = buildGoalFromSuggestion(
+        updatedGoals[targetIndex],
+        suggestion,
+        config
+      );
+    } else {
+      pending.push(suggestion);
     }
   });
 
+  return { updatedGoals, pending };
+};
+
+export const replaceGoalWithSuggestion = (
+  currentGoals: Goal[],
+  index: number,
+  suggestion: GoalSuggestion,
+  config: GameConfig
+): Goal[] => {
+  if (index < 0 || index >= currentGoals.length) return currentGoals;
+  const updatedGoals = [...currentGoals];
+  updatedGoals[index] = buildGoalFromSuggestion(updatedGoals[index], suggestion, config);
   return updatedGoals;
 };

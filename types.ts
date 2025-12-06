@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   name: string;
@@ -20,16 +19,16 @@ export interface Milestone {
 export interface GoalStructure {
   type: GoalType;
   // For Habit (Recurring)
-  frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly'; 
+  frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   periodCount?: number; // New: N times per period (e.g., 3 times per week)
   targetCount?: number; // Total occurrences needed for 100 pts (Calculated)
   exemptionCount?: number; // New: Number of periods allowed to skip (e.g. 2 weeks)
   currentCount?: number;
   unit?: string; // e.g. "次", "小時", "篇"
-  
+
   // For Step (Phase)
   milestones?: Milestone[];
-  
+
   // Bonus
   bonusPoints?: number; // Points added ON TOP of the calculated score
 }
@@ -40,7 +39,7 @@ export interface Goal {
   title: string;
   description: string;
   targetScore: number; // Standard is 100
-  currentScore: number; 
+  currentScore: number;
   structure?: GoalStructure; // New field for structured tracking
   logs: Log[];
   lastUpdated?: number; // Timestamp for sync merging

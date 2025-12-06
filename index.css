@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,17 +5,17 @@
 /* Brand color CSS variables (runtime themeable) */
 :root {
   /* Store RGB triplets for Tailwind opacity support */
-  --brand-mint: 244 246 244;    /* Neutral Light Background */
-  --brand-teal: 74 133 126;     /* Vintage Teal (Text, Borders, Secondary) */
-  --brand-petrol: 31 62 77;     /* Deep Petrol (Primary Text) */
-  --brand-rust: 176 74 46;      /* Dark Rust (Alerts) */
-  --brand-purple: 106 76 120;   /* Deep Vintage Purple */
-  --brand-dark: 17 25 30;       /* Deep Dark BG */
-  --brand-surface: 30 44 52;    /* Dark Mode Surface */
-  --tone-teal: 74 133 126;      /* Base teal tone */
-  --tone-purple: 106 76 120;    /* Base purple tone */
-  --tone-rust: 176 74 46;       /* Base rust tone */
-  --accent: 74 133 126;         /* Accent defaults to teal */
+  --brand-mint: 244 246 244; /* Neutral Light Background */
+  --brand-teal: 74 133 126; /* Vintage Teal (Text, Borders, Secondary) */
+  --brand-petrol: 31 62 77; /* Deep Petrol (Primary Text) */
+  --brand-rust: 176 74 46; /* Dark Rust (Alerts) */
+  --brand-purple: 106 76 120; /* Deep Vintage Purple */
+  --brand-dark: 17 25 30; /* Deep Dark BG */
+  --brand-surface: 30 44 52; /* Dark Mode Surface */
+  --tone-teal: 74 133 126; /* Base teal tone */
+  --tone-purple: 106 76 120; /* Base purple tone */
+  --tone-rust: 176 74 46; /* Base rust tone */
+  --accent: 74 133 126; /* Accent defaults to teal */
 }
 
 /* Custom Scrollbar for BaseModal & Others */
