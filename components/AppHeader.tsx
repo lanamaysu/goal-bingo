@@ -57,7 +57,7 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
 
         <button 
           onClick={onCreateYear} 
-          className="hidden sm:flex p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 dark:text-gray-300 transition-all items-center justify-center flex-shrink-0"
+          className="flex p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 dark:text-gray-300 transition-all items-center justify-center flex-shrink-0"
         >
           <span className="material-symbols-outlined text-[20px]">add</span>
         </button>
@@ -65,12 +65,12 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
       
       <div className="flex items-center gap-1.5 sm:gap-3 justify-end flex-shrink-0">
         {isValidating ? (
-          <div className="hidden sm:flex items-center gap-1.5 text-xs text-brand-rust font-medium bg-brand-rust/10 px-2 py-1 rounded-full whitespace-nowrap">
+          <div className="flex items-center gap-1.5 text-xs text-brand-rust font-medium bg-brand-rust/10 px-2 py-1 rounded-full whitespace-nowrap">
             <Loading size="text-[14px]" />
-            <span className="hidden sm:inline">Syncing</span>
+            <span className="inline">Syncing</span>
           </div>
         ) : (
-          <div className="hidden sm:flex text-brand-teal/50 items-center flex-shrink-0" title="已同步">
+          <div className="flex text-brand-teal/50 items-center flex-shrink-0" title="已同步">
             <span className="material-symbols-outlined text-[14px]">cloud_done</span>
           </div>
         )}
@@ -79,14 +79,11 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
         <div className={`hidden sm:block text-xs px-3 py-1.5 rounded-full border border-brand-petrol/20 dark:border-brand-mint/20 font-bold bg-white/50 dark:bg-black/20 whitespace-nowrap`}>
           {currentUserName}
         </div>
-        {/* Compact account icon for mobile */}
-        <div className="sm:hidden text-brand-teal/70 flex-shrink-0" title={currentUserName}>
-          <span className="material-symbols-outlined text-[20px]">account_circle</span>
-        </div>
+        {/* Compact account icon removed for mobile; show sync status only */}
         
         <button 
           onClick={onToggleTheme} 
-          className="p-2 rounded-lg text-gray-500 dark:text-brand-teal transition-colors flex items-center justify-center flex-shrink-0"
+          className="hidden sm:flex p-2 rounded-lg text-gray-500 dark:text-brand-teal transition-colors items-center justify-center flex-shrink-0"
         >
           <span className="material-symbols-outlined text-[20px]">
             {isDarkTheme ? 'light_mode' : 'dark_mode'}

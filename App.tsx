@@ -223,12 +223,20 @@ const AppContent: React.FC = () => {
         />
       )}
 
-      <SyncModal 
-        isOpen={isSyncOpen}
-        onClose={() => setIsSyncOpen(false)}
-        gameState={game.gameState}
-        onImport={(s) => game.saveAndSync(s)}
-      />
+            <SyncModal 
+                isOpen={isSyncOpen}
+                onClose={() => setIsSyncOpen(false)}
+                gameState={game.gameState}
+                onImport={(s) => game.saveAndSync(s)}
+                isDarkTheme={theme === 'dark'}
+                onToggleTheme={toggleTheme}
+                currentUserName={game.currentUser?.name || ''}
+                onUpdateUserName={(name) => {
+                    if (!game.gameState || !game.currentUser) return;
+                    const updatedUsers = game.gameState.users.map(u => u.id === game.currentUser!.id ? { ...u, name } : u);
+                    game.saveAndSync({ ...game.gameState, users: updatedUsers });
+                }}
+            />
 
       {isCreatingYear && (
           <div className="fixed inset-0 bg-brand-petrol/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">

@@ -7,16 +7,22 @@ import { Input, Button } from './common/FormElements';
 import { Loading } from './common/Loading';
 
 interface SyncModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  gameState: GameState;
-  onImport: (newState: GameState) => void;
+    isOpen: boolean;
+    onClose: () => void;
+    gameState: GameState;
+    onImport: (newState: GameState) => void;
+    // Mobile: Move theme and name controls into global settings
+    isDarkTheme: boolean;
+    onToggleTheme: () => void;
+    currentUserName: string;
+    onUpdateUserName: (name: string) => void;
 }
 
-const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImport }) => {
+const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImport, isDarkTheme, onToggleTheme, currentUserName, onUpdateUserName }) => {
   const [sheetUrl, setUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
+    const [displayName, setDisplayName] = useState('');
   
   const [inviteLink, setInviteLink] = useState('');
   const [syncStatus, setSyncStatus] = useState<{type: 'success' | 'error' | 'loading', msg: string} | null>(null);
@@ -34,6 +40,9 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
         // Load API Key
         const key = localStorage.getItem('bingoGeminiApiKey') || '';
         setApiKey(key);
+
+        // Load current display name
+        setDisplayName(currentUserName || '');
 
         setSyncStatus(null);
     }
@@ -54,6 +63,10 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
   const handleSaveSettings = () => {
       localStorage.setItem('bingoGlobalSheetUrl', sheetUrl);
       localStorage.setItem('bingoGeminiApiKey', apiKey);
+      // Update display name if changed
+      if (displayName && displayName !== currentUserName) {
+          onUpdateUserName(displayName);
+      }
       onClose();
   };
 
@@ -80,6 +93,29 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
         }
     >
         <div className="space-y-8">
+                {/* 0. Personal & Appearance Section */}
+                <div className="space-y-4">
+                      <h4 className="font-bold text-brand-petrol dark:text-brand-mint text-sm border-b border-brand-teal/20 pb-2 flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[18px]">person</span>
+                          外觀與個人
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                         <div className="flex items-center justify-between p-3 rounded-xl border border-brand-teal/20 bg-white/50 dark:bg-black/20">
+                             <div className="text-xs text-brand-teal font-bold">深色模式</div>
+                             <Button onClick={onToggleTheme} className="px-3 py-1 text-xs h-auto">
+                                 {isDarkTheme ? '切換為淺色' : '切換為深色'}
+                             </Button>
+                         </div>
+                         <div>
+                             <Input 
+                                label="顯示名稱"
+                                value={displayName}
+                                onChange={(e) => setDisplayName(e.target.value)}
+                                placeholder="輸入你的名稱..."
+                             />
+                         </div>
+                      </div>
+                </div>
             
             {/* 1. Sync & Data Section */}
             <div className="space-y-4">
