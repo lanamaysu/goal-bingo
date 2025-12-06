@@ -7,6 +7,7 @@ import SetupInstructionsModal from './components/SetupInstructionsModal';
 import JoinTeamModal from './components/JoinTeamModal';
 import GameConfigModal from './components/GameConfigModal';
 import AlertDialog from './components/common/AlertDialog';
+import AppHeader from './components/AppHeader';
 import { APPS_SCRIPT_TEMPLATE } from './utils/constants';
 
 // Context & Hooks
@@ -78,11 +79,6 @@ const AppContent: React.FC = () => {
       game.initializeConfig(config);
       setIsConfiguring(false);
   };
-
-  // Compute available years
-  const yearOptions = Array.from(new Set([...game.availableYears, game.activeYear]))
-        .filter(y => y)
-        .sort().reverse();
 
   // --- Render Logic (State Based Routing) ---
 
@@ -197,68 +193,17 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-brand-mint/30 dark:bg-brand-dark pb-20 transition-colors duration-300 text-brand-petrol dark:text-brand-mint will-change-contents" style={{ minHeight: '100dvh' }}>
       {/* Header */}
-            <header className="px-3 sm:px-4 py-2 bg-white/80 dark:bg-brand-surface/90 backdrop-blur-none md:backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-brand-teal/20 flex items-center justify-between transform-gpu will-change-[transform]">
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="bg-brand-petrol text-brand-mint p-1.5 rounded-lg shadow-sm flex items-center justify-center">
-                <span className="material-symbols-outlined text-[20px]">track_changes</span>
-            </div>
-            <h1 className="text-xl font-black text-brand-petrol dark:text-brand-mint hidden md:block tracking-tight">GOAL BINGO</h1>
-            
-            <div className="relative group">
-                <select 
-                  value={game.activeYear} 
-                  onChange={(e) => game.setActiveYear(e.target.value)}
-                  className="bg-brand-mint/50 dark:bg-brand-dark/50 text-brand-petrol dark:text-brand-mint text-sm font-bold py-1.5 pl-3 pr-8 rounded-lg cursor-pointer outline-none hover:bg-brand-mint dark:hover:bg-brand-dark transition-colors appearance-none"
-                >
-                  {yearOptions.map(y => (
-                      <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 flex items-center">
-                    <span className="material-symbols-outlined text-[14px]">expand_more</span>
-                </div>
-            </div>
-
-             <button onClick={() => setIsCreatingYear(true)} className="hidden sm:flex p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-brand-mint hover:text-brand-petrol dark:hover:bg-brand-mint/20 transition-all items-center justify-center">
-                <span className="material-symbols-outlined text-[20px]">add</span>
-             </button>
-        </div>
-        
-        <div className="flex items-center gap-1.5 sm:gap-3 justify-end">
-            {game.isValidating ? (
-                <div className="hidden sm:flex items-center gap-1.5 text-xs text-brand-rust font-medium bg-brand-rust/10 px-2 py-1 rounded-full">
-                    <Loading size="text-[14px]" />
-                    <span className="hidden sm:inline">Syncing</span>
-                </div>
-            ) : (
-                 <div className="hidden sm:flex text-brand-teal/50 items-center" title="已同步">
-                    <span className="material-symbols-outlined text-[14px]">cloud_done</span>
-                 </div>
-            )}
-            
-            {/* Username pill hidden on small screens to save space */}
-            <div className={`hidden sm:block text-xs px-3 py-1.5 rounded-full border border-brand-petrol/20 dark:border-brand-mint/20 font-bold bg-white/50 dark:bg-black/20`}>
-                {game.currentUser.name}
-            </div>
-            {/* Compact account icon for mobile */}
-            <div className="sm:hidden text-brand-teal/70" title={game.currentUser.name}>
-                <span className="material-symbols-outlined text-[20px]">account_circle</span>
-            </div>
-            
-            <button onClick={toggleTheme} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-brand-teal transition-colors flex items-center justify-center">
-                <span className="material-symbols-outlined text-[20px]">
-                    {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-                </span>
-            </button>
-
-            <button 
-                onClick={() => setIsSyncOpen(true)}
-                className="p-2 bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-brand-mint dark:hover:bg-brand-mint/20 text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center"
-            >
-                <span className="material-symbols-outlined text-[20px]">settings</span>
-            </button>
-        </div>
-      </header>
+            <AppHeader
+              activeYear={game.activeYear}
+              availableYears={game.availableYears}
+              onYearChange={game.setActiveYear}
+              isValidating={game.isValidating}
+              currentUserName={game.currentUser.name}
+              isDarkTheme={theme === 'dark'}
+              onToggleTheme={toggleTheme}
+              onOpenSettings={() => setIsSyncOpen(true)}
+              onCreateYear={() => setIsCreatingYear(true)}
+            />
 
       {/* Main Content: NO PROPS NEEDED HERE ANYMORE! */}
       <main className="pt-8 container mx-auto px-4 md:px-6 max-w-5xl">

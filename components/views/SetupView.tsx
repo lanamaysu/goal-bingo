@@ -54,7 +54,9 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
         const updated = updatedUserGoals.find(ug => ug.id === g.id);
         return updated || g;
     });
-    updateGameStateLocal({ ...gameState, goals: newGoals });
+    const updatedGameState = { ...gameState, goals: newGoals };
+    updateGameStateLocal(updatedGameState);
+    saveAndSync(updatedGameState);
   };
 
   const handleApplyPenalty = (penalty: string) => {
@@ -150,7 +152,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
             <button 
                 onClick={handleToggleReady}
                 disabled={isValidating}
-                className={`w-full py-4 rounded-2xl font-bold text-white transition-all transform active:scale-95 shadow-lg flex items-center justify-center gap-2
+                className={`w-full py-4 rounded-2xl font-bold text-white transition-colors shadow-lg flex items-center justify-center gap-2
                     ${currentUser.isReady ? 'bg-brand-teal hover:bg-brand-teal/80' : 'bg-brand-petrol hover:bg-brand-petrol/90'}
                     ${isValidating ? 'opacity-70 cursor-not-allowed' : ''}
                 `}
@@ -177,7 +179,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                 <div className="pt-6 border-t border-brand-teal/10 animate-fade-in">
                      <button 
                         onClick={handleStartGameClick}
-                        className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-lg hover:shadow-lg transition-shadow flex items-center justify-center gap-2"
                     >
                         <span className="material-symbols-outlined text-[20px]">lock</span> 鎖定目標，開始個人挑戰！
                     </button>
@@ -187,7 +189,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
         </div>
 
         {!isSolo && (
-            <div className={`space-y-6 transition-opacity duration-500 ${allReady ? 'opacity-100' : 'opacity-60 grayscale-[0.5] pointer-events-none'}`}>
+            <div className={`space-y-6 transition-opacity duration-300 ${allReady ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold text-brand-petrol dark:text-brand-mint flex items-center gap-2">
                         <span className="material-symbols-outlined text-[24px] text-brand-teal">group</span> 團體設定
@@ -236,7 +238,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                     <div className="pt-6 border-t border-brand-teal/10">
                         <button 
                             onClick={handleStartGameClick}
-                            className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-lg hover:shadow-lg transition-shadow flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined text-[20px]">lock</span> 鎖定目標，開始遊戲！
                         </button>

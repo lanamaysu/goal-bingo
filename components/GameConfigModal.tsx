@@ -119,7 +119,7 @@ const GameConfigModal: React.FC<GameConfigModalProps> = ({ year, onConfirm, onCa
                 </div>
             </div>
 
-            <div className={`bg-brand-teal/5 dark:bg-brand-teal/10 p-4 rounded-xl border border-brand-teal/20 transition-all ${isSolo ? 'opacity-50 grayscale' : ''}`}>
+            <div className={`bg-brand-teal/5 dark:bg-brand-teal/10 p-4 rounded-xl border border-brand-teal/20 transition-opacity ${isSolo ? 'opacity-50' : ''}`}>
                 <div className="flex justify-between items-center mb-2">
                     <label className="block text-sm font-bold text-brand-teal dark:text-brand-mint">有效月份 (計分週期)</label>
                     {isSolo && <span className="text-[10px] bg-brand-teal text-brand-mint px-2 py-0.5 rounded">單人全年度</span>}
