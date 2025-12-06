@@ -78,16 +78,16 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 }) => {
     const variants = {
         // Primary: Deep Petrol in Light (contrast against white/mint), Teal in Dark (contrast against Petrol Surface)
-        primary: "bg-brand-petrol text-white hover:bg-brand-petrol/90 shadow-lg dark:bg-brand-teal dark:text-white dark:hover:bg-brand-teal/90 dark:shadow-md",
+        primary: "bg-brand-petrol text-white shadow-lg dark:bg-brand-teal dark:text-white dark:shadow-md",
         
         // Secondary: Outline style. Clearly distinguished from Primary.
-        secondary: "bg-white border-2 border-brand-teal/30 text-brand-petrol hover:bg-brand-mint/20 hover:border-brand-teal/50 dark:bg-transparent dark:border-brand-mint/30 dark:text-brand-mint dark:hover:bg-white/5 dark:hover:border-brand-mint/50",
+        secondary: "bg-white border-2 border-brand-teal/30 text-brand-petrol dark:bg-transparent dark:border-brand-mint/30 dark:text-brand-mint",
         
         // Danger: Rust colors. UPDATED: White background in light mode.
-        danger: "bg-white border-2 border-brand-rust/20 text-brand-rust hover:bg-brand-rust hover:text-white hover:border-brand-rust dark:bg-brand-rust/20 dark:text-orange-200 dark:border-brand-rust/40",
+        danger: "bg-white border-2 border-brand-rust/20 text-brand-rust dark:bg-brand-rust/20 dark:text-orange-200 dark:border-brand-rust/40",
         
         // Ghost: Transparent
-        ghost: "bg-transparent text-brand-teal hover:text-brand-petrol hover:bg-brand-mint/10 dark:text-brand-mint dark:hover:bg-white/10"
+        ghost: "bg-transparent text-brand-teal dark:text-brand-mint"
     };
 
     return (

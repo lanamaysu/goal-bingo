@@ -80,7 +80,7 @@ const SetupInstructionsModal: React.FC<SetupInstructionsModalProps> = ({ isOpen,
                 </pre>
                 <button 
                     onClick={handleCopy}
-                    className="absolute top-2 right-2 bg-white text-brand-petrol hover:bg-brand-mint px-3 py-1 rounded text-xs font-bold shadow transition-all flex items-center gap-1"
+                    className="absolute top-2 right-2 bg-white text-brand-petrol px-3 py-1 rounded text-xs font-bold shadow transition-all flex items-center gap-1"
                 >
                     {copied ? (
                         <>

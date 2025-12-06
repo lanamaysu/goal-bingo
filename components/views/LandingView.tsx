@@ -21,9 +21,9 @@ const LandingView: React.FC<LandingViewProps> = ({ onJoinTeam, onCreateTeam }) =
       <div className="space-y-4">
         <button 
           onClick={onJoinTeam}
-          className="w-full py-4 bg-white dark:bg-brand-dark border-2 border-brand-mint dark:border-brand-teal/30 hover:border-brand-teal text-brand-petrol dark:text-brand-mint font-bold rounded-2xl transition-all flex items-center justify-center gap-3 group"
+          className="w-full py-4 bg-white dark:bg-brand-dark border-2 border-brand-mint dark:border-brand-teal/30 text-brand-petrol dark:text-brand-mint font-bold rounded-2xl transition-all flex items-center justify-center gap-3 group"
         >
-          <span className="material-symbols-outlined text-[20px] text-brand-teal group-hover:text-brand-petrol transition-colors">group</span>
+          <span className="material-symbols-outlined text-[20px] text-brand-teal transition-colors">group</span>
           加入現有隊伍
         </button>
         
@@ -34,7 +34,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onJoinTeam, onCreateTeam }) =
 
         <button 
           onClick={onCreateTeam}
-          className="w-full py-4 bg-brand-petrol text-white font-bold rounded-2xl hover:bg-brand-petrol/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-3"
+          className="w-full py-4 bg-brand-petrol text-white font-bold rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3"
         >
           <span className="material-symbols-outlined text-[20px]">add_circle</span>
           建立新隊伍

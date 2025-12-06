@@ -88,7 +88,7 @@ const RegisterView: React.FC<RegisterViewProps> = ({
                                 ${theme.badge} 
                                 ${selectedColorId === theme.id 
                                     ? `scale-110 ring-4 ring-offset-2 ring-offset-white dark:ring-offset-brand-surface ${theme.ring}` 
-                                    : 'opacity-70 hover:opacity-100 border-transparent hover:scale-105'}
+                                    : 'opacity-70 border-transparent'}
                             `}
                          >
                             {selectedColorId === theme.id && (

@@ -77,8 +77,8 @@ const BaseModal: React.FC<BaseModalProps> = ({
                 </div>
                 {!hideCloseButton && (
                     <button 
-                        onClick={onClose} 
-                        className="flex-shrink-0 p-1 rounded-full text-brand-teal hover:bg-brand-mint/20 hover:text-brand-petrol transition-colors"
+                      onClick={onClose} 
+                      className="flex-shrink-0 p-1 rounded-full text-brand-teal transition-colors"
                     >
                         <span className="material-symbols-outlined text-[24px]">close</span>
                     </button>

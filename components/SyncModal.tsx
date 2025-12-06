@@ -100,7 +100,7 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
                             type="button"
                             onClick={handleManualSync} 
                             disabled={syncStatus?.type === 'loading' || !sheetUrl}
-                            className="text-xs text-brand-teal hover:underline font-bold disabled:opacity-50 flex items-center gap-1"
+                            className="text-xs text-brand-teal font-bold disabled:opacity-50 flex items-center gap-1"
                         >
                             {syncStatus?.type === 'loading' ? (
                                 <Loading text="同步中..." size="text-[14px]" />
@@ -152,7 +152,7 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
                 </h4>
                 <div className="bg-brand-purple/5 dark:bg-brand-purple/10 p-4 rounded-xl text-xs text-brand-purple dark:text-purple-200 border border-brand-purple/10">
                     <p className="mb-2">啟用 AI 輔助需要您自己的 API Key。</p>
-                    <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline font-bold flex items-center gap-1 hover:text-brand-petrol">
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline font-bold flex items-center gap-1">
                         前往 Google AI Studio 取得免費 Key <span className="material-symbols-outlined text-[12px]">open_in_new</span>
                     </a>
                 </div>
@@ -163,7 +163,7 @@ const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose, gameState, onImp
                     onChange={(e) => setApiKey(e.target.value)}
                     placeholder="AIzaSy..."
                     rightElement={
-                        <button onClick={() => setShowKey(!showKey)} className="hover:text-brand-petrol transition-colors">
+                        <button onClick={() => setShowKey(!showKey)} className="transition-colors">
                              <span className="material-symbols-outlined text-[20px]">{showKey ? 'visibility_off' : 'visibility'}</span>
                         </button>
                     }

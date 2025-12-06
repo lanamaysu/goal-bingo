@@ -122,7 +122,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                   </h3>
                   <button 
                     onClick={() => setBrainstormUser(currentUser)}
-                    className="text-xs bg-brand-purple/15 text-brand-purple dark:text-purple-200 border border-brand-purple/30 px-3 py-1.5 rounded-full hover:bg-brand-purple/25 transition-colors font-bold flex items-center gap-1 shadow-sm"
+                    className="text-xs bg-brand-purple/15 text-brand-purple dark:text-purple-200 border border-brand-purple/30 px-3 py-1.5 rounded-full transition-colors font-bold flex items-center gap-1 shadow-sm"
                 >
                     <span className="material-symbols-outlined text-[12px]">auto_awesome</span> AI 靈感
                 </button>
@@ -142,7 +142,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
             <div className="bg-white dark:bg-brand-surface p-5 rounded-2xl border border-brand-teal/20 shadow-sm">
                 <div className="flex justify-between items-center mb-3">
                       <label className="text-sm font-bold text-brand-teal">個人懲罰 (若未達成)</label>
-                      <button onClick={() => setBrainstormPenalty({type: 'individual', user: currentUser})} className="text-xs text-brand-purple bg-brand-purple/15 px-2 py-1 rounded hover:bg-brand-purple/25 border border-brand-purple/30 text-brand-purple flex items-center gap-1 shadow-sm font-bold">
+                      <button onClick={() => setBrainstormPenalty({type: 'individual', user: currentUser})} className="text-xs text-brand-purple bg-brand-purple/15 px-2 py-1 rounded border border-brand-purple/30 text-brand-purple flex items-center gap-1 shadow-sm font-bold">
                           <span className="material-symbols-outlined text-[12px]">lightbulb</span> 發想
                       </button>
                 </div>
@@ -161,7 +161,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                 onClick={handleToggleReady}
                 disabled={isValidating}
                 className={`w-full py-4 rounded-2xl font-bold text-white transition-colors shadow-lg flex items-center justify-center gap-2
-                    ${currentUser.isReady ? 'bg-brand-teal hover:bg-brand-teal/80' : 'bg-brand-petrol hover:bg-brand-petrol/90'}
+                    ${currentUser.isReady ? 'bg-brand-teal' : 'bg-brand-petrol'}
                     ${isValidating ? 'opacity-70 cursor-not-allowed' : ''}
                 `}
             >
@@ -187,7 +187,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                 <div className="pt-6 border-t border-brand-teal/10 animate-fade-in">
                      <button 
                         onClick={handleStartGameClick}
-                        className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-lg hover:shadow-lg transition-shadow flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-lg transition-shadow flex items-center justify-center gap-2"
                     >
                         <span className="material-symbols-outlined text-[20px]">lock</span> 鎖定目標，開始個人挑戰！
                     </button>
@@ -209,7 +209,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                     <div>
                         <div className="flex justify-between mb-2">
                             <label className="text-sm font-bold text-brand-teal">團體懲罰 (全員未達標)</label>
-                            <button onClick={() => setBrainstormPenalty({type: 'group'})} className="text-xs text-brand-purple bg-brand-purple/15 px-2 py-1 rounded hover:bg-brand-purple/25 border border-brand-purple/30 text-brand-purple flex items-center gap-1 shadow-sm font-bold">
+                            <button onClick={() => setBrainstormPenalty({type: 'group'})} className="text-xs text-brand-purple bg-brand-purple/15 px-2 py-1 rounded border border-brand-purple/30 text-brand-purple flex items-center gap-1 shadow-sm font-bold">
                                 <span className="material-symbols-outlined text-[12px]">lightbulb</span> 發想
                             </button>
                         </div>
@@ -246,7 +246,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                     <div className="pt-6 border-t border-brand-teal/10">
                         <button 
                             onClick={handleStartGameClick}
-                            className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-lg hover:shadow-lg transition-shadow flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-lg transition-shadow flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined text-[20px]">lock</span> 鎖定目標，開始遊戲！
                         </button>
@@ -265,7 +265,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
              </div>
              <button 
                 onClick={() => setShowResetConfirm(true)}
-                className="px-4 py-2 bg-white dark:bg-brand-dark border border-brand-rust/30 text-brand-rust font-bold rounded-xl hover:bg-brand-rust hover:text-white transition-colors text-sm"
+                className="px-4 py-2 bg-white dark:bg-brand-dark border border-brand-rust/30 text-brand-rust font-bold rounded-xl transition-colors text-sm"
              >
                  重置設定
              </button>

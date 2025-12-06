@@ -44,7 +44,7 @@ const BingoGridCell = React.memo<GridCellProps>(({
       className={`
         relative rounded-2xl p-2 flex flex-col items-center justify-center text-center
         group overflow-hidden border-2 transform-gpu
-        ${isWinning ? 'ring-4 ring-brand-rust ring-offset-2 ring-offset-white dark:ring-offset-brand-surface z-10 md:shadow-xl' : 'hover:shadow-sm md:hover:shadow-md'}
+        ${isWinning ? 'ring-4 ring-brand-rust ring-offset-2 ring-offset-white dark:ring-offset-brand-surface z-10 md:shadow-xl' : ''}
         ${colorClasses}
         ${isComplete ? 'opacity-100' : 'opacity-90 dark:opacity-80'}
       `}

@@ -129,7 +129,7 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
                     <Button 
                         onClick={applySelectedGoals}
                         disabled={selectedGoalIndices.length === 0}
-                        className="bg-brand-purple hover:bg-brand-purple/90 border-transparent text-white"
+                        className="bg-brand-purple border-transparent text-white"
                     >
                         {selectedGoalIndices.length > 0 ? `套用 (${selectedGoalIndices.length})` : '請選擇'}
                     </Button>
@@ -159,7 +159,7 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
                 <Button 
                     onClick={handleGenerate}
                     disabled={loading || !keyword.trim()}
-                    className="whitespace-nowrap bg-brand-purple hover:bg-brand-purple/90 text-white shadow-none"
+                    className="whitespace-nowrap bg-brand-purple text-white shadow-none"
                 >
                     {loading ? '生成中...' : '發想'}
                 </Button>
@@ -179,7 +179,7 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
                         <div 
                             key={idx} 
                             onClick={() => toggleGoalSelection(idx)}
-                            className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${isSelected ? 'border-brand-purple bg-brand-purple/10' : 'border-brand-mint/20 bg-white dark:bg-black/20 dark:border-white/10 hover:border-brand-purple/50'}`}
+                            className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${isSelected ? 'border-brand-purple bg-brand-purple/10' : 'border-brand-mint/20 bg-white dark:bg-black/20 dark:border-white/10'}`}
                         >
                             <div className="flex justify-between items-start mb-1">
                                 <div className="flex items-center gap-2">

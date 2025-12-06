@@ -157,13 +157,13 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
                 <div className="fixed bottom-0 left-0 right-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-white/90 dark:bg-brand-dark/90 backdrop-blur-none md:backdrop-blur border-t border-brand-mint/20 flex justify-center gap-4 z-50 transform-gpu will-change-[transform]">
                     <button 
                         onClick={() => setShowPreview(false)} 
-                        className="px-6 py-3 bg-white dark:bg-brand-surface border border-brand-teal/30 text-brand-petrol dark:text-brand-mint font-bold rounded-xl hover:bg-brand-mint/20"
+                        className="px-6 py-3 bg-white dark:bg-brand-surface border border-brand-teal/30 text-brand-petrol dark:text-brand-mint font-bold rounded-xl"
                     >
                         返回修改
                     </button>
                     <button 
                         onClick={() => setShowConfirmLock(true)} 
-                        className="px-6 py-3 bg-brand-petrol text-white font-bold rounded-xl hover:bg-brand-petrol/90 shadow-lg flex items-center gap-2"
+                        className="px-6 py-3 bg-brand-petrol text-white font-bold rounded-xl shadow-lg flex items-center gap-2"
                     >
                         確認並鎖定結算 <span className="material-symbols-outlined text-[18px]">lock</span>
                     </button>
@@ -198,7 +198,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
             </div>
             <button 
                 onClick={() => setShowPreview(true)}
-                className="px-4 py-2 bg-brand-mint/20 text-brand-petrol dark:text-brand-mint border border-brand-mint/50 rounded-lg font-bold text-sm hover:bg-brand-mint/40 transition-colors flex items-center gap-1"
+                className="px-4 py-2 bg-brand-mint/20 text-brand-petrol dark:text-brand-mint border border-brand-mint/50 rounded-lg font-bold text-sm transition-colors flex items-center gap-1"
             >
                 <span className="material-symbols-outlined text-[16px]">visibility</span> 預覽結算
             </button>

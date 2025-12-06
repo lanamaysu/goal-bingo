@@ -15,7 +15,7 @@ const GoalListItem: React.FC<GoalListItemProps> = ({ goal, index, onClick }) => 
     <div 
       onClick={onClick}
       className={`
-        p-4 rounded-xl cursor-pointer transition-all hover:shadow-md border-2
+        p-4 rounded-xl cursor-pointer transition-all border-2
         ${isEmpty 
             ? 'bg-gray-50 dark:bg-white/5 border-dashed border-gray-300 dark:border-white/10' 
             : 'bg-white dark:bg-brand-surface border-solid border-brand-mint/30 dark:border-brand-teal/30'

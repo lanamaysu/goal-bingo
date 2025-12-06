@@ -323,7 +323,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                         {!isSetupPhase && canEdit && (
                             <button 
                                 onClick={() => setIsEditingSettings(!isEditingSettings)}
-                                className={`whitespace-nowrap px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${isEditingSettings ? 'bg-brand-rust/10 text-brand-rust' : 'bg-brand-mint/20 text-brand-teal'}`}
+                                className={`whitespace-nowrap px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors ${isEditingSettings ? 'bg-brand-rust/10 text-brand-rust' : 'bg-brand-mint/20 text-brand-teal'}`}
                             >
                                 <span className="material-symbols-outlined text-[16px]">{isEditingSettings ? 'close' : 'edit'}</span>
                                 {isEditingSettings ? '取消修改' : '修改設定'}
@@ -360,14 +360,14 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                         <div className="grid grid-cols-2 gap-3">
                             <button 
                                 onClick={() => setGoalType('habit')}
-                                className={`p-4 rounded-xl border-2 text-center transition-all flex flex-col items-center gap-2 ${goalType === 'habit' ? 'border-brand-teal bg-brand-teal/10 text-brand-petrol dark:text-brand-mint' : 'border-brand-mint/20 bg-white dark:bg-black/20 hover:border-brand-teal/50 dark:text-gray-400'}`}
+                                className={`p-4 rounded-xl border-2 text-center transition-colors flex flex-col items-center gap-2 ${goalType === 'habit' ? 'border-brand-teal bg-brand-teal/10 text-brand-petrol dark:text-brand-mint' : 'border-brand-mint/20 bg-white dark:bg-black/20 dark:text-gray-400'}`}
                             >
                                 <span className="material-symbols-outlined text-[24px] mb-1">calendar_today</span>
                                 <div className="font-bold text-sm">規律型</div>
                             </button>
                             <button 
                                 onClick={() => setGoalType('step')}
-                                className={`p-4 rounded-xl border-2 text-center transition-all flex flex-col items-center gap-2 ${goalType === 'step' ? 'border-brand-rust bg-brand-rust/10 text-brand-rust' : 'border-brand-mint/20 bg-white dark:bg-black/20 hover:border-brand-rust/50 dark:text-gray-400'}`}
+                                className={`p-4 rounded-xl border-2 text-center transition-colors flex flex-col items-center gap-2 ${goalType === 'step' ? 'border-brand-rust bg-brand-rust/10 text-brand-rust' : 'border-brand-mint/20 bg-white dark:bg-black/20 dark:text-gray-400'}`}
                             >
                                 <span className="material-symbols-outlined text-[24px] mb-1">flag</span>
                                 <div className="font-bold text-sm">階段型</div>
@@ -477,7 +477,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                                         />
                                     </div>
                                     {canEdit && (
-                                        <button onClick={() => removeMilestone(idx)} className="text-gray-400 hover:text-brand-rust px-1">
+                                        <button onClick={() => removeMilestone(idx)} className="text-gray-400 px-1">
                                             <span className="material-symbols-outlined text-[20px]">close</span>
                                         </button>
                                     )}
@@ -533,7 +533,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                         </div>
                     )}
                 </div>
-                <div className="absolute right-0 bottom-0 w-32 h-32 bg-brand-teal/20 rounded-full blur-2xl -mr-10 -mb-10 pointer-events-none"></div>
+                <div className="absolute right-0 bottom-0 w-32 h-32 bg-brand-teal/20 rounded-full -mr-10 -mb-10 pointer-events-none"></div>
             </div>
 
             {/* Tracking Interface */}
@@ -544,7 +544,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                             {canEdit && (
                                 <button 
                                     onClick={() => incrementHabit(-1)}
-                                    className="w-12 h-12 rounded-full bg-white dark:bg-brand-dark border-2 border-brand-teal/20 text-brand-teal hover:border-brand-teal hover:text-brand-petrol transition-all flex items-center justify-center flex-shrink-0"
+                                    className="w-12 h-12 rounded-full bg-white dark:bg-brand-dark border-2 border-brand-teal/20 text-brand-teal transition-all flex items-center justify-center flex-shrink-0"
                                 >
                                     <span className="material-symbols-outlined text-[20px]">remove</span>
                                 </button>
@@ -557,9 +557,9 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                                             type="number"
                                             value={currentCount.toString()}
                                             onChange={(e) => setCurrentCount(Math.max(0, parseInt(e.target.value) || 0))}
-                                            className="text-5xl font-black text-brand-petrol dark:text-white font-mono tracking-tighter bg-transparent text-center w-32 outline-none border-b-2 border-transparent focus:border-brand-teal/50 hover:border-brand-teal/20 transition-all"
+                                            className="text-5xl font-black text-brand-petrol dark:text-white font-mono tracking-tighter bg-transparent text-center w-32 outline-none border-b-2 border-transparent focus:border-brand-teal/50 transition-all"
                                          />
-                                         <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                         <div className="absolute top-0 right-0 opacity-0 transition-opacity pointer-events-none">
                                             <span className="material-symbols-outlined text-gray-400 text-[14px]">edit</span>
                                          </div>
                                     </div>
@@ -572,7 +572,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                             {canEdit && (
                                 <button 
                                     onClick={() => incrementHabit(1)}
-                                    className="w-20 h-20 rounded-full bg-brand-petrol text-brand-mint shadow-xl hover:bg-brand-petrol/90 hover:scale-105 transition-all flex items-center justify-center flex-shrink-0"
+                                    className="w-20 h-20 rounded-full bg-brand-petrol text-brand-mint shadow-lg transition-colors flex items-center justify-center flex-shrink-0 transform-gpu"
                                 >
                                     <span className="material-symbols-outlined text-[32px]">add</span>
                                 </button>
@@ -587,8 +587,8 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                 {goalType === 'step' && (
                     <div className="space-y-3">
                         {milestones.map((m) => (
-                            <label key={m.id} className={`flex items-center p-4 rounded-2xl border-2 transition-all ${m.isCompleted ? 'bg-brand-mint/20 border-brand-mint dark:bg-brand-mint/10' : 'bg-white dark:bg-brand-surface border-gray-100 dark:border-brand-dark'} ${canEdit ? 'cursor-pointer hover:border-brand-teal/30' : 'cursor-default'}`}>
-                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-3 transition-colors ${m.isCompleted ? 'bg-brand-mint border-brand-mint text-brand-petrol' : 'border-gray-300 dark:border-brand-teal/30'}`}>
+                            <label key={m.id} className={`flex items-center p-4 rounded-2xl border-2 transition-colors ${m.isCompleted ? 'bg-brand-mint/20 border-brand-mint dark:bg-brand-mint/10' : 'bg-white dark:bg-brand-surface border-gray-100 dark:border-brand-dark'} ${canEdit ? 'cursor-pointer' : 'cursor-default'}`}>
+                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-3 transition-colors flex-shrink-0 ${m.isCompleted ? 'bg-brand-mint border-brand-mint text-brand-petrol' : 'border-gray-300 dark:border-brand-teal/30'}`}>
                                     {m.isCompleted && <span className="material-symbols-outlined text-[16px]">check_circle</span>}
                                 </div>
                                 <input 
@@ -618,7 +618,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
                         <button 
                             onClick={fetchAdvice} 
                             disabled={loadingAi}
-                            className="text-xs bg-white dark:bg-brand-purple/20 text-brand-purple dark:text-purple-100 px-3 py-1.5 rounded-full shadow-sm hover:shadow"
+                            className="text-xs bg-white dark:bg-brand-purple/20 text-brand-purple dark:text-purple-100 px-3 py-1.5 rounded-full shadow-sm"
                         >
                             {loadingAi ? '思考中...' : '給點建議'}
                         </button>

@@ -39,7 +39,7 @@ const EmptyYearView: React.FC<EmptyYearViewProps> = ({ year, onSwitchYear, onIni
                      <button 
                         onClick={handleSwitch}
                         disabled={inputYear === year || inputYear.length !== 4}
-                        className="px-4 bg-white dark:bg-brand-dark border-2 border-brand-teal/20 text-brand-teal font-bold rounded-xl hover:border-brand-teal hover:text-brand-petrol dark:hover:text-brand-mint disabled:opacity-50 disabled:hover:border-brand-teal/20 transition-colors"
+                        className="px-4 bg-white dark:bg-brand-dark border-2 border-brand-teal/20 text-brand-teal font-bold rounded-xl disabled:opacity-50 transition-colors"
                      >
                         前往
                      </button>
@@ -54,10 +54,10 @@ const EmptyYearView: React.FC<EmptyYearViewProps> = ({ year, onSwitchYear, onIni
 
         <button 
           onClick={onInitialize}
-          className="w-full py-4 bg-brand-petrol text-white font-bold rounded-2xl hover:bg-brand-petrol/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex flex-col items-center group"
+          className="w-full py-4 bg-brand-petrol text-white font-bold rounded-2xl transition-all shadow-lg flex flex-col items-center group"
         >
           <span className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">auto_awesome</span> 
+              <span className="material-symbols-outlined text-[20px] transition-transform">auto_awesome</span> 
               建立 {year} 年度新遊戲
           </span>
           <span className="text-[10px] font-normal opacity-70 mt-1">設定人數與規則</span>

@@ -44,7 +44,7 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
           <select 
             value={activeYear} 
             onChange={(e) => onYearChange(e.target.value)}
-            className="bg-brand-mint/50 dark:bg-brand-dark/50 text-brand-petrol dark:text-brand-mint text-sm font-bold py-1.5 pl-3 pr-8 rounded-lg cursor-pointer outline-none hover:bg-brand-mint dark:hover:bg-brand-dark transition-colors appearance-none"
+            className="bg-brand-mint/50 dark:bg-brand-dark/50 text-brand-petrol dark:text-brand-mint text-sm font-bold py-1.5 pl-3 pr-8 rounded-lg cursor-pointer outline-none transition-colors appearance-none"
           >
             {yearOptions.map(y => (
               <option key={y} value={y}>{y}</option>
@@ -57,7 +57,7 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
 
         <button 
           onClick={onCreateYear} 
-          className="hidden sm:flex p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-brand-mint hover:text-brand-petrol dark:hover:bg-brand-mint/20 transition-all items-center justify-center flex-shrink-0"
+          className="hidden sm:flex p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 dark:text-gray-300 transition-all items-center justify-center flex-shrink-0"
         >
           <span className="material-symbols-outlined text-[20px]">add</span>
         </button>
@@ -86,7 +86,7 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
         
         <button 
           onClick={onToggleTheme} 
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500 dark:text-brand-teal transition-colors flex items-center justify-center flex-shrink-0"
+          className="p-2 rounded-lg text-gray-500 dark:text-brand-teal transition-colors flex items-center justify-center flex-shrink-0"
         >
           <span className="material-symbols-outlined text-[20px]">
             {isDarkTheme ? 'light_mode' : 'dark_mode'}
@@ -95,7 +95,7 @@ const AppHeader: React.FC<AppHeaderProps> = React.memo(({
 
         <button 
           onClick={onOpenSettings}
-          className="p-2 bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-brand-mint dark:hover:bg-brand-mint/20 text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center flex-shrink-0"
+          className="p-2 bg-gray-100 dark:bg-white/10 rounded-lg text-brand-petrol dark:text-brand-mint transition-colors flex items-center justify-center flex-shrink-0"
         >
           <span className="material-symbols-outlined text-[20px]">settings</span>
         </button>
