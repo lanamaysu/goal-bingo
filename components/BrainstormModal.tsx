@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { generateGoalSuggestions, generatePenaltySuggestions, GoalSuggestion } from '../services/geminiService';
 import BaseModal from './common/BaseModal';
 import { Input, Button } from './common/FormElements';
@@ -24,6 +24,9 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
   // State for Goals
   const [goalSuggestions, setGoalSuggestions] = useState<GoalSuggestion[]>([]);
   const [selectedGoalIndices, setSelectedGoalIndices] = useState<number[]>([]);
+  
+  // Memoize selectedGoalIndices as a Set for O(1) lookup instead of O(n) includes
+  const selectedIndicesSet = useMemo(() => new Set(selectedGoalIndices), [selectedGoalIndices]);
   
   // State for Penalties
   const [penaltySuggestions, setPenaltySuggestions] = useState<string[]>([]);
@@ -70,7 +73,8 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
 
   const toggleGoalSelection = (index: number) => {
       setSelectedGoalIndices(prev => {
-          if (prev.includes(index)) {
+          // Use Set for O(1) has check instead of O(n) includes
+          if (selectedIndicesSet.has(index)) {
               return prev.filter(i => i !== index);
           } else {
               if (prev.length >= maxSelectable) return prev; // Use dynamic limit
@@ -170,7 +174,7 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
             <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
                 {/* Goal Suggestions */}
                 {mode === 'goal' && goalSuggestions.map((s, idx) => {
-                    const isSelected = selectedGoalIndices.includes(idx);
+                    const isSelected = selectedIndicesSet.has(idx);
                     return (
                         <div 
                             key={idx} 

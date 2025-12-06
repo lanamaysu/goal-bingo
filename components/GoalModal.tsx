@@ -20,7 +20,9 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
   // Safe guard access
   if (!gameState || !currentUser) return null;
 
-  const owner = gameState.users.find(u => u.id === goal.userId);
+  // Use Map for O(1) lookup instead of find
+  const userMap = React.useMemo(() => new Map(gameState.users.map(u => [u.id, u])), [gameState.users]);
+  const owner = userMap.get(goal.userId);
   if (!owner) return null;
 
   const config = gameState.config;
@@ -217,8 +219,15 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
   const toggleMilestone = (id: string) => {
     if (!canEdit) return;
     
-    const updatedMilestones = milestones.map(item => item.id === id ? { ...item, isCompleted: !item.isCompleted } : item);
-    const changedItem = updatedMilestones.find(m => m.id === id);
+    // Find the item directly during map to avoid separate find
+    let changedItem: Milestone | undefined;
+    const updatedMilestones = milestones.map(item => {
+      if (item.id === id) {
+        changedItem = { ...item, isCompleted: !item.isCompleted };
+        return changedItem;
+      }
+      return item;
+    });
     
     setMilestones(updatedMilestones); // Update UI
 

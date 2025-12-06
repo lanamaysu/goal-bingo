@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { User, Goal } from '../../types';
 import BrainstormModal from '../BrainstormModal';
 import ConfirmDialog from '../common/ConfirmDialog';
@@ -29,7 +29,16 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
   if (!gameState || !currentUser) return null; // Safe guard
 
   const allReady = gameState.users.length > 0 && gameState.users.every(u => u.isReady);
-  const myGoals = gameState.goals.filter(g => g.userId === currentUser.id);
+  // Memoize goals by userId for O(1) lookup instead of O(n) filter each render
+  const goalsByUser = useMemo(() => {
+    const map = new Map<string, Goal[]>();
+    gameState.goals.forEach(g => {
+      if (!map.has(g.userId)) map.set(g.userId, []);
+      map.get(g.userId)!.push(g);
+    });
+    return map;
+  }, [gameState.goals]);
+  const myGoals = goalsByUser.get(currentUser.id) || [];
   const isSolo = gameState.config.totalPlayers === 1;
 
   const handleToggleReady = () => {
@@ -48,12 +57,11 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
   };
 
   const handleApplyGoals = (suggestions: GoalSuggestion[]) => {
-    const userGoals = gameState.goals.filter(g => g.userId === currentUser.id);
+    const userGoals = goalsByUser.get(currentUser.id) || [];
     const updatedUserGoals = applySuggestionsToGoals(userGoals, suggestions, gameState.config);
-    const newGoals = gameState.goals.map(g => {
-        const updated = updatedUserGoals.find(ug => ug.id === g.id);
-        return updated || g;
-    });
+    // Optimize: Create a Map for O(1) lookup instead of O(n) find inside map
+    const updatedMap = new Map(updatedUserGoals.map(g => [g.id, g]));
+    const newGoals = gameState.goals.map(g => updatedMap.get(g.id) || g);
     const updatedGameState = { ...gameState, goals: newGoals };
     updateGameStateLocal(updatedGameState);
     saveAndSync(updatedGameState);

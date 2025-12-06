@@ -25,10 +25,12 @@ const RegisterView: React.FC<RegisterViewProps> = ({
   // If game is full, we are strictly in "Recovery Mode"
   const isRecoveryMode = isGameFull;
 
-  // Auto-detect existing user color
+  // Auto-detect existing user color - use Map for O(1) lookup
   useEffect(() => {
       if (name && existingUsers.length > 0) {
-          const match = existingUsers.find(u => u.name.trim().toLowerCase() === name.trim().toLowerCase());
+          // Build lowercase name map for O(1) lookup
+          const nameMap = new Map(existingUsers.map(u => [u.name.trim().toLowerCase(), u]));
+          const match = nameMap.get(name.trim().toLowerCase());
           if (match) {
               setSelectedColorId(match.colorId);
           }

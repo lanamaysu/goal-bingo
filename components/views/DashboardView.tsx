@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Goal } from '../../types';
 import BingoGrid from '../BingoGrid';
 import { getWinningLines } from '../../utils/constants';
@@ -27,15 +27,26 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
   // Only calculate winning lines if NOT solo mode
   const winningLines = isSolo ? [] : getWinningLines(gridSize);
 
-  // Determine winning lines for highlighting - memoize goal lookup for performance
-  const goalMap = new Map(gameState.goals.map(g => [g.id, g]));
-  const activeLines = winningLines.filter(line => line.every(idx => {
-      const gId = gameState.gridMapping[idx];
-      const g = goalMap.get(gId);
-      // Fallback for missing goals (safe guard)
-      if (!g) return false;
-      return g.currentScore >= g.targetScore;
-  }));
+  // Memoize goal and user lookup maps for O(1) access
+  const goalMap = useMemo(() => new Map(gameState.goals.map(g => [g.id, g])), [gameState.goals]);
+  const goalsByUserId = useMemo(() => {
+    const map = new Map<string, typeof gameState.goals>();
+    gameState.goals.forEach(g => {
+      if (!map.has(g.userId)) map.set(g.userId, []);
+      map.get(g.userId)!.push(g);
+    });
+    return map;
+  }, [gameState.goals]);
+
+  const activeLines = useMemo(() => 
+    winningLines.filter(line => line.every(idx => {
+        const gId = gameState.gridMapping[idx];
+        const g = goalMap.get(gId);
+        // Fallback for missing goals (safe guard)
+        if (!g) return false;
+        return g.currentScore >= g.targetScore;
+    }))
+  , [winningLines, gameState.gridMapping, goalMap]);
   
   // --- Settlement Logic ---
   const isSettlementMode = phase === 'review' || phase === 'complete' || showPreview;
@@ -109,7 +120,8 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
                         {isSolo ? '個人結算' : '個人懲罰清單'}
                     </h4>
                     {gameState.users.map(u => {
-                        const userGoals = gameState.goals.filter(g => g.userId === u.id);
+                        // Use memoized map instead of filter for O(1) lookup
+                        const userGoals = goalsByUserId.get(u.id) || [];
                         const userTotal = userGoals.reduce((sum, g) => sum + g.currentScore, 0);
                         const isSafe = userTotal >= (gameState.config.individualSafeScore || 100);
                         const theme = getUserTheme(u.colorId);
@@ -136,7 +148,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
             </div>
 
             {/* Grid Visualization (Read Only) */}
-            <div className="opacity-80 pointer-events-none md:scale-90 origin-top">
+            <div className="opacity-80 pointer-events-none origin-top transform-gpu" style={{ transform: 'scale(0.9)' }}>
                 <BingoGrid gameState={gameState} onGoalClick={()=>{}} highlightLines={activeLines} />
             </div>
 
