@@ -54,7 +54,7 @@ const EmptyYearView: React.FC<EmptyYearViewProps> = ({ year, onSwitchYear, onIni
 
         <button 
           onClick={onInitialize}
-          className="w-full py-4 bg-brand-petrol text-white font-bold rounded-2xl transition-all shadow-lg flex flex-col items-center group"
+          className="w-full py-4 bg-brand-petrol text-white font-bold rounded-2xl transition-all shadow flex flex-col items-center group"
         >
           <span className="flex items-center gap-2">
               <span className="material-symbols-outlined text-[20px] transition-transform">auto_awesome</span> 

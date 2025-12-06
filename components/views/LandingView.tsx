@@ -34,7 +34,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onJoinTeam, onCreateTeam }) =
 
         <button 
           onClick={onCreateTeam}
-          className="w-full py-4 bg-brand-petrol text-white font-bold rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3"
+          className="w-full py-4 bg-brand-petrol text-white font-bold rounded-2xl transition-all shadow flex items-center justify-center gap-3"
         >
           <span className="material-symbols-outlined text-[20px]">add_circle</span>
           建立新隊伍

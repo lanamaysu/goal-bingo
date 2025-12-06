@@ -44,7 +44,7 @@ const BingoGridCell = React.memo<GridCellProps>(({
       className={`
         relative rounded-2xl p-2 flex flex-col items-center justify-center text-center
         group overflow-hidden border-2 transform-gpu
-        ${isWinning ? 'ring-4 ring-brand-rust ring-offset-2 ring-offset-white dark:ring-offset-brand-surface z-10 md:shadow-xl' : ''}
+        ${isWinning ? 'ring-4 ring-brand-rust ring-offset-2 ring-offset-white dark:ring-offset-brand-surface z-10' : ''}
         ${colorClasses}
         ${isComplete ? 'opacity-100' : 'opacity-90 dark:opacity-80'}
       `}
@@ -60,7 +60,7 @@ const BingoGridCell = React.memo<GridCellProps>(({
       {/* Owner Badge */}
       <div className={`
          absolute top-0 left-0 w-full py-0.5 text-[8px] sm:text-[10px] font-black uppercase tracking-widest
-         bg-white/40 dark:bg-black/40 backdrop-blur-sm
+         bg-white/50 dark:bg-black/40
       `}>
         {user.name}
       </div>
@@ -75,12 +75,14 @@ const BingoGridCell = React.memo<GridCellProps>(({
       <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2">
          {isComplete && (
            <div className="bg-brand-petrol dark:bg-brand-mint text-brand-mint dark:text-brand-petrol rounded-full p-0.5 shadow-sm flex items-center justify-center">
-               <span className="material-symbols-outlined text-[12px] font-bold">check</span>
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                 <path d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20.3 7.7l-1.4-1.4z" />
+               </svg>
            </div>
          )}
          {!isComplete && goal.currentScore > 0 && (
-            <span className="text-[10px] font-mono bg-white/80 dark:bg-black/40 px-1.5 py-0.5 rounded-md backdrop-blur-sm shadow-sm font-bold">
-                {Math.floor(goal.currentScore)}%
+            <span className="text-[10px] font-mono bg-white/80 dark:bg-black/40 px-1.5 py-0.5 rounded-md shadow-sm font-bold">
+              {Math.floor(goal.currentScore)}%
             </span>
          )}
       </div>
@@ -100,7 +102,7 @@ const BingoGrid: React.FC<BingoGridProps> = ({ gameState, onGoalClick, highlight
   const highlightedIndices = useMemo(() => new Set(highlightLines.flat()), [highlightLines]);
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white dark:bg-brand-surface p-3 rounded-3xl shadow-md md:shadow-2xl relative border-4 border-brand-petrol dark:border-brand-dark transition-colors duration-300 transform-gpu" style={{ willChange: 'transform' }}>
+    <div className="w-full max-w-md mx-auto bg-white dark:bg-brand-surface p-3 rounded-3xl shadow-sm relative border-4 border-brand-petrol dark:border-brand-dark transform-gpu" style={{ willChange: 'transform' }}>
       {/* Grid Container */}
       <div 
         className="grid gap-2 sm:gap-3"

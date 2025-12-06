@@ -160,7 +160,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
             <button 
                 onClick={handleToggleReady}
                 disabled={isValidating}
-                className={`w-full py-4 rounded-2xl font-bold text-white transition-colors shadow-lg flex items-center justify-center gap-2
+                className={`w-full py-4 rounded-2xl font-bold text-white transition-colors shadow flex items-center justify-center gap-2
                     ${currentUser.isReady ? 'bg-brand-teal' : 'bg-brand-petrol'}
                     ${isValidating ? 'opacity-70 cursor-not-allowed' : ''}
                 `}
@@ -187,7 +187,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                 <div className="pt-6 border-t border-brand-teal/10 animate-fade-in">
                      <button 
                         onClick={handleStartGameClick}
-                        className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-lg transition-shadow flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow transition-shadow flex items-center justify-center gap-2"
                     >
                         <span className="material-symbols-outlined text-[20px]">lock</span> 鎖定目標，開始個人挑戰！
                     </button>
@@ -246,7 +246,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onSelectGoal }) => {
                     <div className="pt-6 border-t border-brand-teal/10">
                         <button 
                             onClick={handleStartGameClick}
-                            className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow-lg transition-shadow flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-gradient-to-r from-brand-petrol to-brand-teal text-white font-black text-xl rounded-2xl shadow transition-shadow flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined text-[20px]">lock</span> 鎖定目標，開始遊戲！
                         </button>

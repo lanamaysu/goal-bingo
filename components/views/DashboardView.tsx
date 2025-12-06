@@ -163,7 +163,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
                     </button>
                     <button 
                         onClick={() => setShowConfirmLock(true)} 
-                        className="px-6 py-3 bg-brand-petrol text-white font-bold rounded-xl shadow-lg flex items-center gap-2"
+                        className="px-6 py-3 bg-brand-petrol text-white font-bold rounded-xl shadow flex items-center gap-2"
                     >
                         確認並鎖定結算 <span className="material-symbols-outlined text-[18px]">lock</span>
                     </button>
@@ -172,7 +172,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
             
             <ConfirmDialog 
                 isOpen={showConfirmLock}
-                title={<span className="flex items-center justify-center gap-2 text-brand-rust"><span className="material-symbols-outlined">warning</span> 確定鎖定結算？</span>}
+                title={<span className="flex items-center justify-center gap-2 text-brand-rust"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M1 21h22L12 2 1 21zm12-3h-2v2h2v-2zm0-8h-2v6h2V10z"/></svg> 確定鎖定結算？</span>}
                 message={"按下確定後，本年度將標記為「已結算」。\n\n所有人將無法再修改進度或目標，\n您確定要繼續嗎？"}
                 confirmText="確定鎖定"
                 isDestructive={true}

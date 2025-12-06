@@ -78,7 +78,7 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { 
 }) => {
     const variants = {
         // Primary: Deep Petrol in Light (contrast against white/mint), Teal in Dark (contrast against Petrol Surface)
-        primary: "bg-brand-petrol text-white shadow-lg dark:bg-brand-teal dark:text-white dark:shadow-md",
+        primary: "bg-brand-petrol text-white shadow dark:bg-brand-teal dark:text-white dark:shadow",
         
         // Secondary: Outline style. Clearly distinguished from Primary.
         secondary: "bg-white border-2 border-brand-teal/30 text-brand-petrol dark:bg-transparent dark:border-brand-mint/30 dark:text-brand-mint",
