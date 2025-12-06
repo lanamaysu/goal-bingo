@@ -38,18 +38,18 @@ const EmptyYearView: React.FC<EmptyYearViewProps> = ({ year, onSwitchYear, onIni
             <label className="text-xs font-bold text-brand-teal dark:text-brand-teal/70 uppercase tracking-wider">
               切換至其他年份
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="number"
                 value={inputYear}
                 onChange={(e) => setInputYear(e.target.value)}
-                className="flex-1 p-2 bg-white dark:bg-[rgb(var(--brand-dark))] border-2 border-transparent focus:border-brand-teal rounded-xl text-center font-bold text-lg text-brand-petrol dark:text-brand-mint outline-none transition-all"
+                className="w-full sm:flex-1 p-2 bg-white dark:bg-[rgb(var(--brand-dark))] border-2 border-transparent focus:border-brand-teal rounded-xl text-center font-bold text-lg text-brand-petrol dark:text-brand-mint outline-none transition-all"
                 placeholder="YYYY"
               />
               <button
                 onClick={handleSwitch}
                 disabled={inputYear === year || inputYear.length !== 4}
-                className="px-4 bg-white dark:bg-[rgb(var(--brand-dark))] border-2 border-brand-teal/20 text-brand-teal font-bold rounded-xl disabled:opacity-50 transition-colors"
+                className="w-full sm:w-auto px-4 bg-white dark:bg-[rgb(var(--brand-dark))] border-2 border-brand-teal/20 text-brand-teal font-bold rounded-xl disabled:opacity-50 transition-colors"
               >
                 前往
               </button>
