@@ -26,23 +26,20 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick, onOpenSettin
 
   if (!gameState) return null;
 
-  // Check if gridMapping is missing and needs attention
   const hasGridMappingIssue =
     gameState.phase === 'active' &&
     gameState.gridMapping.length === 0 &&
     gameState.goals.length > 0;
 
-  // Generate lines dynamically based on the current config
   const gridSize = gameState.config.gridSize || 3;
   const isSolo = gameState.config.totalPlayers === 1;
   const phase = gameState.phase;
   const goalsPerUser = gameState.config.goalsPerUser ?? 0;
 
-  // Only calculate winning lines if NOT solo mode
   const winningLines = isSolo ? [] : getWinningLines(gridSize);
 
-  // Memoize goal and user lookup maps for O(1) access
   const goalMap = useMemo(() => new Map(gameState.goals.map((g) => [g.id, g])), [gameState.goals]);
+
   const goalsByUserId = useMemo(() => {
     const map = new Map<string, typeof gameState.goals>();
     gameState.goals.forEach((g) => {
@@ -65,18 +62,23 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick, onOpenSettin
     [winningLines, gameState.gridMapping, goalMap]
   );
 
-  // --- Settlement Logic ---
   const isSettlementMode = phase === 'review' || phase === 'complete' || showPreview;
   const isLocked = phase === 'complete';
 
-  const groupTotalScore = gameState.goals.reduce((sum, g) => sum + g.currentScore, 0);
-  const groupTarget = gameState.config.groupTargetScore;
+  const groupStats = useMemo(() => {
+    const totalScore = gameState.goals.reduce((sum, g) => sum + g.currentScore, 0);
+    const target = gameState.config.groupTargetScore;
+    const minLines = gameState.config.minLinesForSafe || 1;
+    return { totalScore, target, minLines };
+  }, [gameState.goals, gameState.config.groupTargetScore, gameState.config.minLinesForSafe]);
+
+  const groupTotalScore = groupStats.totalScore;
+  const groupTarget = groupStats.target;
   const linesCount = activeLines.length;
-  const linesTarget = gameState.config.minLinesForSafe || 1;
+  const linesTarget = groupStats.minLines;
 
   const isGroupSafe = linesCount >= linesTarget || groupTotalScore >= groupTarget;
 
-  // Compute user statistics
   const userStats = useMemo<UserStat[]>(() => {
     return gameState.users.map((user) => {
       const userGoals = goalsByUserId.get(user.id) || [];

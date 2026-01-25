@@ -1,12 +1,10 @@
 import { GameState } from '../types';
 
-// Helper to handle GAS responses that might have trailing script injections or garbage
 const parseResponse = (text: string): any => {
   if (!text) throw new Error('Empty response');
   try {
     return JSON.parse(text);
   } catch (e) {
-    // If strict parse fails, try to salvage valid JSON from the start.
     try {
       const firstOpen = text.indexOf('{');
       const lastClose = text.lastIndexOf('}');
@@ -14,9 +12,7 @@ const parseResponse = (text: string): any => {
         const candidate = text.substring(firstOpen, lastClose + 1);
         return JSON.parse(candidate);
       }
-    } catch (e2) {
-      // Fall through to throw original error
-    }
+    } catch (e2) {}
     console.error('JSON Parse Failed. Raw content length:', text.length);
     throw e;
   }
@@ -24,7 +20,6 @@ const parseResponse = (text: string): any => {
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Generic request wrapper with Retry Logic
 const sendRequest = async (url: string, payload: any, retries = 3): Promise<any> => {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -35,7 +30,6 @@ const sendRequest = async (url: string, payload: any, retries = 3): Promise<any>
       });
 
       if (!response.ok) {
-        // 5xx errors might be transient server issues
         if (response.status >= 500) throw new Error(`Server Error ${response.status}`);
         throw new Error(`HTTP Error ${response.status}`);
       }
@@ -60,16 +54,12 @@ const sendRequest = async (url: string, payload: any, retries = 3): Promise<any>
         error.message.includes('Network') ||
         error.message.includes('Failed to fetch');
 
-      // If it is a retryable error and we haven't used up all retries
       if (isRetryable && i < retries) {
-        // Use server-suggested retry delay if available, otherwise use exponential backoff
         const delay = error.retryAfter || 1000 * Math.pow(2, i);
         console.warn(`Sync attempt ${i + 1} failed: ${error.message}. Retrying in ${delay}ms...`);
         await wait(delay);
         continue;
       }
-
-      // If last attempt or non-retryable error, throw it
       throw error;
     }
   }
@@ -85,11 +75,9 @@ export const fetchAvailableYears = async (url: string): Promise<string[]> => {
   }
 };
 
-// Load data from the sheet
 export const loadFromSheet = async (url: string, year: string): Promise<GameState | null> => {
   try {
     const data = await sendRequest(url, { action: 'load', year });
-    // If backend says exists: false
     if (data.exists === false) return null;
     return data as GameState;
   } catch (error) {
@@ -98,10 +86,22 @@ export const loadFromSheet = async (url: string, year: string): Promise<GameStat
   }
 };
 
-// Save data to the sheet
 export const saveToSheet = async (url: string, gameState: GameState): Promise<GameState> => {
   try {
     const data = await sendRequest(url, { action: 'save', gameState });
+    if (data.goals && Array.isArray(data.goals)) {
+      const sentGoalIds = new Set(gameState.goals.map((g: any) => g.id));
+      const receivedGoalIds = new Set(data.goals.map((g: any) => g.id));
+      const missingGoalIds = Array.from(sentGoalIds).filter((id) => !receivedGoalIds.has(id));
+      if (missingGoalIds.length > 0) {
+        console.warn('⚠️ Server merge returned missing goals - potential data loss!', {
+          sent: gameState.goals.length,
+          received: data.goals.length,
+          missingIds: missingGoalIds,
+        });
+      }
+    }
+
     return data as GameState;
   } catch (error) {
     console.error('Save Error:', error);
@@ -109,7 +109,6 @@ export const saveToSheet = async (url: string, gameState: GameState): Promise<Ga
   }
 };
 
-// Backward compatibility wrapper
 export const syncWithSheet = async (url: string, gameState: GameState): Promise<GameState> => {
   return saveToSheet(url, gameState);
 };

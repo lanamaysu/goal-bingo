@@ -7,7 +7,6 @@ import { DEFAULT_CONFIG } from '../utils/constants';
 import { isValidGasUrl } from '../utils/urlSecurity';
 import storage from '../utils/storage';
 
-// --- Fetchers ---
 const fetchGameState = async ([url, year]: [string, string]) => {
   if (!url || !year) return null;
   const data = await loadFromSheet(url, year);
@@ -20,7 +19,6 @@ const fetchYears = async (url: string) => {
   return years.sort().reverse();
 };
 
-// --- Initial State Helper ---
 const createNewState = (year: string): GameState => ({
   phase: 'setup',
   users: [],
@@ -30,37 +28,25 @@ const createNewState = (year: string): GameState => ({
 });
 
 export const useBingoGame = () => {
-  // Persistence
   const [sheetUrl, setSheetUrlState] = useState<string>(() => {
-    // Prefer v2 sheet URL only (we no longer parse legacy keys automatically)
     return storage.getSheetUrl() || '';
   });
   const [currentUserId, setCurrentUserId] = useState<string>(() => storage.getUserId() || '');
   const [activeYear, setActiveYear] = useState<string>(new Date().getFullYear().toString());
   const [errorMsg, setErrorMsg] = useState('');
 
-  // --- SWR Hooks ---
+  const [lastFailedState, setLastFailedState] = useState<GameState | null>(null);
+  const [lastSyncError, setLastSyncError] = useState<Error | null>(null);
 
-  // 1. Fetch Available Years
   const { data: availableYears = [] } = useSWR(
     sheetUrl ? ['availableYears', sheetUrl] : null,
     ([_, url]) => fetchYears(url),
     {
       revalidateOnFocus: true,
-      dedupingInterval: 60000, // Check for new years less frequently
+      dedupingInterval: 60000,
     }
   );
 
-  // Auto-switch year logic (Effect based on availableYears change)
-  useEffect(() => {
-    if (availableYears.length > 0 && !availableYears.includes(activeYear)) {
-      // If current active year doesn't exist, but we found years, switch to the latest one
-      // Only do this if we haven't manually created a new year (which would handle its own state)
-      setActiveYear(availableYears[0]);
-    }
-  }, [availableYears]); // Remove activeYear dependency to prevent loops
-
-  // 2. Fetch Game State (The Core Logic)
   const swrKey = sheetUrl && activeYear ? [sheetUrl, activeYear] : null;
 
   const {
@@ -70,26 +56,34 @@ export const useBingoGame = () => {
     isValidating,
     mutate: mutateGameState,
   } = useSWR(swrKey, fetchGameState, {
-    revalidateOnFocus: true, // This enables the background update
-    keepPreviousData: false, // Set to false to force loading state on year switch
-    refreshInterval: 0, // Don't poll automatically unless needed, save quota
+    revalidateOnFocus: false,
+    keepPreviousData: true,
+    refreshInterval: 0,
+    dedupingInterval: 120000,
     onError: (err) => {
       console.error(err);
       setErrorMsg('無法連接雲端，請檢查網址或網路。');
     },
   });
 
-  // --- Derived State ---
+  useEffect(() => {
+    if (isInitialLoading) {
+      return;
+    }
+    if (availableYears.length === 0) {
+      return;
+    }
+    if (!availableYears.includes(activeYear)) {
+      console.warn(
+        `Active year ${activeYear} not found in available years, switching to ${availableYears[0]}`
+      );
+      setActiveYear(availableYears[0]);
+    }
+  }, [availableYears, isInitialLoading]);
 
   const gameState = useMemo(() => {
-    // 1. If we have actual server data, use it.
     if (serverGameState) return serverGameState;
-
-    // 2. If we are loading (initial or switching keys), return null to trigger global loader.
     if (isInitialLoading) return null;
-
-    // 3. If not loading and no data (server returned null/404), return empty state.
-    // This implies "Create New Game" mode for a year that doesn't exist yet.
     return createNewState(activeYear);
   }, [serverGameState, activeYear, isInitialLoading]);
 
@@ -97,23 +91,17 @@ export const useBingoGame = () => {
     () => gameState?.users.find((u) => u.id === currentUserId) || null,
     [gameState, currentUserId]
   );
-
-  // --- Actions ---
-
   const setUrl = (url: string) => {
-    // Validate URL format
     if (!isValidGasUrl(url)) {
       throw new Error(
         '無效的 Google Apps Script URL。請確認網址格式為: https://script.google.com/macros/s/[deployment-id]/exec'
       );
     }
     setSheetUrlState(url);
-    // DEBUG: log setUrl in tests
     try {
       // eslint-disable-next-line no-console
       console.log('[useBingoGame] setUrl ->', url);
     } catch (e) {}
-    // Persist in v2 schema and remove legacy keys to avoid ambiguity
     try {
       storage.setSheetUrl(url);
       storage.clearLegacyKeys();
@@ -121,57 +109,80 @@ export const useBingoGame = () => {
       // ignore storage errors
     }
   };
-
-  // Generic Save Function (Optimistic UI Update + Server Merge Handling)
   const saveAndSync = useCallback(
     async (newState: GameState) => {
       if (!sheetUrl) return;
-
-      // Save the previous state for rollback in case of error
       const previousState = gameState;
-
-      // 1. Optimistic Update: Update the local cache immediately so user sees their change
       await mutateGameState(newState, false);
 
       try {
-        // 2. Send to Server & Get Merged Result
-        // The backend now performs a merge based on 'lastUpdated' timestamps
         const mergedState = await saveToSheet(sheetUrl, newState);
 
-        // 3. Update Local Cache with Merged State
-        // This ensures if someone else updated Goal B while we updated Goal A,
-        // we now see Goal B's update instead of overwriting it with our old cache.
-        if (mergedState) {
-          await mutateGameState(mergedState, false);
-        } else {
-          // Fallback: re-fetch from server
+        if (!mergedState || typeof mergedState !== 'object') {
+          console.warn('⚠️ Server returned invalid merged state');
           await mutateGameState();
+          setErrorMsg('同步異常，已重新載入資料。請重試您的操作。');
+          return;
         }
 
-        // Refresh years list if we just created a new year
-        mutate(['availableYears', sheetUrl]);
+        if (newState.goals && newState.goals.length > 0) {
+          if (!mergedState.goals || mergedState.goals.length === 0) {
+            console.warn('⚠️ Server returned invalid merged state - missing goals');
+            await mutateGameState();
+            setErrorMsg('同步異常，已重新載入資料。請重試您的操作。');
+            return;
+          }
 
-        // Clear any previous error messages on success
+          const originalGoalIds = new Set(newState.goals.map((g) => g.id));
+          const mergedGoalIds = new Set(mergedState.goals.map((g) => g.id));
+          const lostGoals = Array.from(originalGoalIds).filter((id) => !mergedGoalIds.has(id));
+
+          if (lostGoals.length > 0) {
+            console.error('❌ 嚴重：同步時遺失了目標！', lostGoals);
+            // 不信任這個合併結果，強制重新載入
+            await mutateGameState();
+            setErrorMsg('同步失敗：資料遺失，已重新載入。請重試您的操作。');
+            return;
+          }
+        }
+
+        await mutateGameState(mergedState, false);
+
+        mutate(['availableYears', sheetUrl]);
         setErrorMsg('');
       } catch (e) {
         console.error('Sync failed', e);
-
-        // ROLLBACK: Restore the previous state immediately on error
+        const error = e as Error;
+        setLastFailedState(newState);
+        setLastSyncError(error);
         if (previousState) {
           await mutateGameState(previousState, false);
         } else {
-          // If we don't have a previous state, force re-fetch from server
           await mutateGameState();
         }
-
-        // Set user-friendly error message
-        setErrorMsg('同步失敗，操作已復原。請檢查網路連線後重試。');
+        if (error.message.includes('Network') || error.message.includes('Failed to fetch')) {
+          setErrorMsg('網路連線異常，操作已復原。請檢查網路後重試。');
+        } else if (error.message.includes('Server busy')) {
+          setErrorMsg('伺服器忙碌中，操作已復原。請稍後重試。');
+        } else {
+          setErrorMsg('同步失敗，操作已復原。請檢查網路連線或設定後重試。');
+        }
       }
     },
     [sheetUrl, gameState, mutateGameState]
   );
 
-  // Local Update (Just updates the cache, doesn't push to server immediately)
+  const retrySyncFailed = useCallback(async () => {
+    if (!lastFailedState) {
+      setErrorMsg('沒有待重試的操作');
+      return;
+    }
+    console.log('🔄 Retrying failed sync...');
+    setErrorMsg('');
+    setLastSyncError(null);
+    await saveAndSync(lastFailedState);
+  }, [lastFailedState, saveAndSync]);
+
   const updateGameStateLocal = useCallback(
     (newState: GameState) => {
       mutateGameState(newState, false);
@@ -196,12 +207,10 @@ export const useBingoGame = () => {
 
   const registerUser = async (name: string, colorId: number): Promise<boolean> => {
     if (!name.trim()) return false;
-    // Strict check: We cannot register if gameState is not loaded
     if (!gameState) return false;
 
     setErrorMsg('');
 
-    // Identity Recovery
     const existingUser = gameState.users.find((u) => u.name === name);
     if (existingUser) {
       setCurrentUserId(existingUser.id);
@@ -211,7 +220,6 @@ export const useBingoGame = () => {
         // ignore storage errors
       }
 
-      // Update color if different (e.g. re-registering for new year or just changing)
       if (existingUser.colorId !== colorId) {
         const updatedUser = { ...existingUser, colorId };
         const newUsers = gameState.users.map((u) => (u.id === existingUser.id ? updatedUser : u));
@@ -221,7 +229,6 @@ export const useBingoGame = () => {
       return true;
     }
 
-    // Validate Team Size
     if (
       gameState.config.totalPlayers > 0 &&
       gameState.users.length >= gameState.config.totalPlayers
@@ -232,7 +239,6 @@ export const useBingoGame = () => {
       return false;
     }
 
-    // Create New User
     const newUserId = `u_${uuidv4()}`;
 
     const newUser: User = {
@@ -253,7 +259,7 @@ export const useBingoGame = () => {
       currentScore: 0,
       logs: [],
       lastUpdated: Date.now(),
-      version: 0, // Initial version
+      version: 0,
     }));
 
     const newState = {
@@ -278,7 +284,6 @@ export const useBingoGame = () => {
 
   const updateGoal = (updatedGoal: Goal) => {
     if (!gameState) return;
-    // Increment version on update to handle conflicts
     const goalWithVersion = {
       ...updatedGoal,
       version: (updatedGoal.version || 0) + 1,
@@ -293,7 +298,6 @@ export const useBingoGame = () => {
 
   const updateGoalLocal = (updatedGoal: Goal) => {
     if (!gameState) return;
-    // Increment version on update
     const goalWithVersion = {
       ...updatedGoal,
       version: (updatedGoal.version || 0) + 1,
@@ -322,8 +326,6 @@ export const useBingoGame = () => {
 
   const confirmGridAndStartGame = () => {
     if (!gameState) return;
-    // Ensure gridMapping is preserved when transitioning to active
-    // (In case gameState was updated by server while user was reviewing grid)
     saveAndSync({
       ...gameState,
       phase: 'active',
@@ -360,7 +362,6 @@ export const useBingoGame = () => {
 
   const fixMissingGridMapping = async () => {
     if (!gameState) return;
-    // Regenerate gridMapping from existing goals
     const gridSize = gameState.config.gridSize;
     const gridCells = gridSize * gridSize;
     const allGoalIds = gameState.goals.map((g) => g.id);
@@ -379,13 +380,15 @@ export const useBingoGame = () => {
     availableYears,
     gameState,
     currentUser,
-    isLoading: isInitialLoading, // Will be true when switching keys now
+    isLoading: isInitialLoading,
     isValidating,
     isSaving: isValidating,
     errorMsg,
+    lastSyncError,
     setActiveYear,
     setUrl,
     saveAndSync,
+    retrySyncFailed,
     updateGameStateLocal,
     fetchCloudState: () => mutateGameState(),
     initializeConfig,

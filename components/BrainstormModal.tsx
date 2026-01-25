@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   generateGoalSuggestions,
   generatePenaltySuggestions,
@@ -29,23 +29,21 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
   const [keyword, setKeyword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // State for Goals
   const [goalSuggestions, setGoalSuggestions] = useState<GoalSuggestion[]>([]);
   const [selectedGoalIndices, setSelectedGoalIndices] = useState<number[]>([]);
-
-  // Memoize selectedGoalIndices as a Set for O(1) lookup instead of O(n) includes
   const selectedIndicesSet = useMemo(() => new Set(selectedGoalIndices), [selectedGoalIndices]);
-
-  // State for Penalties
   const [penaltySuggestions, setPenaltySuggestions] = useState<string[]>([]);
+
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleGenerate = async () => {
     if (!keyword.trim()) return;
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
     setLoading(true);
     setError('');
-
-    // Clear previous results while loading
     if (mode === 'goal') {
       setGoalSuggestions([]);
       setSelectedGoalIndices([]);
@@ -53,14 +51,19 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
       setPenaltySuggestions([]);
     }
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       let hasResults = false;
       if (mode === 'goal') {
         const results = await generateGoalSuggestions(keyword);
+        if (controller.signal.aborted) return;
         setGoalSuggestions(results);
         hasResults = results.length > 0;
       } else {
         const results = await generatePenaltySuggestions(keyword);
+        if (controller.signal.aborted) return;
         setPenaltySuggestions(results);
         hasResults = results.length > 0;
       }
@@ -69,6 +72,10 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
         setError('AI 無法生成內容，請稍後再試。');
       }
     } catch (e: any) {
+      if (e.name === 'AbortError' || e.code === 'ERR_ABORT_ERR') {
+        console.log('⚠️ Generation request was cancelled');
+        return;
+      }
       console.error(e);
       if (e.message === '請先設定 API Key') {
         setError('請先至右上角「設定」輸入 Gemini API Key');
@@ -76,9 +83,20 @@ const BrainstormModal: React.FC<BrainstormModalProps> = ({
         setError('發生未知錯誤，請確認 API Key 是否有效。');
       }
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+        abortControllerRef.current = null;
+      }
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const toggleGoalSelection = (index: number) => {
     setSelectedGoalIndices((prev) => {
