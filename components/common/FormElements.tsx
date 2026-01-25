@@ -20,11 +20,24 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   rightElement?: React.ReactNode;
 }
 
-export const Input: React.FC<InputProps> = ({ label, className = '', rightElement, ...props }) => (
+export const Input: React.FC<InputProps> = ({
+  label,
+  className = '',
+  rightElement,
+  onFocus,
+  ...props
+}) => (
   <div className="w-full">
     {label && <label className={labelClass}>{label}</label>}
     <div className="relative">
-      <input className={`${baseStyles} ${rightElement ? 'pr-10' : ''} ${className}`} {...props} />
+      <input
+        className={`${baseStyles} ${rightElement ? 'pr-10' : ''} ${className}`}
+        onFocus={(e) => {
+          e.target.select();
+          onFocus?.(e);
+        }}
+        {...props}
+      />
       {rightElement && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-accent">{rightElement}</div>
       )}
