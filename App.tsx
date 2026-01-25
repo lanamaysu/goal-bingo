@@ -318,7 +318,10 @@ const AppContent: React.FC = () => {
             onConfirm={game.confirmGridAndStartGame}
           />
         ) : game.gameState ? (
-          <DashboardView onGoalClick={(g) => setSelectedGoalId(g.id)} />
+          <DashboardView
+            onGoalClick={(g) => setSelectedGoalId(g.id)}
+            onOpenSettings={() => setIsSyncOpen(true)}
+          />
         ) : null}
       </main>
 

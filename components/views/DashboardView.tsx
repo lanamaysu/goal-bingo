@@ -7,6 +7,7 @@ import NormalGameView from './NormalGameView';
 
 interface DashboardViewProps {
   onGoalClick: (goal: Goal) => void;
+  onOpenSettings: () => void;
 }
 
 interface UserStat {
@@ -18,12 +19,18 @@ interface UserStat {
   totalGoals: number;
 }
 
-const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
+const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick, onOpenSettings }) => {
   const { gameState, saveAndSync } = useGame();
 
   const [showPreview, setShowPreview] = useState(false);
 
   if (!gameState) return null;
+
+  // Check if gridMapping is missing and needs attention
+  const hasGridMappingIssue =
+    gameState.phase === 'active' &&
+    gameState.gridMapping.length === 0 &&
+    gameState.goals.length > 0;
 
   // Generate lines dynamically based on the current config
   const gridSize = gameState.config.gridSize || 3;
@@ -142,12 +149,37 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onGoalClick }) => {
   }
 
   return (
-    <NormalGameView
-      gameState={gameState}
-      onGoalClick={onGoalClick}
-      activeLines={activeLines}
-      onShowPreview={() => setShowPreview(true)}
-    />
+    <div className="flex flex-col h-full">
+      {/* Non-blocking warning banner */}
+      {hasGridMappingIssue && (
+        <div className="mb-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 dark:border-amber-500 p-3 rounded-r-lg animate-fade-in">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[20px]">
+                warning
+              </span>
+              <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
+                檢測到網格資料異常，可能影響連線顯示
+              </p>
+            </div>
+            <button
+              onClick={onOpenSettings}
+              className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-[14px]">build</span>
+              診斷修復
+            </button>
+          </div>
+        </div>
+      )}
+
+      <NormalGameView
+        gameState={gameState}
+        onGoalClick={onGoalClick}
+        activeLines={activeLines}
+        onShowPreview={() => setShowPreview(true)}
+      />
+    </div>
   );
 };
 

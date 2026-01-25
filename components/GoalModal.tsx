@@ -612,6 +612,18 @@ const GoalModal: React.FC<GoalModalProps> = ({ goal, isSetupPhase, onClose }) =>
             {/* Decorative circle removed to reduce paint cost */}
           </div>
 
+          {/* Goal Description */}
+          {description && (
+            <div className="bg-white/50 dark:bg-black/20 p-4 rounded-2xl border border-accent/10">
+              <h4 className="text-xs font-bold text-accent/60 dark:text-accent/50 uppercase tracking-wider mb-2">
+                目標說明
+              </h4>
+              <p className="text-sm text-accent dark:text-accent leading-relaxed whitespace-pre-wrap">
+                {description}
+              </p>
+            </div>
+          )}
+
           {/* Tracking Interface */}
           <div>
             {goalType === 'habit' && (

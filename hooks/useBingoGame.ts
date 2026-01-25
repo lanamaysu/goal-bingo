@@ -322,9 +322,17 @@ export const useBingoGame = () => {
 
   const confirmGridAndStartGame = () => {
     if (!gameState) return;
+    // Ensure gridMapping is preserved when transitioning to active
+    // (In case gameState was updated by server while user was reviewing grid)
     saveAndSync({
       ...gameState,
       phase: 'active',
+      gridMapping:
+        gameState.gridMapping && gameState.gridMapping.length > 0
+          ? gameState.gridMapping
+          : gameState.goals
+              .map((g) => g.id)
+              .slice(0, gameState.config.gridSize * gameState.config.gridSize),
     });
   };
 
@@ -350,6 +358,21 @@ export const useBingoGame = () => {
     }
   };
 
+  const fixMissingGridMapping = async () => {
+    if (!gameState) return;
+    // Regenerate gridMapping from existing goals
+    const gridSize = gameState.config.gridSize;
+    const gridCells = gridSize * gridSize;
+    const allGoalIds = gameState.goals.map((g) => g.id);
+    const shuffled = [...allGoalIds].sort(() => Math.random() - 0.5).slice(0, gridCells);
+
+    const fixedState = {
+      ...gameState,
+      gridMapping: shuffled,
+    };
+    await saveAndSync(fixedState);
+  };
+
   return {
     sheetUrl,
     activeYear,
@@ -373,6 +396,7 @@ export const useBingoGame = () => {
     startGame,
     confirmGridAndStartGame,
     resetGame,
+    fixMissingGridMapping,
     initNewGame: (url: string) => {
       setUrl(url);
     },

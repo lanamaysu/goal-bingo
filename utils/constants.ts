@@ -127,16 +127,20 @@ function doPost(e) {
         try {
           var currentState = JSON.parse(currentDataStr);
 
-          // 1. Merge Config (Incoming usually wins for global settings, or keep existing if partial)
-          // For simplicity, we assume incoming config is the latest intent for setup,
-          // but we preserve ID/Grid mapping if Phase is not Setup to prevent reset.
-          if ((currentState.phase === 'grid-review' || currentState.phase === 'active') &&
-            (incomingState.phase === 'grid-review' || incomingState.phase === 'active')) {
-            // Protect grid mapping from being wiped by a client that might have stale config
-            incomingState.gridMapping = currentState.gridMapping;
+          // 1. PROTECT GridMapping - CRITICAL FIX
+          // Never allow gridMapping to be cleared once established in grid-review or active phases.
+          // This prevents data loss when clients send partial state updates.
+          if (currentState.gridMapping && currentState.gridMapping.length > 0) {
+            // If server has gridMapping and client's request is empty or missing it, preserve server's
+            if (!incomingState.gridMapping || incomingState.gridMapping.length === 0) {
+              incomingState.gridMapping = currentState.gridMapping;
+            }
           }
 
-          // 2. Merge Users
+          // 2. Merge Config (Incoming usually wins for global settings)
+          // Phase and config are updated from incoming state
+
+          // 3. Merge Users
           // Add new users that don't exist in current state
           var userMap = {};
           currentState.users.forEach(function (u) { userMap[u.id] = u; });

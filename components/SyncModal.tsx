@@ -50,6 +50,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
     msg: string;
   } | null>(null);
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
+  const [isFixing, setIsFixing] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -160,6 +161,35 @@ const SyncModal: React.FC<SyncModalProps> = ({
     }
     window.location.reload();
   };
+
+  const handleFixGridMapping = async () => {
+    setIsFixing(true);
+    try {
+      const gridSize = gameState.config.gridSize;
+      const gridCells = gridSize * gridSize;
+      const allGoalIds = gameState.goals.map((g) => g.id);
+      const shuffled = [...allGoalIds].sort(() => Math.random() - 0.5).slice(0, gridCells);
+
+      const fixedState = {
+        ...gameState,
+        gridMapping: shuffled,
+      };
+
+      await saveToSheet(sheetUrl, fixedState);
+      onImport(fixedState);
+      setSyncStatus({ type: 'success', msg: '✅ 網格已修復並同步！' });
+    } catch (e) {
+      setSyncStatus({ type: 'error', msg: '修復失敗：' + e });
+    } finally {
+      setIsFixing(false);
+    }
+  };
+
+  // Diagnostics
+  const hasGridMappingIssue =
+    gameState.phase === 'active' &&
+    gameState.gridMapping.length === 0 &&
+    gameState.goals.length > 0;
 
   const { config } = gameState;
   const isSolo = config.totalPlayers === 1;
@@ -347,6 +377,92 @@ const SyncModal: React.FC<SyncModalProps> = ({
                 {isSolo ? '個人' : '團體'} ({config.totalPlayers}人)
               </span>
             </div>
+          </div>
+        </div>
+
+        {/* 4. Diagnostics Section */}
+        <div className="pt-4 border-t border-accent/10">
+          <h4 className="font-bold text-accent dark:text-accent text-sm border-b border-accent/20 pb-2 flex items-center gap-2 mb-4">
+            <span className="material-symbols-outlined text-[18px]">medical_services</span>
+            資料健康檢查
+          </h4>
+
+          <div className="space-y-3">
+            {/* GridMapping Check */}
+            <div
+              className={`p-3 rounded-lg border ${
+                hasGridMappingIssue
+                  ? 'bg-amber-50 dark:bg-amber-900/10 border-amber-400 dark:border-amber-500'
+                  : 'bg-green-50 dark:bg-green-900/10 border-green-400 dark:border-green-500'
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span
+                      className={`material-symbols-outlined text-[18px] ${
+                        hasGridMappingIssue
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-green-600 dark:text-green-400'
+                      }`}
+                    >
+                      {hasGridMappingIssue ? 'warning' : 'check_circle'}
+                    </span>
+                    <span className="text-sm font-bold text-accent dark:text-accent">九宮格</span>
+                  </div>
+                  <p className="text-xs text-accent/70 dark:text-accent/60">
+                    {hasGridMappingIssue
+                      ? `異常：需要 ${gameState.config.gridSize * gameState.config.gridSize} 個目標 ID，目前為空`
+                      : `正常：已設定 ${gameState.gridMapping.length} 個目標`}
+                  </p>
+                </div>
+                {hasGridMappingIssue && (
+                  <button
+                    onClick={handleFixGridMapping}
+                    disabled={isFixing}
+                    className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  >
+                    {isFixing ? '修復中...' : '立即修復'}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Goals Check */}
+            <div className="p-3 rounded-lg border bg-blue-50 dark:bg-blue-900/10 border-blue-400 dark:border-blue-500">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="material-symbols-outlined text-[18px] text-blue-600 dark:text-blue-400">
+                  info
+                </span>
+                <span className="text-sm font-bold text-accent dark:text-accent">目標清單</span>
+              </div>
+              <p className="text-xs text-accent/70 dark:text-accent/60">
+                共 {gameState.goals.length} 個目標 ({gameState.users.length} 位玩家 ×{' '}
+                {gameState.config.goalsPerUser} 個)
+              </p>
+            </div>
+
+            {/* Manual Sync Button */}
+            <button
+              onClick={handleManualSync}
+              disabled={!sheetUrl || syncStatus?.type === 'loading'}
+              className="w-full py-2 bg-brand-teal hover:bg-brand-teal/90 dark:bg-brand-mint dark:hover:bg-brand-mint/80 text-white dark:text-brand-dark font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-[18px]">sync</span>
+              {syncStatus?.type === 'loading' ? '同步中...' : '手動重新同步'}
+            </button>
+
+            {syncStatus && (
+              <div
+                className={`p-3 rounded-lg text-sm ${
+                  syncStatus.type === 'success'
+                    ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200'
+                    : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200'
+                }`}
+              >
+                {syncStatus.msg}
+              </div>
+            )}
           </div>
         </div>
       </div>
